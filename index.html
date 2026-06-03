@@ -18,19 +18,24 @@
             box-sizing: border-box;
             -webkit-tap-highlight-color: transparent;
         }
+        /* TEMA ESCURO (PADRÃO) - Preto com detalhes rosa */
         body {
             font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #2c1a0e 0%, #4a2c1a 100%);
-            min-height: 100vh;
-            overflow-x: hidden;
-            color: #3e2723;
+            background: #000000;
+            color: #ffffff;
+            transition: background 0.2s, color 0.2s;
         }
+        body.light-theme {
+            background: #ffe4e8;
+            color: #1a1a1a;
+        }
+        /* Estilos do tema escuro (padrão) */
         .login-container {
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            background: linear-gradient(135deg, #2c1a0e, #4a2c1a);
+            background: #000000;
             position: fixed;
             top: 0;
             left: 0;
@@ -38,18 +43,18 @@
             z-index: 1000;
         }
         .login-card {
-            background: rgba(245, 230, 211, 0.95);
+            background: #111111;
             backdrop-filter: blur(20px);
             border-radius: 48px;
             padding: 2rem;
             width: 90%;
             max-width: 400px;
-            border: 1px solid rgba(212, 175, 55, 0.5);
-            box-shadow: 0 12px 30px rgba(0,0,0,0.3);
+            border: 1px solid #e91e63;
+            box-shadow: 0 12px 30px rgba(233,30,99,0.2);
         }
         .login-card h2 {
             text-align: center;
-            background: linear-gradient(135deg, #c9a03d, #8b691b);
+            background: linear-gradient(135deg, #e91e63, #ff6b9d);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
@@ -59,16 +64,16 @@
             width: 100%;
             padding: 14px 18px;
             margin-bottom: 16px;
-            background: #fef7e8;
-            border: 1px solid #d4af37;
+            background: #1a1a1a;
+            border: 1px solid #e91e63;
             border-radius: 40px;
-            color: #3e2723;
+            color: #ffffff;
             font-size: 16px;
         }
         .login-card button {
             width: 100%;
             padding: 14px;
-            background: linear-gradient(95deg, #c9a03d, #8b691b);
+            background: linear-gradient(95deg, #e91e63, #c2185b);
             border: none;
             border-radius: 40px;
             color: white;
@@ -81,16 +86,16 @@
             display: none;
             width: 100%;
             min-height: 100vh;
-            background: linear-gradient(135deg, #2c1a0e 0%, #3d2314 100%);
+            background: #000000;
         }
         .app-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 12px 16px;
-            background: rgba(44, 26, 14, 0.9);
+            background: rgba(0, 0, 0, 0.9);
             backdrop-filter: blur(12px);
-            border-bottom: 1px solid #d4af37;
+            border-bottom: 1px solid #e91e63;
             position: sticky;
             top: 0;
             z-index: 100;
@@ -104,29 +109,29 @@
         }
         .logo-area i {
             font-size: 1.6rem;
-            color: #d4af37;
+            color: #e91e63;
         }
         .logo-area h2 {
             font-size: 1.2rem;
             font-weight: 600;
-            color: #f5e6d3;
+            color: #ffffff;
         }
         .profile-btn {
             display: flex;
             align-items: center;
             gap: 12px;
-            background: rgba(255, 255, 255, 0.15);
+            background: rgba(255, 255, 255, 0.1);
             padding: 6px 12px;
             border-radius: 40px;
             cursor: pointer;
-            border: 1px solid #d4af37;
+            border: 1px solid #e91e63;
         }
         .profile-avatar {
             width: 36px;
             height: 36px;
             border-radius: 50%;
-            background: #c9a03d;
-            color: #3e2723;
+            background: #e91e63;
+            color: #000000;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -138,17 +143,17 @@
             display: flex;
             align-items: center;
             gap: 8px;
-            background: rgba(0,0,0,0.4);
+            background: rgba(0,0,0,0.6);
             padding: 4px 12px;
             border-radius: 40px;
         }
         .month-nav button {
-            background: #c9a03d;
+            background: #e91e63;
             border: none;
             width: 30px;
             height: 30px;
             border-radius: 50%;
-            color: #3e2723;
+            color: white;
             cursor: pointer;
             font-weight: bold;
         }
@@ -185,23 +190,22 @@
             width: 8px;
             height: 8px;
             border-radius: 50%;
-            background: rgba(245, 230, 211, 0.5);
+            background: rgba(255, 255, 255, 0.4);
             transition: 0.2s;
         }
         .indicator.active {
             width: 24px;
             border-radius: 10px;
-            background: #d4af37;
+            background: #e91e63;
         }
         .card {
-            background: rgba(245, 230, 211, 0.95);
-            backdrop-filter: blur(8px);
+            background: #111111;
             border-radius: 28px;
             padding: 1rem;
             margin-bottom: 1rem;
-            border: 1px solid #d4af37;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            color: #3e2723;
+            border: 1px solid #e91e63;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            color: #ffffff;
         }
         .card-title {
             font-size: 1.1rem;
@@ -210,10 +214,10 @@
             display: flex;
             align-items: center;
             gap: 8px;
-            color: #8b691b;
+            color: #e91e63;
         }
         .expense-item, .debtor-item {
-            background: rgba(62, 39, 35, 0.08);
+            background: rgba(233, 30, 99, 0.1);
             border-radius: 20px;
             padding: 12px;
             margin-bottom: 10px;
@@ -222,7 +226,7 @@
             align-items: center;
             flex-wrap: wrap;
             gap: 8px;
-            border-left: 4px solid #d4af37;
+            border-left: 4px solid #e91e63;
         }
         .expense-info, .debtor-info {
             flex: 1;
@@ -235,14 +239,14 @@
         .btn-small {
             padding: 6px 12px;
             font-size: 0.7rem;
-            background: #b5651e;
+            background: #e91e63;
             color: white;
             border: none;
             border-radius: 40px;
             cursor: pointer;
         }
         .btn-quitar {
-            background: #2e7d32;
+            background: #4caf50;
         }
         .dashboard-row {
             display: flex;
@@ -258,17 +262,17 @@
         .dashboard-card .value {
             font-size: 1.5rem;
             font-weight: 800;
-            color: #b5651e;
+            color: #e91e63;
         }
         .progress-bar {
             height: 6px;
-            background: rgba(0, 0, 0, 0.2);
+            background: rgba(255, 255, 255, 0.2);
             border-radius: 10px;
             overflow: hidden;
             margin-top: 6px;
         }
         .progress-fill {
-            background: #c9a03d;
+            background: #e91e63;
             width: 0%;
             height: 100%;
         }
@@ -286,9 +290,9 @@
             width: 100%;
             padding: 10px 14px;
             border-radius: 40px;
-            border: 1px solid #d4af37;
-            background: #fef7e8;
-            color: #3e2723;
+            border: 1px solid #e91e63;
+            background: #1a1a1a;
+            color: #ffffff;
             font-size: 0.9rem;
         }
         .btn {
@@ -305,20 +309,20 @@
             transition: 0.2s;
         }
         .btn-primary {
-            background: linear-gradient(95deg, #c9a03d, #8b691b);
+            background: linear-gradient(95deg, #e91e63, #c2185b);
             color: white;
         }
         .btn-secondary {
-            background: rgba(62, 39, 35, 0.2);
-            color: #3e2723;
-            border: 1px solid #d4af37;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid #e91e63;
         }
         .btn-danger {
-            background: #b5651e;
+            background: #e91e63;
             color: white;
         }
         .btn-success {
-            background: #2e7d32;
+            background: #4caf50;
             color: white;
         }
         table {
@@ -328,8 +332,12 @@
         }
         th, td {
             padding: 8px 4px;
-            border-bottom: 1px solid rgba(0,0,0,0.1);
+            border-bottom: 1px solid rgba(233,30,99,0.3);
             text-align: left;
+        }
+        th:first-child, td:first-child {
+            width: 30px;
+            text-align: center;
         }
         .debtor-form-group {
             display: flex;
@@ -375,9 +383,41 @@
             .debtor-item > div:last-child {
                 justify-content: flex-start;
             }
+            table, thead, tbody, th, td, tr {
+                display: block;
+            }
+            thead tr {
+                position: absolute;
+                top: -9999px;
+                left: -9999px;
+            }
+            tr {
+                margin-bottom: 12px;
+                border: 1px solid #e91e63;
+                border-radius: 16px;
+                padding: 8px;
+            }
+            td {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 6px 8px;
+                border: none;
+            }
+            td:before {
+                content: attr(data-label);
+                font-weight: 600;
+                width: 40%;
+            }
+            td:first-child {
+                justify-content: center;
+            }
+            td:first-child:before {
+                display: none;
+            }
         }
         .budget-item {
-            background: rgba(62, 39, 35, 0.08);
+            background: rgba(233, 30, 99, 0.1);
             border-radius: 20px;
             padding: 8px;
             margin-bottom: 10px;
@@ -386,16 +426,149 @@
             float: right;
             background: none;
             border: none;
-            color: #b5651e;
+            color: #e91e63;
             cursor: pointer;
             font-weight: bold;
         }
         .info-message {
-            background: rgba(212, 175, 55, 0.15);
+            background: rgba(233, 30, 99, 0.1);
             padding: 8px;
             border-radius: 16px;
             font-size: 0.7rem;
             margin-top: 8px;
+        }
+        .selection-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            padding: 8px;
+            background: rgba(233, 30, 99, 0.15);
+            border-radius: 20px;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .selection-count {
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+        .checkbox-col {
+            width: 30px;
+            text-align: center;
+        }
+        .checkbox-col input {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: #e91e63;
+        }
+
+        /* TEMA CLARO - rosa com detalhes preto */
+        body.light-theme {
+            background: #fff0f3;
+            color: #1a1a1a;
+        }
+        body.light-theme .app-container,
+        body.light-theme .login-container {
+            background: #fff0f3;
+        }
+        body.light-theme .login-card {
+            background: #ffffff;
+            border: 1px solid #000000;
+        }
+        body.light-theme .login-card input,
+        body.light-theme .login-card select {
+            background: #f8f9fa;
+            border: 1px solid #000000;
+            color: #000000;
+        }
+        body.light-theme .card {
+            background: #ffffff;
+            border: 1px solid #000000;
+            color: #000000;
+        }
+        body.light-theme .card-title {
+            color: #000000;
+        }
+        body.light-theme .app-header {
+            background: rgba(255, 240, 243, 0.95);
+            border-bottom: 1px solid #000000;
+        }
+        body.light-theme .logo-area h2 {
+            color: #000000;
+        }
+        body.light-theme .profile-btn {
+            border: 1px solid #000000;
+            background: rgba(0,0,0,0.05);
+        }
+        body.light-theme .profile-avatar {
+            background: #000000;
+            color: #ffffff;
+        }
+        body.light-theme .month-nav button {
+            background: #000000;
+            color: #ffffff;
+        }
+        body.light-theme .indicator.active {
+            background: #000000;
+        }
+        body.light-theme .dashboard-card .value,
+        body.light-theme .card-title i,
+        body.light-theme .logo-area i {
+            color: #000000;
+        }
+        body.light-theme .btn-primary {
+            background: #000000;
+            color: #ffffff;
+        }
+        body.light-theme .btn-secondary {
+            background: rgba(0,0,0,0.08);
+            border: 1px solid #000000;
+            color: #000000;
+        }
+        body.light-theme .btn-danger {
+            background: #000000;
+            color: #ffffff;
+        }
+        body.light-theme .expense-item,
+        body.light-theme .debtor-item,
+        body.light-theme .budget-item,
+        body.light-theme .info-message {
+            background: rgba(0,0,0,0.05);
+            border-left-color: #000000;
+        }
+        body.light-theme input, 
+        body.light-theme select, 
+        body.light-theme textarea {
+            background: #f8f9fa;
+            border: 1px solid #000000;
+            color: #000000;
+        }
+        body.light-theme .progress-bar {
+            background: rgba(0,0,0,0.1);
+        }
+        body.light-theme .progress-fill {
+            background: #000000;
+        }
+        body.light-theme .delete-budget {
+            color: #000000;
+        }
+        body.light-theme .checkbox-col input {
+            accent-color: #000000;
+        }
+        body.light-theme table th,
+        body.light-theme table td {
+            border-bottom-color: rgba(0,0,0,0.1);
+        }
+        body.light-theme .selection-bar {
+            background: rgba(0,0,0,0.08);
+        }
+        body.light-theme .btn-small {
+            background: #000000;
+            color: #ffffff;
+        }
+        body.light-theme .btn-small.btn-quitar {
+            background: #2e7d32;
         }
     </style>
 </head>
@@ -416,7 +589,7 @@
     </div>
 </div>
 
-<!-- APP PRINCIPAL -->
+<!-- APP PRINCIPAL (conteúdo interno igual ao da versão anterior, apenas com as novas cores) -->
 <div id="app-container" class="app-container">
     <div class="app-header">
         <div class="logo-area">
@@ -558,9 +731,28 @@
                     <select id="filter-payer" style="flex:1;"><option value="">Todos</option><option value="me">Eu</option><option value="her">Parceiro</option></select>
                     <button id="clear-filters" class="btn btn-secondary">Limpar</button>
                 </div>
+                <div id="selectionBar" class="selection-bar" style="display: none;">
+                    <div class="selection-count">
+                        <span id="selectedCount">0</span> despesa(s) selecionada(s)
+                    </div>
+                    <div style="display: flex; gap: 8px;">
+                        <button id="selectAllBtn" class="btn btn-secondary" style="padding: 6px 12px;">Selecionar todos</button>
+                        <button id="deleteSelectedBtn" class="btn btn-danger" style="padding: 6px 12px;"><i class="fas fa-trash"></i> Excluir selecionados</button>
+                    </div>
+                </div>
                 <div style="overflow-x: auto;">
-                    <table style="min-width: 500px;">
-                        <thead><tr><th>Descrição</th><th>Total</th><th>Parc</th><th>Parc.Mês</th><th>Pagador</th><th>Ações</th></tr></thead>
+                    <table id="historyTable" style="min-width: 500px;">
+                        <thead>
+                            <tr>
+                                <th><input type="checkbox" id="headerCheckbox" style="width: 18px; height: 18px; cursor: pointer;"></th>
+                                <th>Descrição</th>
+                                <th>Total</th>
+                                <th>Parc</th>
+                                <th>Parc.Mês</th>
+                                <th>Pagador</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
                         <tbody id="tabela-historico"></tbody>
                     </table>
                 </div>
@@ -588,7 +780,7 @@
             </div>
             <div class="card">
                 <div class="card-title"><i class="fas fa-palette"></i> Aparência</div>
-                <button id="theme-toggle-btn" class="btn btn-secondary" style="width:100%;">🌓 Alternar tema escuro</button>
+                <button id="theme-toggle-btn" class="btn btn-secondary" style="width:100%;">🌓 Alternar tema</button>
             </div>
         </div>
 
@@ -624,7 +816,7 @@
 </div>
 
 <script>
-    // Firebase config
+    // Firebase config (igual ao anterior)
     const firebaseConfig = {
         apiKey: "AIzaSyD0P8GciuV_TvZXtkIQbZLOWtcq_EMKbXo",
         authDomain: "gestao-casal.firebaseapp.com",
@@ -659,6 +851,7 @@
     let debtors = [];
     let categoryChart = null, compareChart = null;
     let unsubscribeExpenses, unsubscribeBudgets, unsubscribeRecurring, unsubscribeMeta, unsubscribeNames, unsubscribeDebtors;
+    let selectedExpenses = new Set();
 
     const formatMoney = (val) => val.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 
@@ -673,40 +866,25 @@
         return { p1: parcelaValor / 2, p2: parcelaValor / 2 };
     }
 
-    // Função principal: determina a fatura correta baseada no dia 2
     function getFaturaMonthYear(date) {
         const day = date.getDate();
         let month = date.getMonth();
         let year = date.getFullYear();
-        
         if (day <= 1) {
-            // Vai para o mês anterior
-            if (month === 0) {
-                month = 11;
-                year--;
-            } else {
-                month--;
-            }
+            if (month === 0) { month = 11; year--; }
+            else month--;
         }
         return `${year}-${String(month + 1).padStart(2, '0')}`;
     }
 
-    // Gera as parcelas restantes baseado no número de parcelas já pagas
     function generateInstallmentMonths(startDateISO, totalParcelas, parcelasPagas = 0) {
         const start = new Date(startDateISO);
         const months = [];
-        
-        // Calcula a partir de qual parcela começar (index base 0)
-        const startIndex = parcelasPagas;
-        
-        // Gera apenas as parcelas restantes
-        for (let i = startIndex; i < totalParcelas; i++) {
+        for (let i = parcelasPagas; i < totalParcelas; i++) {
             const dueDate = new Date(start);
             dueDate.setMonth(start.getMonth() + i);
-            const faturaMonth = getFaturaMonthYear(dueDate);
-            months.push(faturaMonth);
+            months.push(getFaturaMonthYear(dueDate));
         }
-        
         return months;
     }
 
@@ -719,16 +897,8 @@
                 const firstDay = new Date(currentYear, currentMonth, 1);
                 const newInstallments = generateInstallmentMonths(firstDay.toISOString().slice(0,10), template.parcelas, 0);
                 await expensesRef.add({
-                    descricao: template.descricao,
-                    valorTotal: template.valorTotal,
-                    parcelas: template.parcelas,
-                    parcelasPagas: 0,
+                    ...template,
                     startDate: firstDay.toISOString().slice(0,10),
-                    paidBy: template.paidBy,
-                    splitType: template.splitType,
-                    customPercent: template.customPercent,
-                    categoria: template.categoria,
-                    observacao: template.observacao + " (recorrente)",
                     installmentMonths: newInstallments,
                     createdAt: firebase.firestore.FieldValue.serverTimestamp(),
                     updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
@@ -740,13 +910,10 @@
 
     function getInstallmentDate(exp, targetMonthYear) {
         const start = new Date(exp.startDate);
-        const parcelasPagas = exp.parcelasPagas || 0;
-        
-        for (let i = parcelasPagas; i < exp.parcelas; i++) {
+        for (let i = exp.parcelasPagas || 0; i < exp.parcelas; i++) {
             const due = new Date(start);
             due.setMonth(start.getMonth() + i);
-            const dueMonthYear = `${due.getFullYear()}-${String(due.getMonth() + 1).padStart(2, '0')}`;
-            if (dueMonthYear === targetMonthYear) {
+            if (`${due.getFullYear()}-${String(due.getMonth() + 1).padStart(2, '0')}` === targetMonthYear) {
                 return due.toLocaleDateString('pt-BR');
             }
         }
@@ -780,149 +947,66 @@
             return partnerKey === 'me' ? p1 > 0 : p2 > 0;
         }).map(exp => {
             const { p1, p2 } = calculateMonthlyShare(exp);
-            const valor = partnerKey === 'me' ? p1 : p2;
-            const dateStr = getInstallmentDate(exp, monthYear);
-            return { id: exp.id, descricao: exp.descricao, valor, data: dateStr, categoria: exp.categoria };
+            return { id: exp.id, descricao: exp.descricao, valor: partnerKey === 'me' ? p1 : p2, data: getInstallmentDate(exp, monthYear), categoria: exp.categoria };
         });
-        if (filtered.length === 0) {
-            container.innerHTML = '<div style="text-align:center; padding:20px;">Nenhum gasto neste mês.</div>';
-            return;
-        }
+        if (filtered.length === 0) { container.innerHTML = '<div style="text-align:center; padding:20px;">Nenhum gasto neste mês.</div>'; return; }
         container.innerHTML = filtered.map(exp => `
             <div class="expense-item">
-                <div class="expense-info">
-                    <strong>${exp.descricao}</strong><br>
-                    <span class="expense-date">${exp.data} - ${exp.categoria || 'Sem categoria'}</span>
-                </div>
-                <div style="display: flex; align-items: center; gap: 12px;">
-                    <span style="font-weight:700; color:#b5651e;">${formatMoney(exp.valor)}</span>
-                    <button class="btn-small delete-partner-expense" data-id="${exp.id}">🗑️ Excluir</button>
-                </div>
+                <div class="expense-info"><strong>${escapeHtml(exp.descricao)}</strong><br><span class="expense-date">${exp.data} - ${exp.categoria || 'Sem categoria'}</span></div>
+                <div style="display: flex; align-items: center; gap: 12px;"><span style="font-weight:700; color:#e91e63;">${formatMoney(exp.valor)}</span><button class="btn-small delete-partner-expense" data-id="${exp.id}">🗑️ Excluir</button></div>
             </div>
         `).join('');
-        document.querySelectorAll('.delete-partner-expense').forEach(btn => {
-            btn.addEventListener('click', async (e) => {
-                const id = btn.getAttribute('data-id');
-                const result = await Swal.fire({ title: 'Confirmar', text: 'Remover esta despesa?', icon: 'warning', showCancelButton: true });
-                if (result.isConfirmed) {
-                    await expensesRef.doc(id).delete();
-                    Swal.fire('Removida!', '', 'success');
-                }
-            });
-        });
+        document.querySelectorAll('.delete-partner-expense').forEach(btn => btn.addEventListener('click', async () => {
+            if (await Swal.fire({ title: 'Confirmar', text: 'Remover esta despesa?', icon: 'warning', showCancelButton: true }).then(r=>r.isConfirmed))
+                await expensesRef.doc(btn.dataset.id).delete();
+        }));
     }
 
     function renderDebtors() {
         const container = document.getElementById('debtors-list');
         if (!container) return;
-        if (debtors.length === 0) {
-            container.innerHTML = '<div style="text-align:center; padding:20px;">Nenhum devedor cadastrado.</div>';
-            return;
-        }
+        if (debtors.length === 0) { container.innerHTML = '<div style="text-align:center; padding:20px;">Nenhum devedor cadastrado.</div>'; return; }
         const sorted = [...debtors].sort((a,b) => new Date(b.dataHora) - new Date(a.dataHora));
-        container.innerHTML = sorted.map(d => {
-            const dataFormatada = new Date(d.dataHora).toLocaleDateString('pt-BR', { day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit' });
-            return `
-                <div class="debtor-item" data-id="${d.id}">
-                    <div class="debtor-info">
-                        <strong>${escapeHtml(d.nome)}</strong><br>
-                        <span class="debtor-date">📅 ${dataFormatada}</span>
-                    </div>
-                    <div style="display: flex; align-items: center; gap: 12px;">
-                        <span style="font-weight:700; color:#b5651e;">${formatMoney(d.valor)}</span>
-                        <button class="btn-small btn-quitar" data-id="${d.id}" data-value="${d.valor}" data-name="${escapeHtml(d.nome)}">💰 Quitar</button>
-                        <button class="btn-small" data-id="${d.id}" data-action="delete">🗑️ Excluir</button>
-                    </div>
-                </div>
-            `;
-        }).join('');
-
-        document.querySelectorAll('.btn-quitar').forEach(btn => {
-            btn.addEventListener('click', async (e) => {
-                const id = btn.getAttribute('data-id');
-                const nome = btn.getAttribute('data-name');
-                const valor = parseFloat(btn.getAttribute('data-value'));
-                const result = await Swal.fire({
-                    title: 'Quitar dívida',
-                    text: `Confirmar recebimento de ${formatMoney(valor)} de ${nome}?`,
-                    icon: 'question',
-                    showCancelButton: true,
-                    confirmButtonText: 'Sim, quitar'
-                });
-                if (result.isConfirmed) {
-                    await debtorsRef.doc(id).delete();
-                    Swal.fire('Quitado!', `Valor de ${formatMoney(valor)} recebido.`, 'success');
-                }
-            });
-        });
-        document.querySelectorAll('.btn-small[data-action="delete"]').forEach(btn => {
-            btn.addEventListener('click', async (e) => {
-                const id = btn.getAttribute('data-id');
-                const result = await Swal.fire({
-                    title: 'Excluir devedor',
-                    text: 'Remover permanentemente este registro?',
-                    icon: 'warning',
-                    showCancelButton: true
-                });
-                if (result.isConfirmed) {
-                    await debtorsRef.doc(id).delete();
-                    Swal.fire('Removido!', '', 'success');
-                }
-            });
-        });
+        container.innerHTML = sorted.map(d => `
+            <div class="debtor-item" data-id="${d.id}">
+                <div class="debtor-info"><strong>${escapeHtml(d.nome)}</strong><br><span class="debtor-date">📅 ${new Date(d.dataHora).toLocaleString('pt-BR')}</span></div>
+                <div style="display: flex; align-items: center; gap: 12px;"><span style="font-weight:700; color:#e91e63;">${formatMoney(d.valor)}</span><button class="btn-small btn-quitar" data-id="${d.id}" data-value="${d.valor}" data-name="${escapeHtml(d.nome)}">💰 Quitar</button><button class="btn-small" data-id="${d.id}" data-action="delete">🗑️ Excluir</button></div>
+            </div>
+        `).join('');
+        document.querySelectorAll('.btn-quitar').forEach(btn => btn.addEventListener('click', async () => {
+            const id = btn.dataset.id, nome = btn.dataset.name, valor = parseFloat(btn.dataset.value);
+            if (await Swal.fire({ title: 'Quitar dívida', text: `Confirmar recebimento de ${formatMoney(valor)} de ${nome}?`, icon: 'question', showCancelButton: true }).then(r=>r.isConfirmed))
+                await debtorsRef.doc(id).delete();
+        }));
+        document.querySelectorAll('.btn-small[data-action="delete"]').forEach(btn => btn.addEventListener('click', async () => {
+            if (await Swal.fire({ title: 'Excluir devedor', text: 'Remover permanentemente?', icon: 'warning', showCancelButton: true }).then(r=>r.isConfirmed))
+                await debtorsRef.doc(btn.dataset.id).delete();
+        }));
     }
 
-    function escapeHtml(str) {
-        if (!str) return '';
-        return str.replace(/[&<>]/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[m]));
-    }
+    function escapeHtml(str) { if (!str) return ''; return str.replace(/[&<>]/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[m])); }
 
     async function addDebtor() {
         const nome = document.getElementById('new-debtor-name').value.trim();
         const valor = parseFloat(document.getElementById('new-debtor-value').value);
         let dataHora = document.getElementById('new-debtor-date').value;
-        if (!nome || isNaN(valor) || valor <= 0) {
-            Swal.fire('Erro', 'Preencha nome e valor válido.', 'error');
-            return;
-        }
-        if (!dataHora) {
-            dataHora = new Date().toISOString().slice(0,10);
-        }
+        if (!nome || isNaN(valor) || valor <= 0) { Swal.fire('Erro', 'Preencha nome e valor válido.', 'error'); return; }
+        if (!dataHora) dataHora = new Date().toISOString().slice(0,10);
         const dataObj = new Date(dataHora);
-        if (isNaN(dataObj.getTime())) {
-            Swal.fire('Erro', 'Data inválida.', 'error');
-            return;
-        }
-        const isoString = dataObj.toISOString();
-        await debtorsRef.add({
-            nome: nome,
-            valor: valor,
-            dataHora: isoString,
-            criadoEm: firebase.firestore.FieldValue.serverTimestamp()
-        });
-        document.getElementById('new-debtor-name').value = '';
-        document.getElementById('new-debtor-value').value = '';
-        document.getElementById('new-debtor-date').value = '';
+        if (isNaN(dataObj.getTime())) { Swal.fire('Erro', 'Data inválida.', 'error'); return; }
+        await debtorsRef.add({ nome, valor, dataHora: dataObj.toISOString(), criadoEm: firebase.firestore.FieldValue.serverTimestamp() });
+        document.getElementById('new-debtor-name').value = ''; document.getElementById('new-debtor-value').value = ''; document.getElementById('new-debtor-date').value = '';
         Swal.fire('Adicionado!', 'Débito registrado.', 'success');
-    }
-
-    async function saveDebtors() {
-        Swal.fire('Alterações já salvas', 'Os dados são sincronizados automaticamente.', 'info');
     }
 
     function updatePartnerPages() {
         const targetMonth = getFaturaMonthYear(new Date(currentYear, currentMonth, 1));
         renderPartnerExpenses('me', 'partner1-expenses-list', targetMonth);
         renderPartnerExpenses('her', 'partner2-expenses-list', targetMonth);
-        document.getElementById('partner1-month-display').innerText = formatMonthYear(targetMonth);
-        document.getElementById('partner2-month-display').innerText = formatMonthYear(targetMonth);
-        document.getElementById('global-month-display').innerText = formatMonthYear(targetMonth);
-    }
-
-    function formatMonthYear(monthYear) {
-        const [year, month] = monthYear.split('-');
-        const date = new Date(parseInt(year), parseInt(month) - 1, 1);
-        return date.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
+        const format = (ym) => { const [y,m]=ym.split('-'); return new Date(parseInt(y), parseInt(m)-1,1).toLocaleDateString('pt-BR',{month:'long',year:'numeric'}); };
+        document.getElementById('partner1-month-display').innerText = format(targetMonth);
+        document.getElementById('partner2-month-display').innerText = format(targetMonth);
+        document.getElementById('global-month-display').innerText = format(targetMonth);
     }
 
     async function updateDashboard() {
@@ -931,12 +1015,10 @@
         await generateRecurringForMonth(targetMonth);
         const monthExpenses = allExpenses.filter(exp => exp.installmentMonths && exp.installmentMonths.includes(targetMonth));
         currentDisplayExpenses = monthExpenses;
-        
         let totalMe = 0, totalHer = 0, paidByMe = 0, paidByHer = 0;
         for (const exp of monthExpenses) {
             const { p1, p2 } = calculateMonthlyShare(exp);
-            totalMe += p1;
-            totalHer += p2;
+            totalMe += p1; totalHer += p2;
             const vp = exp.valorTotal / exp.parcelas;
             if (exp.paidBy === 'me') paidByMe += vp;
             else if (exp.paidBy === 'her') paidByHer += vp;
@@ -949,122 +1031,116 @@
         if (balance > 0) saldoEl.innerText = `${partnerName.her} te deve ${formatMoney(balance)}`;
         else if (balance < 0) saldoEl.innerText = `Você deve ${formatMoney(-balance)} para ${partnerName.her}`;
         else saldoEl.innerText = `Contas em dia!`;
-        
         const totalGasto = totalMe + totalHer;
         let progresso = Math.max(0, (savingsGoal - totalGasto) / savingsGoal * 100);
         progresso = Math.min(100, progresso);
         document.getElementById('meta-progress').innerText = `${Math.round(progresso)}%`;
         document.getElementById('meta-fill').style.width = `${progresso}%`;
-        
-        updateUpcomingInstallments(monthExpenses);
-        updateCharts(monthExpenses);
-        renderBudgets(monthExpenses);
-        renderHistory();
-        populateCategoryFilter(monthExpenses);
-        updatePartnerPages();
-    }
-
-    function updateUpcomingInstallments(expensesList) {
+        // próximas parcelas, gráficos, orçamentos, histórico
         const container = document.getElementById('upcoming-installments');
-        if (!container) return;
         container.innerHTML = '';
-        const today = new Date();
-        const threeMonthsLater = new Date();
-        threeMonthsLater.setMonth(today.getMonth() + 3);
-        const futureParcels = [];
-        for (const exp of expensesList) {
-            const startDate = new Date(exp.startDate);
-            const parcelasPagas = exp.parcelasPagas || 0;
-            for (let i = parcelasPagas; i < exp.parcelas; i++) {
-                const due = new Date(startDate);
-                due.setMonth(startDate.getMonth() + i);
+        const today = new Date(), threeMonthsLater = new Date(); threeMonthsLater.setMonth(today.getMonth() + 3);
+        const future = [];
+        for (const exp of monthExpenses) {
+            for (let i = exp.parcelasPagas || 0; i < exp.parcelas; i++) {
+                const due = new Date(exp.startDate); due.setMonth(due.getMonth() + i);
                 if (due > today && due <= threeMonthsLater) {
                     const { p1, p2 } = calculateMonthlyShare(exp);
-                    futureParcels.push({ desc: exp.descricao, date: due, value: p1 + p2 });
+                    future.push({ desc: exp.descricao, date: due, value: p1 + p2 });
                 }
             }
         }
-        futureParcels.sort((a,b)=>a.date-b.date);
-        for (let p of futureParcels.slice(0,6)) {
-            const li = document.createElement('li');
-            li.style.background = 'rgba(0,0,0,0.05)';
-            li.style.padding = '6px 12px';
-            li.style.borderRadius = '40px';
-            li.style.fontSize = '0.75rem';
+        future.sort((a,b)=>a.date-b.date).slice(0,6).forEach(p => {
+            const li = document.createElement('li'); li.style.background = 'rgba(233,30,99,0.1)'; li.style.padding = '6px 12px'; li.style.borderRadius = '40px'; li.style.fontSize = '0.75rem';
             li.textContent = `📌 ${p.desc} - ${formatMoney(p.value)} (${p.date.toLocaleDateString()})`;
             container.appendChild(li);
-        }
-        if(futureParcels.length === 0) container.innerHTML = '<li style="background:transparent">Nenhuma parcela futura</li>';
-    }
-
-    function updateCharts(expensesList) {
+        });
+        if(future.length===0) container.innerHTML = '<li style="background:transparent">Nenhuma parcela futura</li>';
+        // gráficos
         const catMap = new Map();
-        for (const exp of expensesList) {
+        monthExpenses.forEach(exp => {
             const { p1, p2 } = calculateMonthlyShare(exp);
             const total = p1 + p2;
             const cat = exp.categoria || "Outros";
             catMap.set(cat, (catMap.get(cat) || 0) + total);
-        }
-        const labels = [...catMap.keys()];
-        const data = [...catMap.values()];
+        });
         if (categoryChart) categoryChart.destroy();
-        const ctx = document.getElementById('categoryChart').getContext('2d');
-        categoryChart = new Chart(ctx, { type: 'pie', data: { labels, datasets: [{ data, backgroundColor: ['#c9a03d', '#b5651e', '#8b691b', '#d4af37', '#f5e6d3', '#a0522d'] }] } });
-        
-        let totalMe=0, totalHer=0;
-        expensesList.forEach(exp => { const {p1,p2}=calculateMonthlyShare(exp); totalMe+=p1; totalHer+=p2; });
+        categoryChart = new Chart(document.getElementById('categoryChart'), { type: 'pie', data: { labels: [...catMap.keys()], datasets: [{ data: [...catMap.values()], backgroundColor: ['#e91e63','#ff6b9d','#c2185b','#f48fb1','#f06292','#ec407a'] }] } });
         if (compareChart) compareChart.destroy();
-        const ctx2 = document.getElementById('compareChart').getContext('2d');
-        compareChart = new Chart(ctx2, { type: 'bar', data: { labels: [partnerName.me, partnerName.her], datasets: [{ data: [totalMe, totalHer], backgroundColor: ['#c9a03d', '#b5651e'] }] } });
-    }
-
-    function renderBudgets(expensesList) {
-        const budgetListDiv = document.getElementById('budget-list');
-        budgetListDiv.innerHTML = '';
+        compareChart = new Chart(document.getElementById('compareChart'), { type: 'bar', data: { labels: [partnerName.me, partnerName.her], datasets: [{ data: [totalMe, totalHer], backgroundColor: ['#e91e63', '#ffb74d'] }] } });
+        // orçamentos
+        const budgetDiv = document.getElementById('budget-list');
+        budgetDiv.innerHTML = '';
         for (let [cat, limit] of Object.entries(categoriesBudget)) {
-            const gasto = expensesList.filter(e => e.categoria === cat).reduce((acc, e) => {
-                const { p1, p2 } = calculateMonthlyShare(e);
-                return acc + p1 + p2;
-            }, 0);
+            const gasto = monthExpenses.filter(e => e.categoria === cat).reduce((acc, e) => { const { p1, p2 } = calculateMonthlyShare(e); return acc + p1 + p2; }, 0);
             const percent = (gasto / limit) * 100;
             const over = gasto > limit;
-            const div = document.createElement('div');
-            div.className = 'budget-item';
+            const div = document.createElement('div'); div.className = 'budget-item';
             div.innerHTML = `<div style="display:flex; justify-content:space-between"><span>${cat}</span><span>${formatMoney(gasto)} / ${formatMoney(limit)}</span></div>
-            <div class="progress-bar"><div class="progress-fill" style="width:${Math.min(percent,100)}%; background:${over ? '#b5651e' : '#c9a03d'}"></div></div>
-            ${over ? '<small style="color:#b5651e">⚠️ Estourou!</small>' : ''}
+            <div class="progress-bar"><div class="progress-fill" style="width:${Math.min(percent,100)}%; background:${over ? '#c62828' : '#e91e63'}"></div></div>
+            ${over ? '<small style="color:#c62828">⚠️ Estourou!</small>' : ''}
             <button class="delete-budget" data-cat="${cat}">❌</button>`;
-            budgetListDiv.appendChild(div);
+            budgetDiv.appendChild(div);
         }
-        document.querySelectorAll('.delete-budget').forEach(btn => {
-            btn.addEventListener('click', async () => {
-                await budgetsRef.doc(btn.dataset.cat).delete();
-            });
-        });
-    }
-
-    function renderHistory() {
+        document.querySelectorAll('.delete-budget').forEach(btn => btn.addEventListener('click', async () => await budgetsRef.doc(btn.dataset.cat).delete()));
+        // histórico
         const tbody = document.getElementById('tabela-historico');
         tbody.innerHTML = '';
-        for (const exp of currentDisplayExpenses) {
+        for (const exp of monthExpenses) {
             const { p1, p2 } = calculateMonthlyShare(exp);
             const payerText = exp.paidBy === 'me' ? `🧑 ${partnerName.me}` : (exp.paidBy === 'her' ? `👩 ${partnerName.her}` : '🤝 Dividido');
-            const row = document.createElement('tr');
+            const row = tbody.insertRow();
+            row.setAttribute('data-id', exp.id);
             row.innerHTML = `
-                <td><strong>${exp.descricao}</strong><br><small>${exp.observacao || ''}</small></td>
-                <td>${formatMoney(exp.valorTotal)}</td>
-                <td>${exp.parcelas}x (${exp.parcelasPagas || 0} pagas)</td>
-                <td>${formatMoney(p1 + p2)}</td>
-                <td>${payerText}</td>
-                <td><button class="edit-expense btn btn-secondary" data-id="${exp.id}" style="padding:4px 8px;">✏️</button> <button class="delete-expense btn btn-danger" data-id="${exp.id}" style="padding:4px 8px;">🗑️</button></td>
+                <td class="checkbox-col"><input type="checkbox" class="expense-checkbox" data-id="${exp.id}" style="accent-color:#e91e63;"></td>
+                <td data-label="Descrição"><strong>${escapeHtml(exp.descricao)}</strong><br><small>${escapeHtml(exp.observacao || '')}</small></td>
+                <td data-label="Total">${formatMoney(exp.valorTotal)}</td>
+                <td data-label="Parc">${exp.parcelas}x (${exp.parcelasPagas || 0} pagas)</td>
+                <td data-label="Parc.Mês">${formatMoney(p1 + p2)}</td>
+                <td data-label="Pagador">${payerText}</td>
+                <td data-label="Ações"><button class="edit-expense btn btn-secondary" data-id="${exp.id}" style="padding:4px 8px;">✏️</button> <button class="delete-expense btn btn-danger" data-id="${exp.id}" style="padding:4px 8px;">🗑️</button></td>
             `;
-            tbody.appendChild(row);
         }
+        document.querySelectorAll('.expense-checkbox').forEach(cb => cb.addEventListener('change', (e) => { if(e.target.checked) selectedExpenses.add(e.target.dataset.id); else selectedExpenses.delete(e.target.dataset.id); updateSelectionBar(); updateHeaderCheckbox(); }));
         document.querySelectorAll('.edit-expense').forEach(btn => btn.addEventListener('click', () => startEditExpense(btn.dataset.id)));
-        document.querySelectorAll('.delete-expense').forEach(btn => btn.addEventListener('click', async () => {
-            const result = await Swal.fire({ title: 'Confirmar', text: 'Remover despesa?', icon: 'warning', showCancelButton: true });
-            if (result.isConfirmed) await expensesRef.doc(btn.dataset.id).delete();
-        }));
+        document.querySelectorAll('.delete-expense').forEach(btn => btn.addEventListener('click', async () => { if(await Swal.fire({title:'Confirmar',text:'Remover?',icon:'warning',showCancelButton:true}).then(r=>r.isConfirmed)) await expensesRef.doc(btn.dataset.id).delete(); }));
+        updateSelectionBar();
+        // categorias filtro
+        const cats = [...new Set(monthExpenses.map(e=>e.categoria).filter(c=>c))];
+        document.getElementById('filter-category').innerHTML = '<option value="">Todas categorias</option>' + cats.map(c=>`<option>${c}</option>`).join('');
+        updatePartnerPages();
+    }
+
+    function updateSelectionBar() {
+        const bar = document.getElementById('selectionBar');
+        const count = selectedExpenses.size;
+        document.getElementById('selectedCount').innerText = count;
+        bar.style.display = count > 0 ? 'flex' : 'none';
+    }
+    function updateHeaderCheckbox() {
+        const header = document.getElementById('headerCheckbox');
+        if(!header) return;
+        const total = currentDisplayExpenses.length;
+        const selected = selectedExpenses.size;
+        if(total>0 && selected===total) { header.checked=true; header.indeterminate=false; }
+        else if(selected>0 && selected<total) { header.checked=false; header.indeterminate=true; }
+        else { header.checked=false; header.indeterminate=false; }
+    }
+    function selectAllExpenses() {
+        if(selectedExpenses.size === currentDisplayExpenses.length) selectedExpenses.clear();
+        else currentDisplayExpenses.forEach(exp => selectedExpenses.add(exp.id));
+        renderHistory(); // refresh
+    }
+    async function deleteSelectedExpenses() {
+        const count = selectedExpenses.size;
+        if(count===0) return;
+        if(await Swal.fire({title:'Confirmar exclusão',text:`Excluir ${count} despesa(s)?`,icon:'warning',showCancelButton:true}).then(r=>r.isConfirmed)) {
+            const batch = db.batch();
+            selectedExpenses.forEach(id => batch.delete(expensesRef.doc(id)));
+            await batch.commit();
+            selectedExpenses.clear();
+            Swal.fire('Excluídas!',`${count} despesa(s) removida(s).`,'success');
+        }
     }
 
     function applyFilters() {
@@ -1077,356 +1153,240 @@
         if (cat) filtered = filtered.filter(e => e.categoria === cat);
         if (payer) filtered = filtered.filter(e => e.paidBy === payer);
         currentDisplayExpenses = filtered;
+        selectedExpenses.clear();
         renderHistory();
-        renderBudgets(currentDisplayExpenses);
     }
-
-    function populateCategoryFilter(expensesList) {
-        const uniqueCats = [...new Set(expensesList.map(e => e.categoria).filter(c => c))];
-        const filterCategory = document.getElementById('filter-category');
-        filterCategory.innerHTML = '<option value="">Todas categorias</option>' + uniqueCats.map(c => `<option>${c}</option>`).join('');
+    function renderHistory() {
+        const tbody = document.getElementById('tabela-historico');
+        tbody.innerHTML = '';
+        if(currentDisplayExpenses.length===0) { tbody.innerHTML='<tr><td colspan="7" style="text-align:center">Nenhuma despesa encontrada</td></tr>'; return; }
+        for(const exp of currentDisplayExpenses) {
+            const {p1,p2}=calculateMonthlyShare(exp);
+            const payerText = exp.paidBy==='me'?`🧑 ${partnerName.me}`:(exp.paidBy==='her'?`👩 ${partnerName.her}`:'🤝 Dividido');
+            const row = tbody.insertRow();
+            row.innerHTML = `
+                <td class="checkbox-col"><input type="checkbox" class="expense-checkbox" data-id="${exp.id}" ${selectedExpenses.has(exp.id)?'checked':''}></td>
+                <td data-label="Descrição"><strong>${escapeHtml(exp.descricao)}</strong><br><small>${escapeHtml(exp.observacao||'')}</small></td>
+                <td data-label="Total">${formatMoney(exp.valorTotal)}</td>
+                <td data-label="Parc">${exp.parcelas}x (${exp.parcelasPagas||0} pagas)</td>
+                <td data-label="Parc.Mês">${formatMoney(p1+p2)}</td>
+                <td data-label="Pagador">${payerText}</td>
+                <td data-label="Ações"><button class="edit-expense btn btn-secondary" data-id="${exp.id}" style="padding:4px 8px;">✏️</button> <button class="delete-expense btn btn-danger" data-id="${exp.id}" style="padding:4px 8px;">🗑️</button></td>
+            `;
+        }
+        document.querySelectorAll('.expense-checkbox').forEach(cb => cb.addEventListener('change', (e) => { if(e.target.checked) selectedExpenses.add(e.target.dataset.id); else selectedExpenses.delete(e.target.dataset.id); updateSelectionBar(); updateHeaderCheckbox(); }));
+        document.querySelectorAll('.edit-expense').forEach(btn => btn.addEventListener('click', () => startEditExpense(btn.dataset.id)));
+        document.querySelectorAll('.delete-expense').forEach(btn => btn.addEventListener('click', async () => { if(await Swal.fire({title:'Confirmar',text:'Remover?',icon:'warning',showCancelButton:true}).then(r=>r.isConfirmed)) await expensesRef.doc(btn.dataset.id).delete(); }));
+        updateSelectionBar();
+        updateHeaderCheckbox();
     }
 
     async function startEditExpense(id) {
-        const exp = allExpenses.find(e => e.id === id);
-        if (!exp) return;
-        editingDocId = id;
-        document.getElementById('descricao').value = exp.descricao;
-        document.getElementById('valor-total').value = exp.valorTotal;
-        document.getElementById('parcelas').value = exp.parcelas;
-        document.getElementById('parcelasPagas').value = exp.parcelasPagas || 0;
-        document.getElementById('start-date').value = exp.startDate.slice(0,10);
-        document.getElementById('paid-by').value = exp.paidBy;
-        document.getElementById('split-type').value = exp.splitType;
-        document.getElementById('custom-split').value = exp.customPercent !== undefined ? exp.customPercent : '';
-        document.getElementById('categoria').value = exp.categoria || '';
-        document.getElementById('recorrente').value = exp.recurringTemplateId ? 'monthly' : 'none';
-        document.getElementById('observacao').value = exp.observacao || '';
-        document.getElementById('add-expense-btn').textContent = '✏️ Atualizar';
-        document.getElementById('cancel-edit-btn').style.display = 'inline-block';
-        if (exp.splitType === 'custom-percent') document.getElementById('custom-split').style.display = 'block';
-        else document.getElementById('custom-split').style.display = 'none';
-        if (exp.recurringTemplateId) {
-            Swal.fire({ icon: 'info', title: 'Despesa recorrente', text: 'Esta edição também atualizará o template original.', confirmButtonText: 'Ok' });
-        }
-        document.getElementById('swipeContainer').scrollTo({ left: window.innerWidth * 3, behavior: 'smooth' });
+        const exp = allExpenses.find(e=>e.id===id);
+        if(!exp) return;
+        editingDocId=id;
+        document.getElementById('descricao').value=exp.descricao;
+        document.getElementById('valor-total').value=exp.valorTotal;
+        document.getElementById('parcelas').value=exp.parcelas;
+        document.getElementById('parcelasPagas').value=exp.parcelasPagas||0;
+        document.getElementById('start-date').value=exp.startDate.slice(0,10);
+        document.getElementById('paid-by').value=exp.paidBy;
+        document.getElementById('split-type').value=exp.splitType;
+        document.getElementById('custom-split').value=exp.customPercent||'';
+        document.getElementById('categoria').value=exp.categoria||'';
+        document.getElementById('recorrente').value=exp.recurringTemplateId?'monthly':'none';
+        document.getElementById('observacao').value=exp.observacao||'';
+        document.getElementById('add-expense-btn').textContent='✏️ Atualizar';
+        document.getElementById('cancel-edit-btn').style.display='inline-block';
+        document.getElementById('custom-split').style.display=exp.splitType==='custom-percent'?'block':'none';
+        document.getElementById('swipeContainer').scrollTo({left:window.innerWidth*3,behavior:'smooth'});
     }
 
     async function saveExpense() {
         const descricao = document.getElementById('descricao').value.trim();
         const valorTotal = parseFloat(document.getElementById('valor-total').value);
         const parcelas = parseInt(document.getElementById('parcelas').value);
-        const parcelasPagas = parseInt(document.getElementById('parcelasPagas').value) || 0;
+        const parcelasPagas = parseInt(document.getElementById('parcelasPagas').value)||0;
         const startDateStr = document.getElementById('start-date').value;
-        
-        if (!descricao || isNaN(valorTotal) || valorTotal <= 0 || parcelas < 1 || !startDateStr) {
-            Swal.fire("Preencha todos os campos obrigatórios.");
-            return;
-        }
-        
-        if (parcelasPagas >= parcelas) {
-            Swal.fire("Atenção", "O número de parcelas já pagas não pode ser maior ou igual ao total de parcelas.", "warning");
-            return;
-        }
-        
+        if(!descricao||isNaN(valorTotal)||valorTotal<=0||parcelas<1||!startDateStr) { Swal.fire('Preencha todos os campos obrigatórios.'); return; }
+        if(parcelasPagas>=parcelas) { Swal.fire('Atenção','Parcelas pagas não pode ser maior ou igual ao total.','warning'); return; }
         const paidBy = document.getElementById('paid-by').value;
         const splitType = document.getElementById('split-type').value;
         let customPercent = null;
-        if (splitType === 'custom-percent') {
+        if(splitType==='custom-percent') {
             customPercent = parseFloat(document.getElementById('custom-split').value);
-            if (isNaN(customPercent) || customPercent < 0 || customPercent > 100) {
-                Swal.fire("Percentual deve estar entre 0 e 100");
-                return;
-            }
+            if(isNaN(customPercent)||customPercent<0||customPercent>100) { Swal.fire('Percentual entre 0 e 100'); return; }
         }
-        const categoria = document.getElementById('categoria').value.trim() || "Geral";
+        const categoria = document.getElementById('categoria').value.trim()||'Geral';
         const observacao = document.getElementById('observacao').value;
-        const isRecurring = document.getElementById('recorrente').value === 'monthly';
-        
-        // Gera apenas as parcelas restantes
+        const isRecurring = document.getElementById('recorrente').value==='monthly';
         const installmentMonths = generateInstallmentMonths(startDateStr, parcelas, parcelasPagas);
-        
-        const expenseData = {
-            descricao, valorTotal, parcelas, parcelasPagas, startDate: startDateStr,
-            paidBy, splitType, customPercent, categoria, observacao,
-            installmentMonths,
-            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-        };
-        if (!editingDocId) expenseData.createdAt = firebase.firestore.FieldValue.serverTimestamp();
-        
-        if (editingDocId) {
-            await expensesRef.doc(editingDocId).update(expenseData);
-            editingDocId = null;
-        } else {
+        const expenseData = { descricao, valorTotal, parcelas, parcelasPagas, startDate: startDateStr, paidBy, splitType, customPercent, categoria, observacao, installmentMonths, updatedAt: firebase.firestore.FieldValue.serverTimestamp() };
+        if(!editingDocId) expenseData.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+        if(editingDocId) await expensesRef.doc(editingDocId).update(expenseData);
+        else {
             const newRef = await expensesRef.add(expenseData);
-            if (isRecurring && parcelasPagas === 0) {
-                await recurringRef.add({
-                    descricao, valorTotal, parcelas, parcelasPagas, startDate: startDateStr,
-                    paidBy, splitType, customPercent, categoria, observacao,
-                    templateFor: newRef.id
-                });
-            }
+            if(isRecurring && parcelasPagas===0) await recurringRef.add({...expenseData, templateFor: newRef.id});
         }
         document.getElementById('expense-form').reset();
-        document.getElementById('parcelas').value = 1;
-        document.getElementById('parcelasPagas').value = 0;
-        document.getElementById('start-date').valueAsDate = new Date();
-        document.getElementById('add-expense-btn').textContent = '💾 Salvar';
-        document.getElementById('cancel-edit-btn').style.display = 'none';
-        Swal.fire("Despesa salva!", "", "success");
+        document.getElementById('parcelas').value=1;
+        document.getElementById('parcelasPagas').value=0;
+        document.getElementById('start-date').valueAsDate=new Date();
+        document.getElementById('add-expense-btn').textContent='💾 Salvar';
+        document.getElementById('cancel-edit-btn').style.display='none';
+        editingDocId=null;
+        Swal.fire('Despesa salva!','','success');
     }
 
     async function changeMonth(delta) {
-        let nm = currentMonth + delta, ny = currentYear;
-        if (nm < 0) { nm = 11; ny--; }
-        else if (nm > 11) { nm = 0; ny++; }
-        currentMonth = nm;
-        currentYear = ny;
+        let nm=currentMonth+delta, ny=currentYear;
+        if(nm<0){nm=11;ny--;} else if(nm>11){nm=0;ny++;}
+        currentMonth=nm; currentYear=ny;
+        selectedExpenses.clear();
         await updateDashboard();
     }
 
     function exportCSV() {
-        let csvRows = [["Descrição","Valor Total","Parcelas","Parcelas Pagas","Parcela Mês","Pagador","Categoria","Observação"]];
-        for (let exp of currentDisplayExpenses) {
-            const { p1, p2 } = calculateMonthlyShare(exp);
-            const payerText = exp.paidBy === 'me' ? partnerName.me : (exp.paidBy === 'her' ? partnerName.her : 'Dividido');
-            csvRows.push([exp.descricao, exp.valorTotal, exp.parcelas, exp.parcelasPagas || 0, p1+p2, payerText, exp.categoria, exp.observacao]);
+        let csv=[["Descrição","Valor Total","Parcelas","Parcelas Pagas","Parcela Mês","Pagador","Categoria","Observação"]];
+        for(let exp of currentDisplayExpenses) {
+            const {p1,p2}=calculateMonthlyShare(exp);
+            const payerText=exp.paidBy==='me'?partnerName.me:(exp.paidBy==='her'?partnerName.her:'Dividido');
+            csv.push([exp.descricao, exp.valorTotal, exp.parcelas, exp.parcelasPagas||0, p1+p2, payerText, exp.categoria, exp.observacao]);
         }
-        const csv = csvRows.map(row => row.join(",")).join("\n");
-        const blob = new Blob([csv], {type: "text/csv"});
-        const a = document.createElement("a");
-        a.href = URL.createObjectURL(blob);
-        a.download = `financas_${currentYear}-${currentMonth+1}.csv`;
-        a.click();
+        const blob=new Blob([csv.map(r=>r.join(",")).join("\n")],{type:"text/csv"});
+        const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=`financas_${currentYear}-${currentMonth+1}.csv`; a.click();
     }
 
     async function quickExpense() {
-        const { value: formValues } = await Swal.fire({
-            title: 'Despesa rápida',
-            html: `<input id="swal-desc" class="swal2-input" placeholder="Descrição"><input id="swal-valor" type="number" step="0.01" class="swal2-input" placeholder="Valor total"><select id="swal-cat" class="swal2-select"><option>Alimentação</option><option>Lazer</option><option>Moradia</option></select>`,
-            focusConfirm: false, preConfirm: () => ({ desc: document.getElementById('swal-desc').value, valor: parseFloat(document.getElementById('swal-valor').value), cat: document.getElementById('swal-cat').value })
-        });
-        if (formValues && formValues.desc && !isNaN(formValues.valor)) {
-            const startDate = new Date(currentYear, currentMonth, 1);
-            const startDateStr = startDate.toISOString().slice(0,10);
-            const installmentMonths = generateInstallmentMonths(startDateStr, 1, 0);
-            await expensesRef.add({
-                descricao: formValues.desc, valorTotal: formValues.valor, parcelas: 1, parcelasPagas: 0, startDate: startDateStr,
-                paidBy: 'both', splitType: '50-50', categoria: formValues.cat, installmentMonths,
-                observacao: '', createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-            });
-            Swal.fire("Adicionada!", "", "success");
+        const {value:fv}=await Swal.fire({title:'Despesa rápida',html:'<input id="swal-desc" placeholder="Descrição"><input id="swal-valor" type="number" step="0.01" placeholder="Valor total"><select id="swal-cat"><option>Alimentação</option><option>Lazer</option><option>Moradia</option></select>',focusConfirm:false,preConfirm:()=>({desc:document.getElementById('swal-desc').value,valor:parseFloat(document.getElementById('swal-valor').value),cat:document.getElementById('swal-cat').value})});
+        if(fv&&fv.desc&&!isNaN(fv.valor)) {
+            const startDate=new Date(currentYear,currentMonth,1).toISOString().slice(0,10);
+            await expensesRef.add({descricao:fv.desc,valorTotal:fv.valor,parcelas:1,parcelasPagas:0,startDate,paidBy:'both',splitType:'50-50',categoria:fv.cat,installmentMonths:generateInstallmentMonths(startDate,1,0),observacao:'',createdAt:firebase.firestore.FieldValue.serverTimestamp(),updatedAt:firebase.firestore.FieldValue.serverTimestamp()});
+            Swal.fire('Adicionada!','','success');
         }
     }
 
-    async function setSavingsGoal(value) {
-        await metaRef.set({ value });
+    async function setSavingsGoal(v){ await metaRef.set({value:v}); }
+    function showManageRecurring(){
+        if(!recurringTemplates.length){ Swal.fire('Nenhum template recorrente','Adicione uma despesa recorrente.','info'); return; }
+        let html='<div style="max-height:300px;overflow-y:auto;">';
+        recurringTemplates.forEach(t=>{ html+=`<div style="background:rgba(233,30,99,0.1);border-radius:20px;padding:8px;margin-bottom:8px;display:flex;justify-content:space-between;"><div><strong>${t.descricao}</strong> - ${formatMoney(t.valorTotal)} (${t.parcelas}x)</div><button class="delete-template-btn" data-id="${t.id}" style="background:#e91e63;color:white;border:none;border-radius:40px;padding:4px 12px;">Excluir</button></div>`; });
+        html+='</div><p style="font-size:0.7rem;">Ao excluir, despesas futuras não serão criadas.</p>';
+        Swal.fire({title:'Gerenciar recorrências',html,showConfirmButton:false,showCloseButton:true,didRender:()=>{ document.querySelectorAll('.delete-template-btn').forEach(btn=>btn.addEventListener('click',async()=>{ await recurringRef.doc(btn.dataset.id).delete(); Swal.close(); showManageRecurring(); })); }});
     }
 
-    function showManageRecurring() {
-        if (recurringTemplates.length === 0) {
-            Swal.fire("Nenhum template recorrente", "Adicione uma despesa com a opção 'Recorrente' para gerenciar.", "info");
-            return;
-        }
-        let html = `<div style="max-height: 300px; overflow-y: auto;">`;
-        recurringTemplates.forEach(t => {
-            html += `<div style="background:rgba(0,0,0,0.05); border-radius:20px; padding:8px; margin-bottom:8px; display:flex; justify-content:space-between;">
-                        <div><strong>${t.descricao}</strong> - ${formatMoney(t.valorTotal)} (${t.parcelas}x) - ${t.categoria}</div>
-                        <button class="delete-template-btn" data-id="${t.id}" style="background:#b5651e; color:white; border:none; border-radius:40px; padding:4px 12px;">Excluir</button>
-                     </div>`;
+    function setupFirestoreListeners(){
+        if(unsubscribeExpenses) unsubscribeExpenses();
+        if(unsubscribeBudgets) unsubscribeBudgets();
+        if(unsubscribeRecurring) unsubscribeRecurring();
+        if(unsubscribeMeta) unsubscribeMeta();
+        if(unsubscribeNames) unsubscribeNames();
+        if(unsubscribeDebtors) unsubscribeDebtors();
+        unsubscribeExpenses = expensesRef.onSnapshot(s=>{ allExpenses=s.docs.map(d=>({id:d.id,...d.data()})); updateDashboard(); });
+        unsubscribeBudgets = budgetsRef.onSnapshot(s=>{ categoriesBudget={}; s.forEach(d=>categoriesBudget[d.id]=d.data().limit); updateDashboard(); });
+        unsubscribeRecurring = recurringRef.onSnapshot(s=>{ recurringTemplates=s.docs.map(d=>({id:d.id,...d.data()})); });
+        unsubscribeMeta = metaRef.onSnapshot(d=>{ savingsGoal=d.exists?d.data().value:500; document.getElementById('meta-valor').value=savingsGoal; updateDashboard(); });
+        unsubscribeNames = namesRef.onSnapshot(d=>{
+            if(d.exists){ const data=d.data(); if(data.name1&&data.name2){ partnerName.me=currentUserId==='me'?data.name1:data.name2; partnerName.her=currentUserId==='me'?data.name2:data.name1; } }
+            else{ partnerName.me='Você'; partnerName.her='Parceiro(a)'; }
+            updateUIWithNames(); updateDashboard();
         });
-        html += `</div><p style="font-size:0.7rem;">Ao excluir, as despesas já geradas permanecem, mas novas não serão criadas.</p>`;
-        Swal.fire({
-            title: 'Gerenciar recorrências',
-            html: html,
-            showConfirmButton: false,
-            showCloseButton: true,
-            didRender: () => {
-                document.querySelectorAll('.delete-template-btn').forEach(btn => {
-                    btn.addEventListener('click', async () => {
-                        await recurringRef.doc(btn.dataset.id).delete();
-                        Swal.close();
-                        showManageRecurring();
-                    });
-                });
-            }
-        });
+        unsubscribeDebtors = debtorsRef.onSnapshot(s=>{ debtors=s.docs.map(d=>({id:d.id,...d.data()})); renderDebtors(); });
     }
 
-    function setupFirestoreListeners() {
-        if (unsubscribeExpenses) unsubscribeExpenses();
-        if (unsubscribeBudgets) unsubscribeBudgets();
-        if (unsubscribeRecurring) unsubscribeRecurring();
-        if (unsubscribeMeta) unsubscribeMeta();
-        if (unsubscribeNames) unsubscribeNames();
-        if (unsubscribeDebtors) unsubscribeDebtors();
-        
-        unsubscribeExpenses = expensesRef.onSnapshot(snapshot => {
-            allExpenses = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-            updateDashboard();
-        });
-        unsubscribeBudgets = budgetsRef.onSnapshot(snapshot => {
-            categoriesBudget = {};
-            snapshot.forEach(doc => { categoriesBudget[doc.id] = doc.data().limit; });
-            updateDashboard();
-        });
-        unsubscribeRecurring = recurringRef.onSnapshot(snapshot => {
-            recurringTemplates = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        });
-        unsubscribeMeta = metaRef.onSnapshot(doc => {
-            if (doc.exists) savingsGoal = doc.data().value;
-            else savingsGoal = 500;
-            document.getElementById('meta-valor').value = savingsGoal;
-            updateDashboard();
-        });
-        unsubscribeNames = namesRef.onSnapshot(doc => {
-            if (doc.exists) {
-                const data = doc.data();
-                if (data.name1 && data.name2) {
-                    partnerName.me = currentUserId === 'me' ? data.name1 : data.name2;
-                    partnerName.her = currentUserId === 'me' ? data.name2 : data.name1;
-                }
-            } else {
-                partnerName.me = "Você";
-                partnerName.her = "Parceiro(a)";
-            }
-            updateUIWithNames();
-            updateDashboard();
-        });
-        unsubscribeDebtors = debtorsRef.onSnapshot(snapshot => {
-            debtors = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-            renderDebtors();
-        });
+    function loadSavedLogin(){
+        const n1=localStorage.getItem('couple_name1'), n2=localStorage.getItem('couple_name2'), last=localStorage.getItem('couple_last_user');
+        if(n1) document.getElementById('name1').value=n1;
+        if(n2) document.getElementById('name2').value=n2;
+        if(n1&&n2) updateUserSelect();
+        if(last && document.getElementById('current-user-select').querySelector(`option[value="${last}"]`)) document.getElementById('current-user-select').value=last;
     }
-
-    function loadSavedLogin() {
-        const savedName1 = localStorage.getItem('couple_name1');
-        const savedName2 = localStorage.getItem('couple_name2');
-        const savedLastUser = localStorage.getItem('couple_last_user');
-        if (savedName1) document.getElementById('name1').value = savedName1;
-        if (savedName2) document.getElementById('name2').value = savedName2;
-        if (savedName1 && savedName2) updateUserSelect();
-        if (savedLastUser && document.getElementById('current-user-select').querySelector(`option[value="${savedLastUser}"]`)) {
-            document.getElementById('current-user-select').value = savedLastUser;
-        }
+    function saveLoginData(n1,n2,sel){ localStorage.setItem('couple_name1',n1); localStorage.setItem('couple_name2',n2); localStorage.setItem('couple_last_user',sel); }
+    function updateUserSelect(){
+        const n1=document.getElementById('name1').value.trim(), n2=document.getElementById('name2').value.trim(), sel=document.getElementById('current-user-select');
+        sel.innerHTML='<option value="">-- Selecione quem está usando --</option>';
+        if(n1) sel.innerHTML+=`<option value="${n1}">${n1}</option>`;
+        if(n2) sel.innerHTML+=`<option value="${n2}">${n2}</option>`;
     }
-
-    function saveLoginData(name1, name2, selectedUser) {
-        localStorage.setItem('couple_name1', name1);
-        localStorage.setItem('couple_name2', name2);
-        localStorage.setItem('couple_last_user', selectedUser);
-    }
-
-    function updateUserSelect() {
-        const name1 = document.getElementById('name1').value.trim();
-        const name2 = document.getElementById('name2').value.trim();
-        const select = document.getElementById('current-user-select');
-        select.innerHTML = '<option value="">-- Selecione quem está usando --</option>';
-        if (name1) select.innerHTML += `<option value="${name1}">${name1}</option>`;
-        if (name2) select.innerHTML += `<option value="${name2}">${name2}</option>`;
-    }
-
-    async function initApp() {
-        const name1 = document.getElementById('name1').value.trim();
-        const name2 = document.getElementById('name2').value.trim();
-        const selected = document.getElementById('current-user-select').value;
-        if (!name1 || !name2 || !selected) {
-            Swal.fire("Atenção", "Preencha os dois nomes e selecione quem está usando o dispositivo.", "warning");
-            return;
-        }
-        saveLoginData(name1, name2, selected);
-        await namesRef.set({ name1, name2 });
-        currentUserId = (selected === name1) ? 'me' : 'her';
-        partnerName.me = selected;
-        partnerName.her = (selected === name1) ? name2 : name1;
+    async function initApp(){
+        const n1=document.getElementById('name1').value.trim(), n2=document.getElementById('name2').value.trim(), sel=document.getElementById('current-user-select').value;
+        if(!n1||!n2||!sel){ Swal.fire('Atenção','Preencha os dois nomes e selecione quem está usando.','warning'); return; }
+        saveLoginData(n1,n2,sel);
+        await namesRef.set({name1:n1, name2:n2});
+        currentUserId = (sel===n1)?'me':'her';
+        partnerName.me=sel;
+        partnerName.her=(sel===n1)?n2:n1;
         updateUIWithNames();
-        document.getElementById('login-container').style.display = 'none';
-        document.getElementById('app-container').style.display = 'block';
+        document.getElementById('login-container').style.display='none';
+        document.getElementById('app-container').style.display='block';
         setupFirestoreListeners();
-        const targetMonth = getFaturaMonthYear(new Date(currentYear, currentMonth, 1));
-        await generateRecurringForMonth(targetMonth);
-        updateDashboard();
+        await generateRecurringForMonth(getFaturaMonthYear(new Date(currentYear,currentMonth,1)));
+        await updateDashboard();
         setupSwipe();
     }
-
-    function setupSwipe() {
-        const container = document.getElementById('swipeContainer');
-        const indicators = document.getElementById('pageIndicators');
-        const pages = document.querySelectorAll('.swipe-page');
-        const totalPages = pages.length;
-        indicators.innerHTML = '';
-        for (let i = 0; i < totalPages; i++) {
-            const dot = document.createElement('div');
-            dot.className = 'indicator';
-            dot.onclick = () => container.scrollTo({ left: container.clientWidth * i, behavior: 'smooth' });
-            indicators.appendChild(dot);
-        }
-        function updateIndicators() {
-            const activeIndex = Math.round(container.scrollLeft / container.clientWidth);
-            document.querySelectorAll('.indicator').forEach((dot, idx) => dot.classList.toggle('active', idx === activeIndex));
-        }
-        container.addEventListener('scroll', updateIndicators);
-        setTimeout(updateIndicators, 100);
+    function setupSwipe(){
+        const container=document.getElementById('swipeContainer'), indicators=document.getElementById('pageIndicators');
+        const pages=document.querySelectorAll('.swipe-page');
+        indicators.innerHTML='';
+        for(let i=0;i<pages.length;i++){ const dot=document.createElement('div'); dot.className='indicator'; dot.onclick=()=>container.scrollTo({left:container.clientWidth*i,behavior:'smooth'}); indicators.appendChild(dot); }
+        function update(){ const active=Math.round(container.scrollLeft/container.clientWidth); document.querySelectorAll('.indicator').forEach((dot,idx)=>dot.classList.toggle('active',idx===active)); }
+        container.addEventListener('scroll',update); setTimeout(update,100);
     }
-
-    function logout() {
-        if (unsubscribeExpenses) unsubscribeExpenses();
-        if (unsubscribeBudgets) unsubscribeBudgets();
-        if (unsubscribeRecurring) unsubscribeRecurring();
-        if (unsubscribeMeta) unsubscribeMeta();
-        if (unsubscribeNames) unsubscribeNames();
-        if (unsubscribeDebtors) unsubscribeDebtors();
-        document.getElementById('app-container').style.display = 'none';
-        document.getElementById('login-container').style.display = 'block';
-        currentUserId = null;
+    function logout(){
+        if(unsubscribeExpenses) unsubscribeExpenses();
+        if(unsubscribeBudgets) unsubscribeBudgets();
+        if(unsubscribeRecurring) unsubscribeRecurring();
+        if(unsubscribeMeta) unsubscribeMeta();
+        if(unsubscribeNames) unsubscribeNames();
+        if(unsubscribeDebtors) unsubscribeDebtors();
+        document.getElementById('app-container').style.display='none';
+        document.getElementById('login-container').style.display='block';
+        currentUserId=null;
         loadSavedLogin();
     }
 
-    // Event listeners
-    document.getElementById('name1').addEventListener('input', updateUserSelect);
-    document.getElementById('name2').addEventListener('input', updateUserSelect);
-    document.getElementById('enter-app-btn').addEventListener('click', initApp);
-    document.getElementById('logoutBtn').addEventListener('click', logout);
-    document.getElementById('add-expense-btn').addEventListener('click', saveExpense);
-    document.getElementById('cancel-edit-btn').addEventListener('click', () => { editingDocId=null; document.getElementById('expense-form').reset(); document.getElementById('add-expense-btn').textContent='💾 Salvar'; document.getElementById('cancel-edit-btn').style.display='none'; });
-    document.getElementById('split-type').addEventListener('change', () => { document.getElementById('custom-split').style.display = document.getElementById('split-type').value === 'custom-percent' ? 'block' : 'none'; });
-    document.getElementById('valor-total').addEventListener('input', () => { const val = parseFloat(document.getElementById('valor-total').value) || 0; const parcelas = parseInt(document.getElementById('parcelas').value) || 1; const pt = val/parcelas; document.getElementById('preview-division').innerText = `Cada pessoa: ${formatMoney(pt/2)}/mês (${parcelas}x)`; });
-    document.getElementById('export-csv-btn').addEventListener('click', exportCSV);
-    document.getElementById('quick-expense-btn').addEventListener('click', quickExpense);
-    document.getElementById('add-budget-btn').addEventListener('click', async () => { const cat = document.getElementById('new-budget-cat').value.trim(); const limit = parseFloat(document.getElementById('new-budget-value').value); if (cat && !isNaN(limit)) await budgetsRef.doc(cat).set({ limit }); });
-    document.getElementById('filter-desc').addEventListener('input', applyFilters);
-    document.getElementById('filter-category').addEventListener('change', applyFilters);
-    document.getElementById('filter-payer').addEventListener('change', applyFilters);
-    document.getElementById('clear-filters').addEventListener('click', () => { document.getElementById('filter-desc').value=''; document.getElementById('filter-category').value=''; document.getElementById('filter-payer').value=''; applyFilters(); });
-    document.getElementById('manage-recurring-btn').addEventListener('click', showManageRecurring);
-    document.getElementById('set-meta-btn').addEventListener('click', async () => { let newGoal = parseFloat(document.getElementById('meta-valor').value); if (isNaN(newGoal) || newGoal <= 0) newGoal = 500; await setSavingsGoal(newGoal); });
-    document.getElementById('start-date').valueAsDate = new Date();
-    document.getElementById('custom-split').style.display = 'none';
-    document.getElementById('global-prev-month').addEventListener('click', () => changeMonth(-1));
-    document.getElementById('global-next-month').addEventListener('click', () => changeMonth(1));
-    document.getElementById('partner1-prev-month').addEventListener('click', () => changeMonth(-1));
-    document.getElementById('partner1-next-month').addEventListener('click', () => changeMonth(1));
-    document.getElementById('partner2-prev-month').addEventListener('click', () => changeMonth(-1));
-    document.getElementById('partner2-next-month').addEventListener('click', () => changeMonth(1));
-    document.getElementById('add-debtor-btn').addEventListener('click', addDebtor);
-    document.getElementById('save-debtors-btn').addEventListener('click', saveDebtors);
+    document.getElementById('name1').addEventListener('input',updateUserSelect);
+    document.getElementById('name2').addEventListener('input',updateUserSelect);
+    document.getElementById('enter-app-btn').addEventListener('click',initApp);
+    document.getElementById('logoutBtn').addEventListener('click',logout);
+    document.getElementById('add-expense-btn').addEventListener('click',saveExpense);
+    document.getElementById('cancel-edit-btn').addEventListener('click',()=>{ editingDocId=null; document.getElementById('expense-form').reset(); document.getElementById('add-expense-btn').textContent='💾 Salvar'; document.getElementById('cancel-edit-btn').style.display='none'; });
+    document.getElementById('split-type').addEventListener('change',()=>{ document.getElementById('custom-split').style.display=document.getElementById('split-type').value==='custom-percent'?'block':'none'; });
+    document.getElementById('valor-total').addEventListener('input',()=>{ const v=parseFloat(document.getElementById('valor-total').value)||0; const p=parseInt(document.getElementById('parcelas').value)||1; const pt=v/p; document.getElementById('preview-division').innerText=`Cada pessoa: ${formatMoney(pt/2)}/mês (${p}x)`; });
+    document.getElementById('export-csv-btn').addEventListener('click',exportCSV);
+    document.getElementById('quick-expense-btn').addEventListener('click',quickExpense);
+    document.getElementById('add-budget-btn').addEventListener('click',async()=>{ const cat=document.getElementById('new-budget-cat').value.trim(), lim=parseFloat(document.getElementById('new-budget-value').value); if(cat&&!isNaN(lim)) await budgetsRef.doc(cat).set({limit:lim}); });
+    document.getElementById('filter-desc').addEventListener('input',applyFilters);
+    document.getElementById('filter-category').addEventListener('change',applyFilters);
+    document.getElementById('filter-payer').addEventListener('change',applyFilters);
+    document.getElementById('clear-filters').addEventListener('click',()=>{ document.getElementById('filter-desc').value=''; document.getElementById('filter-category').value=''; document.getElementById('filter-payer').value=''; applyFilters(); });
+    document.getElementById('manage-recurring-btn').addEventListener('click',showManageRecurring);
+    document.getElementById('set-meta-btn').addEventListener('click',async()=>{ let ng=parseFloat(document.getElementById('meta-valor').value); if(isNaN(ng)||ng<=0) ng=500; await setSavingsGoal(ng); });
+    document.getElementById('start-date').valueAsDate=new Date();
+    document.getElementById('custom-split').style.display='none';
+    document.getElementById('global-prev-month').addEventListener('click',()=>changeMonth(-1));
+    document.getElementById('global-next-month').addEventListener('click',()=>changeMonth(1));
+    document.getElementById('partner1-prev-month').addEventListener('click',()=>changeMonth(-1));
+    document.getElementById('partner1-next-month').addEventListener('click',()=>changeMonth(1));
+    document.getElementById('partner2-prev-month').addEventListener('click',()=>changeMonth(-1));
+    document.getElementById('partner2-next-month').addEventListener('click',()=>changeMonth(1));
+    document.getElementById('add-debtor-btn').addEventListener('click',addDebtor);
+    document.getElementById('save-debtors-btn').addEventListener('click',()=>Swal.fire('Alterações já salvas','Os dados são sincronizados automaticamente.','info'));
+    document.getElementById('selectAllBtn')?.addEventListener('click',selectAllExpenses);
+    document.getElementById('deleteSelectedBtn')?.addEventListener('click',deleteSelectedExpenses);
+    document.getElementById('headerCheckbox')?.addEventListener('change',(e)=>{ if(e.target.checked) currentDisplayExpenses.forEach(exp=>selectedExpenses.add(exp.id)); else selectedExpenses.clear(); renderHistory(); });
 
-    // Tema escuro alternativo
     const themeToggle = document.getElementById('theme-toggle-btn');
-    if (themeToggle) {
-        themeToggle.addEventListener('click', () => {
-            document.body.classList.toggle('dark-theme');
-            localStorage.setItem('darkTheme', document.body.classList.contains('dark-theme') ? 'enabled' : 'disabled');
+    if(themeToggle){
+        themeToggle.addEventListener('click',()=>{
+            document.body.classList.toggle('light-theme');
+            localStorage.setItem('lightTheme', document.body.classList.contains('light-theme') ? 'enabled' : 'disabled');
         });
     }
-    if (localStorage.getItem('darkTheme') === 'enabled') document.body.classList.add('dark-theme');
-    const styleDark = document.createElement('style');
-    styleDark.textContent = `.dark-theme .card { background: rgba(44, 26, 14, 0.95); color: #f5e6d3; } .dark-theme .card-title { color: #d4af37; } .dark-theme .dashboard-card .value { color: #d4af37; } .dark-theme input, .dark-theme select { background: #3e2723; color: #f5e6d3; border-color: #d4af37; }`;
-    document.head.appendChild(styleDark);
+    if(localStorage.getItem('lightTheme') === 'enabled') document.body.classList.add('light-theme');
 
     loadSavedLogin();
-    if (document.getElementById('name1').value.trim() && document.getElementById('name2').value.trim()) updateUserSelect();
+    if(document.getElementById('name1').value.trim() && document.getElementById('name2').value.trim()) updateUserSelect();
 </script>
 </body>
 </html>
