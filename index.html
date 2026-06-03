@@ -18,7 +18,6 @@
             box-sizing: border-box;
             -webkit-tap-highlight-color: transparent;
         }
-        /* TEMA ESCURO (PADRÃO) - Preto com detalhes rosa */
         body {
             font-family: 'Inter', sans-serif;
             background: #000000;
@@ -29,7 +28,6 @@
             background: #ffe4e8;
             color: #1a1a1a;
         }
-        /* Estilos do tema escuro (padrão) */
         .login-container {
             min-height: 100vh;
             display: flex;
@@ -216,7 +214,93 @@
             gap: 8px;
             color: #e91e63;
         }
-        .expense-item, .debtor-item {
+        /* IA Concierge */
+        .concierge-container {
+            position: fixed;
+            bottom: 80px;
+            right: 16px;
+            z-index: 200;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 8px;
+        }
+        .concierge-bubble {
+            background: #e91e63;
+            border-radius: 24px 24px 24px 8px;
+            padding: 12px 16px;
+            max-width: 280px;
+            font-size: 0.85rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            animation: fadeInUp 0.3s ease;
+            position: relative;
+        }
+        .concierge-bubble.light {
+            background: #000000;
+            color: #ffffff;
+        }
+        .concierge-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #e91e63, #ff6b9d);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(233,30,99,0.4);
+            transition: transform 0.2s;
+        }
+        .concierge-avatar:hover {
+            transform: scale(1.05);
+        }
+        .concierge-avatar i {
+            font-size: 1.8rem;
+            color: white;
+        }
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .goal-item {
+            background: rgba(233,30,99,0.1);
+            border-radius: 20px;
+            padding: 12px;
+            margin-bottom: 12px;
+        }
+        .goal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        .goal-name {
+            font-weight: 600;
+            font-size: 1rem;
+        }
+        .goal-actions button {
+            background: none;
+            border: none;
+            color: #e91e63;
+            cursor: pointer;
+            margin-left: 8px;
+        }
+        .goal-progress {
+            margin: 8px 0;
+        }
+        .goal-values {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.75rem;
+            margin-top: 4px;
+        }
+        .expense-item, .debtor-item, .message-item {
             background: rgba(233, 30, 99, 0.1);
             border-radius: 20px;
             padding: 12px;
@@ -227,6 +311,51 @@
             flex-wrap: wrap;
             gap: 8px;
             border-left: 4px solid #e91e63;
+        }
+        .message-item {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        .message-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            width: 100%;
+        }
+        .message-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #e91e63;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.1rem;
+            text-transform: uppercase;
+        }
+        .message-info {
+            flex: 1;
+        }
+        .message-author {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        .message-time {
+            font-size: 0.65rem;
+            opacity: 0.6;
+        }
+        .message-content {
+            margin-top: 8px;
+            padding-left: 52px;
+            font-size: 0.9rem;
+            word-break: break-word;
+        }
+        .message-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+            padding-left: 52px;
         }
         .expense-info, .debtor-info {
             flex: 1;
@@ -339,49 +468,83 @@
             width: 30px;
             text-align: center;
         }
-        .debtor-form-group {
+        .debtor-form-group, .third-party-group {
             display: flex;
             gap: 12px;
             margin-top: 16px;
             flex-wrap: wrap;
             align-items: flex-end;
         }
-        .debtor-form-group .field-name {
-            flex: 3;
+        .third-party-item {
+            background: rgba(233,30,99,0.15);
+            border-radius: 20px;
+            padding: 10px;
+            margin-bottom: 8px;
+        }
+        .third-party-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        .debtor-form-group .field-name, .third-party-group .field-name {
+            flex: 2;
             min-width: 0;
         }
-        .debtor-form-group .field-value {
+        .debtor-form-group .field-value, .third-party-group .field-value {
             flex: 1;
             min-width: 0;
         }
-        .debtor-form-group .field-date {
+        .debtor-form-group .field-date, .third-party-group .field-date {
             flex: 1.2;
             min-width: 0;
         }
-        .debtor-form-group .field-button {
+        .debtor-form-group .field-button, .third-party-group .field-button {
             flex: 0 0 auto;
         }
-        .debtor-form-group label {
+        .debtor-form-group label, .third-party-group label {
             font-size: 0.7rem;
             opacity: 0.8;
             display: block;
             margin-bottom: 4px;
         }
+        .income-row {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        .income-row input {
+            flex: 1;
+        }
+        .chat-input-area {
+            display: flex;
+            gap: 12px;
+            margin-top: 16px;
+            flex-wrap: wrap;
+        }
+        .chat-input-area input {
+            flex: 1;
+        }
         @media (max-width: 550px) {
-            .debtor-form-group {
+            .debtor-form-group, .third-party-group {
                 flex-direction: column;
                 align-items: stretch;
             }
-            .debtor-form-group .field-button button {
+            .debtor-form-group .field-button button,
+            .third-party-group .field-button button {
                 margin-top: 8px;
                 width: 100%;
             }
-            .debtor-item {
+            .debtor-item, .message-item {
                 flex-direction: column;
                 align-items: stretch;
             }
-            .debtor-item > div:last-child {
-                justify-content: flex-start;
+            .message-content {
+                padding-left: 0;
+            }
+            .message-actions {
+                padding-left: 0;
             }
             table, thead, tbody, th, td, tr {
                 display: block;
@@ -414,6 +577,10 @@
             }
             td:first-child:before {
                 display: none;
+            }
+            .concierge-bubble {
+                max-width: 220px;
+                font-size: 0.75rem;
             }
         }
         .budget-item {
@@ -462,8 +629,16 @@
             cursor: pointer;
             accent-color: #e91e63;
         }
+        .messages-container {
+            max-height: 55vh;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
 
-        /* TEMA CLARO - rosa com detalhes preto */
+        /* TEMA CLARO */
         body.light-theme {
             background: #fff0f3;
             color: #1a1a1a;
@@ -533,7 +708,10 @@
         body.light-theme .expense-item,
         body.light-theme .debtor-item,
         body.light-theme .budget-item,
-        body.light-theme .info-message {
+        body.light-theme .info-message,
+        body.light-theme .message-item,
+        body.light-theme .third-party-item,
+        body.light-theme .goal-item {
             background: rgba(0,0,0,0.05);
             border-left-color: #000000;
         }
@@ -570,6 +748,18 @@
         body.light-theme .btn-small.btn-quitar {
             background: #2e7d32;
         }
+        body.light-theme .message-avatar {
+            background: #000000;
+            color: #ffffff;
+        }
+        body.light-theme .concierge-avatar {
+            background: linear-gradient(135deg, #000000, #333333);
+        }
+        body.light-theme .concierge-bubble.light {
+            background: #ffffff;
+            color: #000000;
+            border: 1px solid #000000;
+        }
     </style>
 </head>
 <body>
@@ -589,7 +779,7 @@
     </div>
 </div>
 
-<!-- APP PRINCIPAL (conteúdo interno igual ao da versão anterior, apenas com as novas cores) -->
+<!-- APP PRINCIPAL -->
 <div id="app-container" class="app-container">
     <div class="app-header">
         <div class="logo-area">
@@ -703,6 +893,15 @@
                         <div class="input-group"><label>Categoria</label><input type="text" id="categoria" list="categorias-sugeridas"></div>
                         <div class="input-group"><label>Recorrente?</label><select id="recorrente"><option value="none">Não</option><option value="monthly">Mensal</option></select></div>
                     </div>
+                    <div class="form-row">
+                        <div class="input-group"><label>Dividir com terceiros?</label><select id="has-third-parties"><option value="no">Não</option><option value="yes">Sim</option></select></div>
+                    </div>
+                    <div id="third-parties-container" style="display: none;">
+                        <div class="card-title" style="font-size:0.9rem; margin-top:8px;"><i class="fas fa-users"></i> Amigos/terceiros na divisão</div>
+                        <div id="third-parties-list"></div>
+                        <button type="button" id="add-third-party-btn" class="btn btn-secondary" style="margin-top:8px;"><i class="fas fa-plus"></i> Adicionar pessoa</button>
+                        <div class="info-message" style="margin-top:8px;">Os valores informados serão descontados do total antes de dividir entre o casal.</div>
+                    </div>
                     <div class="input-group"><label>Observação</label><input type="text" id="observacao"></div>
                     <div id="preview-division" style="margin: 8px 0; font-size: 0.7rem; opacity: 0.8;"></div>
                     <div class="info-message">
@@ -732,43 +931,31 @@
                     <button id="clear-filters" class="btn btn-secondary">Limpar</button>
                 </div>
                 <div id="selectionBar" class="selection-bar" style="display: none;">
-                    <div class="selection-count">
-                        <span id="selectedCount">0</span> despesa(s) selecionada(s)
-                    </div>
-                    <div style="display: flex; gap: 8px;">
-                        <button id="selectAllBtn" class="btn btn-secondary" style="padding: 6px 12px;">Selecionar todos</button>
-                        <button id="deleteSelectedBtn" class="btn btn-danger" style="padding: 6px 12px;"><i class="fas fa-trash"></i> Excluir selecionados</button>
-                    </div>
+                    <div class="selection-count"><span id="selectedCount">0</span> despesa(s) selecionada(s)</div>
+                    <div style="display: flex; gap: 8px;"><button id="selectAllBtn" class="btn btn-secondary" style="padding: 6px 12px;">Selecionar todos</button><button id="deleteSelectedBtn" class="btn btn-danger" style="padding: 6px 12px;"><i class="fas fa-trash"></i> Excluir selecionados</button></div>
                 </div>
                 <div style="overflow-x: auto;">
                     <table id="historyTable" style="min-width: 500px;">
-                        <thead>
-                            <tr>
-                                <th><input type="checkbox" id="headerCheckbox" style="width: 18px; height: 18px; cursor: pointer;"></th>
-                                <th>Descrição</th>
-                                <th>Total</th>
-                                <th>Parc</th>
-                                <th>Parc.Mês</th>
-                                <th>Pagador</th>
-                                <th>Ações</th>
-                            </tr>
-                        </thead>
+                        <thead><tr><th><input type="checkbox" id="headerCheckbox" style="width: 18px; height: 18px; cursor: pointer;"></th><th>Descrição</th><th>Total</th><th>Parc</th><th>Parc.Mês</th><th>Pagador</th><th>Ações</th></tr></thead>
                         <tbody id="tabela-historico"></tbody>
                     </table>
                 </div>
             </div>
         </div>
 
-        <!-- Página 5: Configurações -->
+        <!-- Página 5: Configurações (com Renda Compartilhada) -->
         <div class="swipe-page" data-page="5">
+            <div class="card">
+                <div class="card-title"><i class="fas fa-chart-line"></i> Renda Compartilhada</div>
+                <div class="income-row"><span>💰 Renda de <span id="income-name1"></span>:</span><input type="number" id="income1" step="100" placeholder="R$ 0,00" value="0"></div>
+                <div class="income-row"><span>💰 Renda de <span id="income-name2"></span>:</span><input type="number" id="income2" step="100" placeholder="R$ 0,00" value="0"></div>
+                <div id="income-summary" class="info-message" style="margin-top:8px;"></div>
+                <button id="save-income-btn" class="btn btn-primary" style="margin-top:8px;"><i class="fas fa-save"></i> Salvar rendas</button>
+            </div>
             <div class="card">
                 <div class="card-title"><i class="fas fa-tasks"></i> Orçamento por categoria</div>
                 <div id="budget-list"></div>
-                <div style="display: flex; gap: 8px; margin-top: 12px;">
-                    <input type="text" id="new-budget-cat" placeholder="Categoria" style="flex:2;">
-                    <input type="number" id="new-budget-value" placeholder="R$" step="0.01" style="flex:1;">
-                    <button id="add-budget-btn" class="btn btn-primary">Definir</button>
-                </div>
+                <div style="display: flex; gap: 8px; margin-top: 12px;"><input type="text" id="new-budget-cat" placeholder="Categoria" style="flex:2;"><input type="number" id="new-budget-value" placeholder="R$" step="0.01" style="flex:1;"><button id="add-budget-btn" class="btn btn-primary">Definir</button></div>
             </div>
             <div class="card">
                 <div class="card-title"><i class="fas fa-sync-alt"></i> Gerenciar recorrências</div>
@@ -789,25 +976,36 @@
             <div class="card">
                 <div class="card-title"><i class="fas fa-hand-holding-usd"></i> Devedores (terceiros)</div>
                 <div id="debtors-list" class="debtors-grid"></div>
-                
-                <div class="debtor-form-group">
-                    <div class="field-name">
-                        <label>Nome completo</label>
-                        <input type="text" id="new-debtor-name" placeholder="Ex: João Silva">
-                    </div>
-                    <div class="field-value">
-                        <label>Valor (R$)</label>
-                        <input type="number" id="new-debtor-value" placeholder="0,00" step="0.01">
-                    </div>
-                    <div class="field-date">
-                        <label>Data de referência</label>
-                        <input type="date" id="new-debtor-date">
-                    </div>
-                    <div class="field-button">
-                        <button id="add-debtor-btn" class="btn btn-success" style="white-space: nowrap;"><i class="fas fa-plus"></i> Adicionar</button>
-                    </div>
-                </div>
+                <div class="debtor-form-group"><div class="field-name"><label>Nome completo</label><input type="text" id="new-debtor-name" placeholder="Ex: João Silva"></div><div class="field-value"><label>Valor (R$)</label><input type="number" id="new-debtor-value" placeholder="0,00" step="0.01"></div><div class="field-date"><label>Data de referência</label><input type="date" id="new-debtor-date"></div><div class="field-button"><button id="add-debtor-btn" class="btn btn-success"><i class="fas fa-plus"></i> Adicionar</button></div></div>
                 <button id="save-debtors-btn" class="btn btn-primary" style="margin-top: 16px; width: 100%;"><i class="fas fa-save"></i> Salvar alterações</button>
+            </div>
+        </div>
+
+        <!-- Página 7: Mural do Casal -->
+        <div class="swipe-page" data-page="7">
+            <div class="card">
+                <div class="card-title"><i class="fas fa-comments"></i> Mural do Casal</div>
+                <div id="messages-container" class="messages-container"></div>
+                <div class="chat-input-area"><input type="text" id="message-input" placeholder="Digite uma mensagem, lembrete ou observação..." maxlength="500"><button id="send-message-btn" class="btn btn-primary"><i class="fas fa-paper-plane"></i> Enviar</button></div>
+                <div class="info-message" style="margin-top: 8px;"><i class="fas fa-info-circle"></i> Este mural é compartilhado entre o casal.</div>
+            </div>
+        </div>
+
+        <!-- Página 8: Metas de Economia -->
+        <div class="swipe-page" data-page="8">
+            <div class="card">
+                <div class="card-title"><i class="fas fa-bullseye"></i> Metas de Economia</div>
+                <div id="goals-list"></div>
+                <div class="form-row" style="margin-top: 12px;">
+                    <div class="input-group"><label>Nome da meta</label><input type="text" id="new-goal-name" placeholder="Ex: Viagem dos sonhos"></div>
+                    <div class="input-group"><label>Valor alvo (R$)</label><input type="number" id="new-goal-target" step="100" placeholder="0,00"></div>
+                </div>
+                <div class="form-row">
+                    <div class="input-group"><label>Valor atual (R$)</label><input type="number" id="new-goal-current" step="100" placeholder="0,00" value="0"></div>
+                    <div class="input-group"><label>Prazo (opcional)</label><input type="date" id="new-goal-deadline"></div>
+                </div>
+                <button id="add-goal-btn" class="btn btn-primary" style="width:100%;"><i class="fas fa-plus"></i> Adicionar meta</button>
+                <div class="info-message" style="margin-top: 12px;"><i class="fas fa-chart-simple"></i> Acompanhe suas metas e veja o progresso. Você pode atualizar o valor atual a qualquer momento.</div>
             </div>
         </div>
     </div>
@@ -815,8 +1013,18 @@
     <div class="page-indicators" id="pageIndicators"></div>
 </div>
 
+<!-- IA Concierge -->
+<div class="concierge-container" id="conciergeContainer">
+    <div class="concierge-bubble" id="conciergeBubble" style="display: none;">
+        <span id="conciergeMessage"></span>
+    </div>
+    <div class="concierge-avatar" id="conciergeAvatar">
+        <i class="fas fa-robot"></i>
+    </div>
+</div>
+
 <script>
-    // Firebase config (igual ao anterior)
+    // Firebase config
     const firebaseConfig = {
         apiKey: "AIzaSyD0P8GciuV_TvZXtkIQbZLOWtcq_EMKbXo",
         authDomain: "gestao-casal.firebaseapp.com",
@@ -837,6 +1045,9 @@
     const metaRef = db.collection(`shared/${COUPLE_ID}/settings`).doc("savingsGoal");
     const namesRef = db.collection(`shared/${COUPLE_ID}/settings`).doc("names");
     const debtorsRef = db.collection(`shared/${COUPLE_ID}/debtors`);
+    const messagesRef = db.collection(`shared/${COUPLE_ID}/messages`);
+    const incomesRef = db.collection(`shared/${COUPLE_ID}/settings`).doc("incomes");
+    const goalsRef = db.collection(`shared/${COUPLE_ID}/goals`);
 
     let currentUserId = null;
     let partnerName = { me: "", her: "" };
@@ -849,21 +1060,195 @@
     let editingDocId = null;
     let savingsGoal = 500;
     let debtors = [];
+    let messages = [];
+    let incomes = { me: 0, her: 0 };
+    let goals = [];
+    let thirdParties = [];
     let categoryChart = null, compareChart = null;
-    let unsubscribeExpenses, unsubscribeBudgets, unsubscribeRecurring, unsubscribeMeta, unsubscribeNames, unsubscribeDebtors;
+    let unsubscribeExpenses, unsubscribeBudgets, unsubscribeRecurring, unsubscribeMeta, unsubscribeNames, unsubscribeDebtors, unsubscribeMessages, unsubscribeIncomes, unsubscribeGoals;
     let selectedExpenses = new Set();
 
     const formatMoney = (val) => val.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 
+    // ========== IA CONCIERGE ==========
+    let lastPage = 0;
+    let conciergeTimeout = null;
+
+    function getConciergeMessage(page, data = {}) {
+        const userName = (currentUserId === 'me') ? partnerName.me : partnerName.her;
+        const partner = partnerName.her;
+        const targetMonth = getFaturaMonthYear(new Date(currentYear, currentMonth, 1));
+        const monthExpenses = allExpenses.filter(exp => exp.installmentMonths && exp.installmentMonths.includes(targetMonth));
+        const totalMe = monthExpenses.reduce((sum, exp) => sum + calculateMonthlyShare(exp).p1, 0);
+        const totalHer = monthExpenses.reduce((sum, exp) => sum + calculateMonthlyShare(exp).p2, 0);
+        const totalGasto = totalMe + totalHer;
+        const totalIncomes = incomes.me + incomes.her;
+        
+        // Verificar metas próximas
+        const nearGoals = goals.filter(g => g.current >= g.target * 0.9 && g.current < g.target);
+        // Verificar orçamentos estourados
+        const overBudget = Object.entries(categoriesBudget).filter(([cat, limit]) => {
+            const gasto = monthExpenses.filter(e => e.categoria === cat).reduce((acc, e) => acc + calculateMonthlyShare(e).p1 + calculateMonthlyShare(e).p2, 0);
+            return gasto > limit;
+        });
+        // Verificar parcelas próximas
+        const today = new Date();
+        const upcoming = [];
+        for (const exp of monthExpenses) {
+            for (let i = exp.parcelasPagas || 0; i < exp.parcelas; i++) {
+                const due = new Date(exp.startDate);
+                due.setMonth(due.getMonth() + i);
+                if (due > today && due <= new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000)) {
+                    upcoming.push(exp);
+                    break;
+                }
+            }
+        }
+        
+        const messagesMap = {
+            0: () => {
+                let msg = `Olá ${userName}! 👋 Bem-vindo ao CASH CASAL. `;
+                if (totalGasto > 0) msg += `Este mês vocês gastaram ${formatMoney(totalGasto)}. `;
+                if (totalIncomes > 0 && totalGasto > totalIncomes * 0.7) msg += `⚠️ Atenção: seus gastos estão próximos de ${Math.round(totalGasto/totalIncomes*100)}% da renda. `;
+                if (nearGoals.length > 0) msg += `🎉 Faltam apenas ${formatMoney(nearGoals[0].target - nearGoals[0].current)} para atingir a meta "${nearGoals[0].name}"! `;
+                if (upcoming.length > 0) msg += `📅 Em breve vence a parcela de "${upcoming[0].descricao}". `;
+                if (overBudget.length > 0) msg += `⚠️ Você estourou o orçamento de ${overBudget[0][0]}. `;
+                msg += `💡 Dica: clique no ícone de IA para mais orientações!`;
+                return msg;
+            },
+            1: () => `📊 Aqui estão os gastos de ${userName} em ${new Date(currentYear, currentMonth).toLocaleDateString('pt-BR', {month:'long'})}. Total: ${formatMoney(totalMe)}. Use os botões de excluir para remover despesas pagas ou erradas.`,
+            2: () => `📊 Aqui estão os gastos de ${partner} em ${new Date(currentYear, currentMonth).toLocaleDateString('pt-BR', {month:'long'})}. Total: ${formatMoney(totalHer)}.`,
+            3: () => `➕ Adicione uma despesa com todos os detalhes: parcelamento, divisão personalizada ou até mesmo dividir com amigos. Lembre-se: compras a partir do dia 2 vão para a fatura do mês seguinte!`,
+            4: () => `📋 No histórico você pode filtrar por descrição, categoria ou quem pagou. Use os checkboxes para selecionar várias despesas e excluí-las de uma vez!`,
+            5: () => `⚙️ Aqui você pode definir a renda de cada um (para divisão proporcional), criar orçamentos por categoria, gerenciar recorrências e exportar seus dados.`,
+            6: () => `💰 Gerencie devedores aqui. Registre quem deve para o casal, com data e valor. Use "Quitar" quando receber o pagamento.`,
+            7: () => `💬 Este é o mural do casal! Use para combinar finanças, deixar lembretes ou conversar sobre os gastos. Tudo fica salvo e sincronizado.`,
+            8: () => {
+                let msg = `🎯 Metas de economia! `;
+                if (goals.length === 0) msg += `Você ainda não criou nenhuma meta. Crie uma agora mesmo! Exemplo: "Viagem para a praia" com valor R$ 2000.`;
+                else {
+                    const progress = goals.reduce((sum, g) => sum + (g.current / g.target), 0) / goals.length;
+                    msg += `Você tem ${goals.length} meta(s). Progresso médio: ${Math.round(progress * 100)}%. `;
+                    const completed = goals.filter(g => g.current >= g.target);
+                    if (completed.length > 0) msg += `🎉 Parabéns! Você atingiu ${completed.length} meta(s)! `;
+                }
+                return msg;
+            }
+        };
+        return messagesMap[page] ? messagesMap[page]() : `💡 Dica: Explore todas as páginas do app para gerenciar melhor suas finanças!`;
+    }
+
+    function showConciergeMessage(message, duration = 8000) {
+        const bubble = document.getElementById('conciergeBubble');
+        const msgSpan = document.getElementById('conciergeMessage');
+        if (!bubble) return;
+        msgSpan.innerText = message;
+        bubble.style.display = 'block';
+        if (conciergeTimeout) clearTimeout(conciergeTimeout);
+        conciergeTimeout = setTimeout(() => {
+            bubble.style.display = 'none';
+        }, duration);
+    }
+
+    function updateConciergeForPage(page) {
+        if (!currentUserId) return;
+        const message = getConciergeMessage(page);
+        showConciergeMessage(message, 6000);
+    }
+
+    // ========== FUNÇÕES DE METAS ==========
+    async function renderGoals() {
+        const container = document.getElementById('goals-list');
+        if (!container) return;
+        if (goals.length === 0) {
+            container.innerHTML = '<div style="text-align:center; padding:20px;">Nenhuma meta cadastrada. Crie sua primeira meta!</div>';
+            return;
+        }
+        container.innerHTML = goals.map(goal => {
+            const percent = (goal.current / goal.target) * 100;
+            const remaining = goal.target - goal.current;
+            const deadlineText = goal.deadline ? `📅 Prazo: ${new Date(goal.deadline).toLocaleDateString('pt-BR')}` : '';
+            return `
+                <div class="goal-item" data-id="${goal.id}">
+                    <div class="goal-header">
+                        <span class="goal-name">🎯 ${escapeHtml(goal.name)}</span>
+                        <div class="goal-actions">
+                            <button class="edit-goal" data-id="${goal.id}"><i class="fas fa-edit"></i></button>
+                            <button class="delete-goal" data-id="${goal.id}"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </div>
+                    <div class="goal-progress">
+                        <div class="progress-bar"><div class="progress-fill" style="width:${Math.min(percent,100)}%"></div></div>
+                        <div class="goal-values">
+                            <span>${formatMoney(goal.current)}</span>
+                            <span>${formatMoney(goal.target)}</span>
+                        </div>
+                    </div>
+                    <div style="font-size:0.7rem; margin-top:4px;">
+                        ${deadlineText}
+                        ${remaining > 0 ? `🔹 Faltam ${formatMoney(remaining)}` : '✅ Meta atingida! 🎉'}
+                    </div>
+                </div>
+            `;
+        }).join('');
+        
+        document.querySelectorAll('.edit-goal').forEach(btn => btn.addEventListener('click', async () => {
+            const goal = goals.find(g => g.id === btn.dataset.id);
+            if (!goal) return;
+            const { value: formValues } = await Swal.fire({
+                title: 'Editar meta',
+                html: `<input id="goal-current" type="number" step="100" value="${goal.current}" placeholder="Valor atual (R$)" class="swal2-input">
+                        <input id="goal-deadline" type="date" value="${goal.deadline || ''}" class="swal2-input">`,
+                focusConfirm: false,
+                preConfirm: () => ({ current: parseFloat(document.getElementById('goal-current').value) || 0, deadline: document.getElementById('goal-deadline').value })
+            });
+            if (formValues) {
+                await goalsRef.doc(goal.id).update({ current: formValues.current, deadline: formValues.deadline });
+                Swal.fire('Atualizado!', '', 'success');
+            }
+        }));
+        document.querySelectorAll('.delete-goal').forEach(btn => btn.addEventListener('click', async () => {
+            if (await Swal.fire({ title: 'Confirmar', text: 'Excluir esta meta?', icon: 'warning', showCancelButton: true }).then(r => r.isConfirmed))
+                await goalsRef.doc(btn.dataset.id).delete();
+        }));
+    }
+
+    async function addGoal() {
+        const name = document.getElementById('new-goal-name').value.trim();
+        const target = parseFloat(document.getElementById('new-goal-target').value);
+        const current = parseFloat(document.getElementById('new-goal-current').value) || 0;
+        const deadline = document.getElementById('new-goal-deadline').value;
+        if (!name || isNaN(target) || target <= 0) {
+            Swal.fire('Erro', 'Preencha nome e valor alvo válido.', 'error');
+            return;
+        }
+        await goalsRef.add({ name, target, current, deadline, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+        document.getElementById('new-goal-name').value = '';
+        document.getElementById('new-goal-target').value = '';
+        document.getElementById('new-goal-current').value = '0';
+        document.getElementById('new-goal-deadline').value = '';
+        Swal.fire('Meta criada!', '', 'success');
+    }
+
+    // ========== FUNÇÕES FINANCEIRAS (mantidas) ==========
     function calculateMonthlyShare(exp) {
         const parcelaValor = exp.valorTotal / exp.parcelas;
-        if (exp.splitType === '50-50') return { p1: parcelaValor / 2, p2: parcelaValor / 2 };
+        let valorAposTerceiros = parcelaValor;
+        if (exp.thirdParties && exp.thirdParties.length > 0) {
+            const totalTerceiros = exp.thirdParties.reduce((sum, t) => sum + (t.valor || 0), 0);
+            valorAposTerceiros = Math.max(0, parcelaValor - totalTerceiros);
+        }
+        if (exp.splitType === '50-50') return { p1: valorAposTerceiros / 2, p2: valorAposTerceiros / 2 };
         if (exp.splitType === 'custom-percent') {
             let perc = exp.customPercent !== undefined ? exp.customPercent : 50;
             perc = Math.min(100, Math.max(0, perc));
-            return { p1: parcelaValor * (perc / 100), p2: parcelaValor * ((100 - perc) / 100) };
+            return { p1: valorAposTerceiros * (perc / 100), p2: valorAposTerceiros * ((100 - perc) / 100) };
         }
-        return { p1: parcelaValor / 2, p2: parcelaValor / 2 };
+        if (exp.splitType === 'proportional-income' && (incomes.me + incomes.her) > 0) {
+            const totalIncome = incomes.me + incomes.her;
+            return { p1: valorAposTerceiros * (incomes.me / totalIncome), p2: valorAposTerceiros * (incomes.her / totalIncome) };
+        }
+        return { p1: valorAposTerceiros / 2, p2: valorAposTerceiros / 2 };
     }
 
     function getFaturaMonthYear(date) {
@@ -896,14 +1281,7 @@
             if (snap.empty) {
                 const firstDay = new Date(currentYear, currentMonth, 1);
                 const newInstallments = generateInstallmentMonths(firstDay.toISOString().slice(0,10), template.parcelas, 0);
-                await expensesRef.add({
-                    ...template,
-                    startDate: firstDay.toISOString().slice(0,10),
-                    installmentMonths: newInstallments,
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                    updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
-                    recurringTemplateId: template.id
-                });
+                await expensesRef.add({ ...template, startDate: firstDay.toISOString().slice(0,10), installmentMonths: newInstallments, createdAt: firebase.firestore.FieldValue.serverTimestamp(), updatedAt: firebase.firestore.FieldValue.serverTimestamp(), recurringTemplateId: template.id });
             }
         }
     }
@@ -913,9 +1291,7 @@
         for (let i = exp.parcelasPagas || 0; i < exp.parcelas; i++) {
             const due = new Date(start);
             due.setMonth(start.getMonth() + i);
-            if (`${due.getFullYear()}-${String(due.getMonth() + 1).padStart(2, '0')}` === targetMonthYear) {
-                return due.toLocaleDateString('pt-BR');
-            }
+            if (`${due.getFullYear()}-${String(due.getMonth() + 1).padStart(2, '0')}` === targetMonthYear) return due.toLocaleDateString('pt-BR');
         }
         return "Data desconhecida";
     }
@@ -926,63 +1302,47 @@
         document.getElementById('userAvatar').innerText = partnerName.me.charAt(0).toUpperCase();
         document.getElementById('partner1-name-label').innerText = partnerName.me;
         document.getElementById('partner2-name-label').innerText = partnerName.her;
+        document.getElementById('income-name1').innerText = partnerName.me;
+        document.getElementById('income-name2').innerText = partnerName.her;
         const paidBySelect = document.getElementById('paid-by');
-        if (paidBySelect) {
-            paidBySelect.options[0].text = `Eu (${partnerName.me})`;
-            paidBySelect.options[1].text = `Parceiro (${partnerName.her})`;
-        }
+        if (paidBySelect) { paidBySelect.options[0].text = `Eu (${partnerName.me})`; paidBySelect.options[1].text = `Parceiro (${partnerName.her})`; }
         const filterPayer = document.getElementById('filter-payer');
-        if (filterPayer && filterPayer.options.length >= 2) {
-            filterPayer.options[1].text = `Eu (${partnerName.me})`;
-            filterPayer.options[2].text = `Parceiro (${partnerName.her})`;
-        }
+        if (filterPayer && filterPayer.options.length >= 2) { filterPayer.options[1].text = `Eu (${partnerName.me})`; filterPayer.options[2].text = `Parceiro (${partnerName.her})`; }
     }
 
     function renderPartnerExpenses(partnerKey, containerId, monthYear) {
         const container = document.getElementById(containerId);
         if (!container) return;
         const monthExpenses = allExpenses.filter(exp => exp.installmentMonths && exp.installmentMonths.includes(monthYear));
-        const filtered = monthExpenses.filter(exp => {
-            const { p1, p2 } = calculateMonthlyShare(exp);
-            return partnerKey === 'me' ? p1 > 0 : p2 > 0;
-        }).map(exp => {
+        const filtered = monthExpenses.filter(exp => { const { p1, p2 } = calculateMonthlyShare(exp); return partnerKey === 'me' ? p1 > 0 : p2 > 0; }).map(exp => {
             const { p1, p2 } = calculateMonthlyShare(exp);
             return { id: exp.id, descricao: exp.descricao, valor: partnerKey === 'me' ? p1 : p2, data: getInstallmentDate(exp, monthYear), categoria: exp.categoria };
         });
         if (filtered.length === 0) { container.innerHTML = '<div style="text-align:center; padding:20px;">Nenhum gasto neste mês.</div>'; return; }
-        container.innerHTML = filtered.map(exp => `
-            <div class="expense-item">
-                <div class="expense-info"><strong>${escapeHtml(exp.descricao)}</strong><br><span class="expense-date">${exp.data} - ${exp.categoria || 'Sem categoria'}</span></div>
-                <div style="display: flex; align-items: center; gap: 12px;"><span style="font-weight:700; color:#e91e63;">${formatMoney(exp.valor)}</span><button class="btn-small delete-partner-expense" data-id="${exp.id}">🗑️ Excluir</button></div>
-            </div>
-        `).join('');
-        document.querySelectorAll('.delete-partner-expense').forEach(btn => btn.addEventListener('click', async () => {
-            if (await Swal.fire({ title: 'Confirmar', text: 'Remover esta despesa?', icon: 'warning', showCancelButton: true }).then(r=>r.isConfirmed))
-                await expensesRef.doc(btn.dataset.id).delete();
-        }));
+        container.innerHTML = filtered.map(exp => `<div class="expense-item"><div class="expense-info"><strong>${escapeHtml(exp.descricao)}</strong><br><span class="expense-date">${exp.data} - ${exp.categoria || 'Sem categoria'}</span></div><div style="display: flex; align-items: center; gap: 12px;"><span style="font-weight:700; color:#e91e63;">${formatMoney(exp.valor)}</span><button class="btn-small delete-partner-expense" data-id="${exp.id}">🗑️ Excluir</button></div></div>`).join('');
+        document.querySelectorAll('.delete-partner-expense').forEach(btn => btn.addEventListener('click', async () => { if (await Swal.fire({ title: 'Confirmar', text: 'Remover esta despesa?', icon: 'warning', showCancelButton: true }).then(r=>r.isConfirmed)) await expensesRef.doc(btn.dataset.id).delete(); }));
     }
 
     function renderDebtors() {
         const container = document.getElementById('debtors-list');
         if (!container) return;
         if (debtors.length === 0) { container.innerHTML = '<div style="text-align:center; padding:20px;">Nenhum devedor cadastrado.</div>'; return; }
-        const sorted = [...debtors].sort((a,b) => new Date(b.dataHora) - new Date(a.dataHora));
-        container.innerHTML = sorted.map(d => `
-            <div class="debtor-item" data-id="${d.id}">
-                <div class="debtor-info"><strong>${escapeHtml(d.nome)}</strong><br><span class="debtor-date">📅 ${new Date(d.dataHora).toLocaleString('pt-BR')}</span></div>
-                <div style="display: flex; align-items: center; gap: 12px;"><span style="font-weight:700; color:#e91e63;">${formatMoney(d.valor)}</span><button class="btn-small btn-quitar" data-id="${d.id}" data-value="${d.valor}" data-name="${escapeHtml(d.nome)}">💰 Quitar</button><button class="btn-small" data-id="${d.id}" data-action="delete">🗑️ Excluir</button></div>
-            </div>
-        `).join('');
-        document.querySelectorAll('.btn-quitar').forEach(btn => btn.addEventListener('click', async () => {
-            const id = btn.dataset.id, nome = btn.dataset.name, valor = parseFloat(btn.dataset.value);
-            if (await Swal.fire({ title: 'Quitar dívida', text: `Confirmar recebimento de ${formatMoney(valor)} de ${nome}?`, icon: 'question', showCancelButton: true }).then(r=>r.isConfirmed))
-                await debtorsRef.doc(id).delete();
-        }));
-        document.querySelectorAll('.btn-small[data-action="delete"]').forEach(btn => btn.addEventListener('click', async () => {
-            if (await Swal.fire({ title: 'Excluir devedor', text: 'Remover permanentemente?', icon: 'warning', showCancelButton: true }).then(r=>r.isConfirmed))
-                await debtorsRef.doc(btn.dataset.id).delete();
-        }));
+        container.innerHTML = [...debtors].sort((a,b) => new Date(b.dataHora) - new Date(a.dataHora)).map(d => `<div class="debtor-item" data-id="${d.id}"><div class="debtor-info"><strong>${escapeHtml(d.nome)}</strong><br><span class="debtor-date">📅 ${new Date(d.dataHora).toLocaleString('pt-BR')}</span></div><div style="display: flex; align-items: center; gap: 12px;"><span style="font-weight:700; color:#e91e63;">${formatMoney(d.valor)}</span><button class="btn-small btn-quitar" data-id="${d.id}" data-value="${d.valor}" data-name="${escapeHtml(d.nome)}">💰 Quitar</button><button class="btn-small" data-id="${d.id}" data-action="delete">🗑️ Excluir</button></div></div>`).join('');
+        document.querySelectorAll('.btn-quitar').forEach(btn => btn.addEventListener('click', async () => { const id = btn.dataset.id, valor = parseFloat(btn.dataset.value), nome = btn.dataset.name; if (await Swal.fire({ title: 'Quitar dívida', text: `Confirmar recebimento de ${formatMoney(valor)} de ${nome}?`, icon: 'question', showCancelButton: true }).then(r=>r.isConfirmed)) await debtorsRef.doc(id).delete(); }));
+        document.querySelectorAll('.btn-small[data-action="delete"]').forEach(btn => btn.addEventListener('click', async () => { if (await Swal.fire({ title: 'Excluir devedor', text: 'Remover permanentemente?', icon: 'warning', showCancelButton: true }).then(r=>r.isConfirmed)) await debtorsRef.doc(btn.dataset.id).delete(); }));
     }
+
+    function renderMessages() {
+        const container = document.getElementById('messages-container');
+        if (!container) return;
+        if (messages.length === 0) { container.innerHTML = '<div style="text-align:center; padding:20px;">💬 Nenhuma mensagem ainda. Comece a conversa!</div>'; return; }
+        const currentUserName = (currentUserId === 'me') ? partnerName.me : partnerName.her;
+        container.innerHTML = [...messages].reverse().map(msg => `<div class="message-item" style="border-left-color: ${msg.author === currentUserName ? '#e91e63' : '#4caf50'}"><div class="message-header"><div class="message-avatar" style="background: ${msg.author === currentUserName ? '#e91e63' : '#4caf50'}">${msg.author.charAt(0).toUpperCase()}</div><div class="message-info"><div class="message-author">${escapeHtml(msg.author)}</div><div class="message-time">${new Date(msg.createdAt).toLocaleString('pt-BR')}</div></div></div><div class="message-content">${escapeHtml(msg.content)}</div>${msg.author === currentUserName ? `<div class="message-actions"><button class="btn-small delete-message" data-id="${msg.id}">🗑️ Excluir</button></div>` : ''}</div>`).join('');
+        document.querySelectorAll('.delete-message').forEach(btn => btn.addEventListener('click', async () => { if (await Swal.fire({ title: 'Confirmar', text: 'Excluir esta mensagem?', icon: 'warning', showCancelButton: true }).then(r=>r.isConfirmed)) await messagesRef.doc(btn.dataset.id).delete(); }));
+        container.scrollTop = container.scrollHeight;
+    }
+
+    async function sendMessage() { const input = document.getElementById('message-input'); const content = input.value.trim(); if (!content) return; await messagesRef.add({ author: (currentUserId === 'me') ? partnerName.me : partnerName.her, content, createdAt: firebase.firestore.FieldValue.serverTimestamp() }); input.value = ''; }
 
     function escapeHtml(str) { if (!str) return ''; return str.replace(/[&<>]/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[m])); }
 
@@ -997,6 +1357,46 @@
         await debtorsRef.add({ nome, valor, dataHora: dataObj.toISOString(), criadoEm: firebase.firestore.FieldValue.serverTimestamp() });
         document.getElementById('new-debtor-name').value = ''; document.getElementById('new-debtor-value').value = ''; document.getElementById('new-debtor-date').value = '';
         Swal.fire('Adicionado!', 'Débito registrado.', 'success');
+    }
+
+    async function saveIncomes() {
+        const income1 = parseFloat(document.getElementById('income1').value) || 0;
+        const income2 = parseFloat(document.getElementById('income2').value) || 0;
+        await incomesRef.set({ income1, income2 });
+        const total = income1 + income2;
+        const perc1 = total > 0 ? (income1 / total * 100).toFixed(1) : 50;
+        const perc2 = total > 0 ? (income2 / total * 100).toFixed(1) : 50;
+        document.getElementById('income-summary').innerHTML = `<strong>📊 Proporção de contribuição:</strong><br>${partnerName.me}: ${formatMoney(income1)} (${perc1}%)<br>${partnerName.her}: ${formatMoney(income2)} (${perc2}%)`;
+        Swal.fire('Rendas salvas!', 'Os valores foram atualizados.', 'success');
+        updateDashboard();
+    }
+
+    function renderThirdParties() {
+        const container = document.getElementById('third-parties-list');
+        if (!container) return;
+        if (thirdParties.length === 0) { container.innerHTML = '<div style="text-align:center; padding:10px;">Nenhum terceiro adicionado</div>'; return; }
+        container.innerHTML = thirdParties.map((tp, idx) => `<div class="third-party-item"><div class="third-party-header"><strong>${escapeHtml(tp.nome)}</strong><button type="button" class="btn-small remove-third-party" data-idx="${idx}">🗑️ Remover</button></div><div style="display:flex; gap:8px; flex-wrap:wrap;"><div style="flex:1"><label>Valor (R$)</label><input type="number" class="third-party-value" data-idx="${idx}" value="${tp.valor}" step="0.01" style="width:100%;"></div></div></div>`).join('');
+        document.querySelectorAll('.remove-third-party').forEach(btn => btn.addEventListener('click', () => { thirdParties.splice(parseInt(btn.dataset.idx), 1); renderThirdParties(); updatePreviewDivision(); }));
+        document.querySelectorAll('.third-party-value').forEach(input => input.addEventListener('change', () => { thirdParties[parseInt(input.dataset.idx)].valor = parseFloat(input.value) || 0; updatePreviewDivision(); }));
+    }
+
+    function addThirdParty() { thirdParties.push({ nome: `Amigo ${thirdParties.length + 1}`, valor: 0 }); renderThirdParties(); updatePreviewDivision(); }
+
+    function updatePreviewDivision() {
+        const valorTotal = parseFloat(document.getElementById('valor-total').value) || 0;
+        const parcelas = parseInt(document.getElementById('parcelas').value) || 1;
+        const parcelaValor = valorTotal / parcelas;
+        const totalTerceiros = thirdParties.reduce((sum, tp) => sum + (tp.valor || 0), 0);
+        const valorAposTerceiros = Math.max(0, parcelaValor - totalTerceiros);
+        const splitType = document.getElementById('split-type').value;
+        let p1 = 0, p2 = 0;
+        if (splitType === '50-50') { p1 = valorAposTerceiros / 2; p2 = valorAposTerceiros / 2; }
+        else if (splitType === 'custom-percent') { const perc = parseFloat(document.getElementById('custom-split').value) || 50; p1 = valorAposTerceiros * (perc / 100); p2 = valorAposTerceiros * ((100 - perc) / 100); }
+        else { p1 = valorAposTerceiros / 2; p2 = valorAposTerceiros / 2; }
+        let preview = `💰 Parcela: ${formatMoney(parcelaValor)} | `;
+        if (thirdParties.length > 0) preview += `👥 Terceiros pagam: ${formatMoney(totalTerceiros)} | `;
+        preview += `💑 Casal paga: ${formatMoney(valorAposTerceiros)}<br>🧑 ${partnerName.me}: ${formatMoney(p1)} | 👩 ${partnerName.her}: ${formatMoney(p2)}`;
+        document.getElementById('preview-division').innerHTML = preview;
     }
 
     function updatePartnerPages() {
@@ -1020,8 +1420,10 @@
             const { p1, p2 } = calculateMonthlyShare(exp);
             totalMe += p1; totalHer += p2;
             const vp = exp.valorTotal / exp.parcelas;
-            if (exp.paidBy === 'me') paidByMe += vp;
-            else if (exp.paidBy === 'her') paidByHer += vp;
+            let valorPagoParcela = vp;
+            if (exp.thirdParties && exp.thirdParties.length > 0) { const totalTerceiros = exp.thirdParties.reduce((sum, t) => sum + (t.valor || 0), 0); valorPagoParcela = Math.max(0, vp - totalTerceiros); }
+            if (exp.paidBy === 'me') paidByMe += valorPagoParcela;
+            else if (exp.paidBy === 'her') paidByHer += valorPagoParcela;
             else if (exp.paidBy === 'both') { paidByMe += p1; paidByHer += p2; }
         }
         const balance = paidByMe - totalMe;
@@ -1036,7 +1438,7 @@
         progresso = Math.min(100, progresso);
         document.getElementById('meta-progress').innerText = `${Math.round(progresso)}%`;
         document.getElementById('meta-fill').style.width = `${progresso}%`;
-        // próximas parcelas, gráficos, orçamentos, histórico
+        
         const container = document.getElementById('upcoming-installments');
         container.innerHTML = '';
         const today = new Date(), threeMonthsLater = new Date(); threeMonthsLater.setMonth(today.getMonth() + 3);
@@ -1044,31 +1446,19 @@
         for (const exp of monthExpenses) {
             for (let i = exp.parcelasPagas || 0; i < exp.parcelas; i++) {
                 const due = new Date(exp.startDate); due.setMonth(due.getMonth() + i);
-                if (due > today && due <= threeMonthsLater) {
-                    const { p1, p2 } = calculateMonthlyShare(exp);
-                    future.push({ desc: exp.descricao, date: due, value: p1 + p2 });
-                }
+                if (due > today && due <= threeMonthsLater) { const { p1, p2 } = calculateMonthlyShare(exp); future.push({ desc: exp.descricao, date: due, value: p1 + p2 }); }
             }
         }
-        future.sort((a,b)=>a.date-b.date).slice(0,6).forEach(p => {
-            const li = document.createElement('li'); li.style.background = 'rgba(233,30,99,0.1)'; li.style.padding = '6px 12px'; li.style.borderRadius = '40px'; li.style.fontSize = '0.75rem';
-            li.textContent = `📌 ${p.desc} - ${formatMoney(p.value)} (${p.date.toLocaleDateString()})`;
-            container.appendChild(li);
-        });
+        future.sort((a,b)=>a.date-b.date).slice(0,6).forEach(p => { const li = document.createElement('li'); li.style.background = 'rgba(233,30,99,0.1)'; li.style.padding = '6px 12px'; li.style.borderRadius = '40px'; li.style.fontSize = '0.75rem'; li.textContent = `📌 ${p.desc} - ${formatMoney(p.value)} (${p.date.toLocaleDateString()})`; container.appendChild(li); });
         if(future.length===0) container.innerHTML = '<li style="background:transparent">Nenhuma parcela futura</li>';
-        // gráficos
+        
         const catMap = new Map();
-        monthExpenses.forEach(exp => {
-            const { p1, p2 } = calculateMonthlyShare(exp);
-            const total = p1 + p2;
-            const cat = exp.categoria || "Outros";
-            catMap.set(cat, (catMap.get(cat) || 0) + total);
-        });
+        monthExpenses.forEach(exp => { const { p1, p2 } = calculateMonthlyShare(exp); const total = p1 + p2; const cat = exp.categoria || "Outros"; catMap.set(cat, (catMap.get(cat) || 0) + total); });
         if (categoryChart) categoryChart.destroy();
         categoryChart = new Chart(document.getElementById('categoryChart'), { type: 'pie', data: { labels: [...catMap.keys()], datasets: [{ data: [...catMap.values()], backgroundColor: ['#e91e63','#ff6b9d','#c2185b','#f48fb1','#f06292','#ec407a'] }] } });
         if (compareChart) compareChart.destroy();
         compareChart = new Chart(document.getElementById('compareChart'), { type: 'bar', data: { labels: [partnerName.me, partnerName.her], datasets: [{ data: [totalMe, totalHer], backgroundColor: ['#e91e63', '#ffb74d'] }] } });
-        // orçamentos
+        
         const budgetDiv = document.getElementById('budget-list');
         budgetDiv.innerHTML = '';
         for (let [cat, limit] of Object.entries(categoriesBudget)) {
@@ -1076,73 +1466,35 @@
             const percent = (gasto / limit) * 100;
             const over = gasto > limit;
             const div = document.createElement('div'); div.className = 'budget-item';
-            div.innerHTML = `<div style="display:flex; justify-content:space-between"><span>${cat}</span><span>${formatMoney(gasto)} / ${formatMoney(limit)}</span></div>
-            <div class="progress-bar"><div class="progress-fill" style="width:${Math.min(percent,100)}%; background:${over ? '#c62828' : '#e91e63'}"></div></div>
-            ${over ? '<small style="color:#c62828">⚠️ Estourou!</small>' : ''}
-            <button class="delete-budget" data-cat="${cat}">❌</button>`;
+            div.innerHTML = `<div style="display:flex; justify-content:space-between"><span>${cat}</span><span>${formatMoney(gasto)} / ${formatMoney(limit)}</span></div><div class="progress-bar"><div class="progress-fill" style="width:${Math.min(percent,100)}%; background:${over ? '#c62828' : '#e91e63'}"></div></div>${over ? '<small style="color:#c62828">⚠️ Estourou!</small>' : ''}<button class="delete-budget" data-cat="${cat}">❌</button>`;
             budgetDiv.appendChild(div);
         }
         document.querySelectorAll('.delete-budget').forEach(btn => btn.addEventListener('click', async () => await budgetsRef.doc(btn.dataset.cat).delete()));
-        // histórico
+        
         const tbody = document.getElementById('tabela-historico');
         tbody.innerHTML = '';
         for (const exp of monthExpenses) {
             const { p1, p2 } = calculateMonthlyShare(exp);
             const payerText = exp.paidBy === 'me' ? `🧑 ${partnerName.me}` : (exp.paidBy === 'her' ? `👩 ${partnerName.her}` : '🤝 Dividido');
+            let terceirosText = '';
+            if (exp.thirdParties && exp.thirdParties.length > 0) terceirosText = `<br><small>👥 ${exp.thirdParties.map(t => `${t.nome}: ${formatMoney(t.valor)}`).join(', ')}</small>`;
             const row = tbody.insertRow();
             row.setAttribute('data-id', exp.id);
-            row.innerHTML = `
-                <td class="checkbox-col"><input type="checkbox" class="expense-checkbox" data-id="${exp.id}" style="accent-color:#e91e63;"></td>
-                <td data-label="Descrição"><strong>${escapeHtml(exp.descricao)}</strong><br><small>${escapeHtml(exp.observacao || '')}</small></td>
-                <td data-label="Total">${formatMoney(exp.valorTotal)}</td>
-                <td data-label="Parc">${exp.parcelas}x (${exp.parcelasPagas || 0} pagas)</td>
-                <td data-label="Parc.Mês">${formatMoney(p1 + p2)}</td>
-                <td data-label="Pagador">${payerText}</td>
-                <td data-label="Ações"><button class="edit-expense btn btn-secondary" data-id="${exp.id}" style="padding:4px 8px;">✏️</button> <button class="delete-expense btn btn-danger" data-id="${exp.id}" style="padding:4px 8px;">🗑️</button></td>
-            `;
+            row.innerHTML = `<td class="checkbox-col"><input type="checkbox" class="expense-checkbox" data-id="${exp.id}" style="accent-color:#e91e63;"></td><td data-label="Descrição"><strong>${escapeHtml(exp.descricao)}</strong>${terceirosText}<br><small>${escapeHtml(exp.observacao || '')}</small></td><td data-label="Total">${formatMoney(exp.valorTotal)}</td><td data-label="Parc">${exp.parcelas}x (${exp.parcelasPagas || 0} pagas)</td><td data-label="Parc.Mês">${formatMoney(p1 + p2)}</td><td data-label="Pagador">${payerText}</td><td data-label="Ações"><button class="edit-expense btn btn-secondary" data-id="${exp.id}" style="padding:4px 8px;">✏️</button> <button class="delete-expense btn btn-danger" data-id="${exp.id}" style="padding:4px 8px;">🗑️</button></td>`;
         }
         document.querySelectorAll('.expense-checkbox').forEach(cb => cb.addEventListener('change', (e) => { if(e.target.checked) selectedExpenses.add(e.target.dataset.id); else selectedExpenses.delete(e.target.dataset.id); updateSelectionBar(); updateHeaderCheckbox(); }));
         document.querySelectorAll('.edit-expense').forEach(btn => btn.addEventListener('click', () => startEditExpense(btn.dataset.id)));
         document.querySelectorAll('.delete-expense').forEach(btn => btn.addEventListener('click', async () => { if(await Swal.fire({title:'Confirmar',text:'Remover?',icon:'warning',showCancelButton:true}).then(r=>r.isConfirmed)) await expensesRef.doc(btn.dataset.id).delete(); }));
         updateSelectionBar();
-        // categorias filtro
         const cats = [...new Set(monthExpenses.map(e=>e.categoria).filter(c=>c))];
         document.getElementById('filter-category').innerHTML = '<option value="">Todas categorias</option>' + cats.map(c=>`<option>${c}</option>`).join('');
         updatePartnerPages();
     }
 
-    function updateSelectionBar() {
-        const bar = document.getElementById('selectionBar');
-        const count = selectedExpenses.size;
-        document.getElementById('selectedCount').innerText = count;
-        bar.style.display = count > 0 ? 'flex' : 'none';
-    }
-    function updateHeaderCheckbox() {
-        const header = document.getElementById('headerCheckbox');
-        if(!header) return;
-        const total = currentDisplayExpenses.length;
-        const selected = selectedExpenses.size;
-        if(total>0 && selected===total) { header.checked=true; header.indeterminate=false; }
-        else if(selected>0 && selected<total) { header.checked=false; header.indeterminate=true; }
-        else { header.checked=false; header.indeterminate=false; }
-    }
-    function selectAllExpenses() {
-        if(selectedExpenses.size === currentDisplayExpenses.length) selectedExpenses.clear();
-        else currentDisplayExpenses.forEach(exp => selectedExpenses.add(exp.id));
-        renderHistory(); // refresh
-    }
-    async function deleteSelectedExpenses() {
-        const count = selectedExpenses.size;
-        if(count===0) return;
-        if(await Swal.fire({title:'Confirmar exclusão',text:`Excluir ${count} despesa(s)?`,icon:'warning',showCancelButton:true}).then(r=>r.isConfirmed)) {
-            const batch = db.batch();
-            selectedExpenses.forEach(id => batch.delete(expensesRef.doc(id)));
-            await batch.commit();
-            selectedExpenses.clear();
-            Swal.fire('Excluídas!',`${count} despesa(s) removida(s).`,'success');
-        }
-    }
-
+    function updateSelectionBar() { const bar = document.getElementById('selectionBar'); const count = selectedExpenses.size; document.getElementById('selectedCount').innerText = count; bar.style.display = count > 0 ? 'flex' : 'none'; }
+    function updateHeaderCheckbox() { const header = document.getElementById('headerCheckbox'); if(!header) return; const total = currentDisplayExpenses.length; const selected = selectedExpenses.size; if(total>0 && selected===total) { header.checked=true; header.indeterminate=false; } else if(selected>0 && selected<total) { header.checked=false; header.indeterminate=true; } else { header.checked=false; header.indeterminate=false; } }
+    function selectAllExpenses() { if(selectedExpenses.size === currentDisplayExpenses.length) selectedExpenses.clear(); else currentDisplayExpenses.forEach(exp => selectedExpenses.add(exp.id)); renderHistory(); }
+    async function deleteSelectedExpenses() { const count = selectedExpenses.size; if(count===0) return; if(await Swal.fire({title:'Confirmar exclusão',text:`Excluir ${count} despesa(s)?`,icon:'warning',showCancelButton:true}).then(r=>r.isConfirmed)) { const batch = db.batch(); selectedExpenses.forEach(id => batch.delete(expensesRef.doc(id))); await batch.commit(); selectedExpenses.clear(); Swal.fire('Excluídas!',`${count} despesa(s) removida(s).`,'success'); } }
     function applyFilters() {
         const targetMonth = getFaturaMonthYear(new Date(currentYear, currentMonth, 1));
         let filtered = allExpenses.filter(exp => exp.installmentMonths && exp.installmentMonths.includes(targetMonth));
@@ -1163,22 +1515,15 @@
         for(const exp of currentDisplayExpenses) {
             const {p1,p2}=calculateMonthlyShare(exp);
             const payerText = exp.paidBy==='me'?`🧑 ${partnerName.me}`:(exp.paidBy==='her'?`👩 ${partnerName.her}`:'🤝 Dividido');
+            let terceirosText = '';
+            if (exp.thirdParties && exp.thirdParties.length > 0) terceirosText = `<br><small>👥 ${exp.thirdParties.map(t => `${t.nome}: ${formatMoney(t.valor)}`).join(', ')}</small>`;
             const row = tbody.insertRow();
-            row.innerHTML = `
-                <td class="checkbox-col"><input type="checkbox" class="expense-checkbox" data-id="${exp.id}" ${selectedExpenses.has(exp.id)?'checked':''}></td>
-                <td data-label="Descrição"><strong>${escapeHtml(exp.descricao)}</strong><br><small>${escapeHtml(exp.observacao||'')}</small></td>
-                <td data-label="Total">${formatMoney(exp.valorTotal)}</td>
-                <td data-label="Parc">${exp.parcelas}x (${exp.parcelasPagas||0} pagas)</td>
-                <td data-label="Parc.Mês">${formatMoney(p1+p2)}</td>
-                <td data-label="Pagador">${payerText}</td>
-                <td data-label="Ações"><button class="edit-expense btn btn-secondary" data-id="${exp.id}" style="padding:4px 8px;">✏️</button> <button class="delete-expense btn btn-danger" data-id="${exp.id}" style="padding:4px 8px;">🗑️</button></td>
-            `;
+            row.innerHTML = `<td class="checkbox-col"><input type="checkbox" class="expense-checkbox" data-id="${exp.id}" ${selectedExpenses.has(exp.id)?'checked':''} style="accent-color:#e91e63;"></td><td data-label="Descrição"><strong>${escapeHtml(exp.descricao)}</strong>${terceirosText}<br><small>${escapeHtml(exp.observacao||'')}</small></td><td data-label="Total">${formatMoney(exp.valorTotal)}</td><td data-label="Parc">${exp.parcelas}x (${exp.parcelasPagas||0} pagas)</td><td data-label="Parc.Mês">${formatMoney(p1+p2)}</td><td data-label="Pagador">${payerText}</td><td data-label="Ações"><button class="edit-expense btn btn-secondary" data-id="${exp.id}" style="padding:4px 8px;">✏️</button> <button class="delete-expense btn btn-danger" data-id="${exp.id}" style="padding:4px 8px;">🗑️</button></td>`;
         }
         document.querySelectorAll('.expense-checkbox').forEach(cb => cb.addEventListener('change', (e) => { if(e.target.checked) selectedExpenses.add(e.target.dataset.id); else selectedExpenses.delete(e.target.dataset.id); updateSelectionBar(); updateHeaderCheckbox(); }));
         document.querySelectorAll('.edit-expense').forEach(btn => btn.addEventListener('click', () => startEditExpense(btn.dataset.id)));
         document.querySelectorAll('.delete-expense').forEach(btn => btn.addEventListener('click', async () => { if(await Swal.fire({title:'Confirmar',text:'Remover?',icon:'warning',showCancelButton:true}).then(r=>r.isConfirmed)) await expensesRef.doc(btn.dataset.id).delete(); }));
-        updateSelectionBar();
-        updateHeaderCheckbox();
+        updateSelectionBar(); updateHeaderCheckbox();
     }
 
     async function startEditExpense(id) {
@@ -1196,10 +1541,14 @@
         document.getElementById('categoria').value=exp.categoria||'';
         document.getElementById('recorrente').value=exp.recurringTemplateId?'monthly':'none';
         document.getElementById('observacao').value=exp.observacao||'';
+        document.getElementById('custom-split').style.display=exp.splitType==='custom-percent'?'block':'none';
+        thirdParties = exp.thirdParties ? [...exp.thirdParties] : [];
+        if (thirdParties.length > 0) { document.getElementById('has-third-parties').value = 'yes'; document.getElementById('third-parties-container').style.display = 'block'; renderThirdParties(); }
+        else { document.getElementById('has-third-parties').value = 'no'; document.getElementById('third-parties-container').style.display = 'none'; }
         document.getElementById('add-expense-btn').textContent='✏️ Atualizar';
         document.getElementById('cancel-edit-btn').style.display='inline-block';
-        document.getElementById('custom-split').style.display=exp.splitType==='custom-percent'?'block':'none';
         document.getElementById('swipeContainer').scrollTo({left:window.innerWidth*3,behavior:'smooth'});
+        updatePreviewDivision();
     }
 
     async function saveExpense() {
@@ -1213,45 +1562,39 @@
         const paidBy = document.getElementById('paid-by').value;
         const splitType = document.getElementById('split-type').value;
         let customPercent = null;
-        if(splitType==='custom-percent') {
-            customPercent = parseFloat(document.getElementById('custom-split').value);
-            if(isNaN(customPercent)||customPercent<0||customPercent>100) { Swal.fire('Percentual entre 0 e 100'); return; }
-        }
+        if(splitType==='custom-percent') { customPercent = parseFloat(document.getElementById('custom-split').value); if(isNaN(customPercent)||customPercent<0||customPercent>100) { Swal.fire('Percentual entre 0 e 100'); return; } }
         const categoria = document.getElementById('categoria').value.trim()||'Geral';
         const observacao = document.getElementById('observacao').value;
         const isRecurring = document.getElementById('recorrente').value==='monthly';
+        const hasThirdParties = document.getElementById('has-third-parties').value === 'yes';
+        const thirdPartiesToSave = hasThirdParties ? thirdParties.filter(tp => tp.valor > 0) : [];
         const installmentMonths = generateInstallmentMonths(startDateStr, parcelas, parcelasPagas);
-        const expenseData = { descricao, valorTotal, parcelas, parcelasPagas, startDate: startDateStr, paidBy, splitType, customPercent, categoria, observacao, installmentMonths, updatedAt: firebase.firestore.FieldValue.serverTimestamp() };
+        const expenseData = { descricao, valorTotal, parcelas, parcelasPagas, startDate: startDateStr, paidBy, splitType, customPercent, categoria, observacao, installmentMonths, thirdParties: thirdPartiesToSave, updatedAt: firebase.firestore.FieldValue.serverTimestamp() };
         if(!editingDocId) expenseData.createdAt = firebase.firestore.FieldValue.serverTimestamp();
         if(editingDocId) await expensesRef.doc(editingDocId).update(expenseData);
-        else {
-            const newRef = await expensesRef.add(expenseData);
-            if(isRecurring && parcelasPagas===0) await recurringRef.add({...expenseData, templateFor: newRef.id});
-        }
+        else { const newRef = await expensesRef.add(expenseData); if(isRecurring && parcelasPagas===0) await recurringRef.add({...expenseData, templateFor: newRef.id}); }
         document.getElementById('expense-form').reset();
         document.getElementById('parcelas').value=1;
         document.getElementById('parcelasPagas').value=0;
         document.getElementById('start-date').valueAsDate=new Date();
         document.getElementById('add-expense-btn').textContent='💾 Salvar';
         document.getElementById('cancel-edit-btn').style.display='none';
+        thirdParties = [];
+        document.getElementById('third-parties-container').style.display = 'none';
+        document.getElementById('has-third-parties').value = 'no';
         editingDocId=null;
         Swal.fire('Despesa salva!','','success');
     }
 
-    async function changeMonth(delta) {
-        let nm=currentMonth+delta, ny=currentYear;
-        if(nm<0){nm=11;ny--;} else if(nm>11){nm=0;ny++;}
-        currentMonth=nm; currentYear=ny;
-        selectedExpenses.clear();
-        await updateDashboard();
-    }
+    async function changeMonth(delta) { let nm=currentMonth+delta, ny=currentYear; if(nm<0){nm=11;ny--;} else if(nm>11){nm=0;ny++;} currentMonth=nm; currentYear=ny; selectedExpenses.clear(); await updateDashboard(); }
 
     function exportCSV() {
-        let csv=[["Descrição","Valor Total","Parcelas","Parcelas Pagas","Parcela Mês","Pagador","Categoria","Observação"]];
+        let csv=[["Descrição","Valor Total","Parcelas","Parcelas Pagas","Parcela Mês","Pagador","Categoria","Observação","Terceiros"]];
         for(let exp of currentDisplayExpenses) {
             const {p1,p2}=calculateMonthlyShare(exp);
             const payerText=exp.paidBy==='me'?partnerName.me:(exp.paidBy==='her'?partnerName.her:'Dividido');
-            csv.push([exp.descricao, exp.valorTotal, exp.parcelas, exp.parcelasPagas||0, p1+p2, payerText, exp.categoria, exp.observacao]);
+            const terceirosText = exp.thirdParties ? exp.thirdParties.map(t=>`${t.nome}:${t.valor}`).join(';') : '';
+            csv.push([exp.descricao, exp.valorTotal, exp.parcelas, exp.parcelasPagas||0, p1+p2, payerText, exp.categoria, exp.observacao, terceirosText]);
         }
         const blob=new Blob([csv.map(r=>r.join(",")).join("\n")],{type:"text/csv"});
         const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=`financas_${currentYear}-${currentMonth+1}.csv`; a.click();
@@ -1259,11 +1602,7 @@
 
     async function quickExpense() {
         const {value:fv}=await Swal.fire({title:'Despesa rápida',html:'<input id="swal-desc" placeholder="Descrição"><input id="swal-valor" type="number" step="0.01" placeholder="Valor total"><select id="swal-cat"><option>Alimentação</option><option>Lazer</option><option>Moradia</option></select>',focusConfirm:false,preConfirm:()=>({desc:document.getElementById('swal-desc').value,valor:parseFloat(document.getElementById('swal-valor').value),cat:document.getElementById('swal-cat').value})});
-        if(fv&&fv.desc&&!isNaN(fv.valor)) {
-            const startDate=new Date(currentYear,currentMonth,1).toISOString().slice(0,10);
-            await expensesRef.add({descricao:fv.desc,valorTotal:fv.valor,parcelas:1,parcelasPagas:0,startDate,paidBy:'both',splitType:'50-50',categoria:fv.cat,installmentMonths:generateInstallmentMonths(startDate,1,0),observacao:'',createdAt:firebase.firestore.FieldValue.serverTimestamp(),updatedAt:firebase.firestore.FieldValue.serverTimestamp()});
-            Swal.fire('Adicionada!','','success');
-        }
+        if(fv&&fv.desc&&!isNaN(fv.valor)) { const startDate=new Date(currentYear,currentMonth,1).toISOString().slice(0,10); await expensesRef.add({descricao:fv.desc,valorTotal:fv.valor,parcelas:1,parcelasPagas:0,startDate,paidBy:'both',splitType:'50-50',categoria:fv.cat,installmentMonths:generateInstallmentMonths(startDate,1,0),observacao:'',thirdParties:[],createdAt:firebase.firestore.FieldValue.serverTimestamp(),updatedAt:firebase.firestore.FieldValue.serverTimestamp()}); Swal.fire('Adicionada!','','success'); }
     }
 
     async function setSavingsGoal(v){ await metaRef.set({value:v}); }
@@ -1282,6 +1621,10 @@
         if(unsubscribeMeta) unsubscribeMeta();
         if(unsubscribeNames) unsubscribeNames();
         if(unsubscribeDebtors) unsubscribeDebtors();
+        if(unsubscribeMessages) unsubscribeMessages();
+        if(unsubscribeIncomes) unsubscribeIncomes();
+        if(unsubscribeGoals) unsubscribeGoals();
+        
         unsubscribeExpenses = expensesRef.onSnapshot(s=>{ allExpenses=s.docs.map(d=>({id:d.id,...d.data()})); updateDashboard(); });
         unsubscribeBudgets = budgetsRef.onSnapshot(s=>{ categoriesBudget={}; s.forEach(d=>categoriesBudget[d.id]=d.data().limit); updateDashboard(); });
         unsubscribeRecurring = recurringRef.onSnapshot(s=>{ recurringTemplates=s.docs.map(d=>({id:d.id,...d.data()})); });
@@ -1292,22 +1635,22 @@
             updateUIWithNames(); updateDashboard();
         });
         unsubscribeDebtors = debtorsRef.onSnapshot(s=>{ debtors=s.docs.map(d=>({id:d.id,...d.data()})); renderDebtors(); });
+        unsubscribeMessages = messagesRef.orderBy('createdAt', 'desc').onSnapshot(s=>{ messages=s.docs.map(d=>({id:d.id,...d.data()})); renderMessages(); });
+        unsubscribeIncomes = incomesRef.onSnapshot(doc=>{
+            if(doc.exists){ const data=doc.data();
+                if(currentUserId==='me'){ incomes.me = data.income1 || 0; incomes.her = data.income2 || 0; document.getElementById('income1').value = incomes.me; document.getElementById('income2').value = incomes.her; }
+                else{ incomes.me = data.income2 || 0; incomes.her = data.income1 || 0; document.getElementById('income1').value = incomes.her; document.getElementById('income2').value = incomes.me; }
+            } else { incomes.me = 0; incomes.her = 0; document.getElementById('income1').value = 0; document.getElementById('income2').value = 0; }
+            const total = incomes.me + incomes.her; const perc1 = total > 0 ? (incomes.me / total * 100).toFixed(1) : 50; const perc2 = total > 0 ? (incomes.her / total * 100).toFixed(1) : 50;
+            document.getElementById('income-summary').innerHTML = `<strong>📊 Proporção de contribuição:</strong><br>${partnerName.me}: ${formatMoney(incomes.me)} (${perc1}%)<br>${partnerName.her}: ${formatMoney(incomes.her)} (${perc2}%)`;
+            updateDashboard();
+        });
+        unsubscribeGoals = goalsRef.onSnapshot(s=>{ goals=s.docs.map(d=>({id:d.id,...d.data()})); renderGoals(); });
     }
 
-    function loadSavedLogin(){
-        const n1=localStorage.getItem('couple_name1'), n2=localStorage.getItem('couple_name2'), last=localStorage.getItem('couple_last_user');
-        if(n1) document.getElementById('name1').value=n1;
-        if(n2) document.getElementById('name2').value=n2;
-        if(n1&&n2) updateUserSelect();
-        if(last && document.getElementById('current-user-select').querySelector(`option[value="${last}"]`)) document.getElementById('current-user-select').value=last;
-    }
+    function loadSavedLogin(){ const n1=localStorage.getItem('couple_name1'), n2=localStorage.getItem('couple_name2'), last=localStorage.getItem('couple_last_user'); if(n1) document.getElementById('name1').value=n1; if(n2) document.getElementById('name2').value=n2; if(n1&&n2) updateUserSelect(); if(last && document.getElementById('current-user-select').querySelector(`option[value="${last}"]`)) document.getElementById('current-user-select').value=last; }
     function saveLoginData(n1,n2,sel){ localStorage.setItem('couple_name1',n1); localStorage.setItem('couple_name2',n2); localStorage.setItem('couple_last_user',sel); }
-    function updateUserSelect(){
-        const n1=document.getElementById('name1').value.trim(), n2=document.getElementById('name2').value.trim(), sel=document.getElementById('current-user-select');
-        sel.innerHTML='<option value="">-- Selecione quem está usando --</option>';
-        if(n1) sel.innerHTML+=`<option value="${n1}">${n1}</option>`;
-        if(n2) sel.innerHTML+=`<option value="${n2}">${n2}</option>`;
-    }
+    function updateUserSelect(){ const n1=document.getElementById('name1').value.trim(), n2=document.getElementById('name2').value.trim(), sel=document.getElementById('current-user-select'); sel.innerHTML='<option value="">-- Selecione quem está usando --</option>'; if(n1) sel.innerHTML+=`<option value="${n1}">${n1}</option>`; if(n2) sel.innerHTML+=`<option value="${n2}">${n2}</option>`; }
     async function initApp(){
         const n1=document.getElementById('name1').value.trim(), n2=document.getElementById('name2').value.trim(), sel=document.getElementById('current-user-select').value;
         if(!n1||!n2||!sel){ Swal.fire('Atenção','Preencha os dois nomes e selecione quem está usando.','warning'); return; }
@@ -1323,13 +1666,15 @@
         await generateRecurringForMonth(getFaturaMonthYear(new Date(currentYear,currentMonth,1)));
         await updateDashboard();
         setupSwipe();
+        updateConciergeForPage(0);
     }
     function setupSwipe(){
         const container=document.getElementById('swipeContainer'), indicators=document.getElementById('pageIndicators');
         const pages=document.querySelectorAll('.swipe-page');
         indicators.innerHTML='';
         for(let i=0;i<pages.length;i++){ const dot=document.createElement('div'); dot.className='indicator'; dot.onclick=()=>container.scrollTo({left:container.clientWidth*i,behavior:'smooth'}); indicators.appendChild(dot); }
-        function update(){ const active=Math.round(container.scrollLeft/container.clientWidth); document.querySelectorAll('.indicator').forEach((dot,idx)=>dot.classList.toggle('active',idx===active)); }
+        let lastActiveIndex=0;
+        function update(){ const active=Math.round(container.scrollLeft/container.clientWidth); document.querySelectorAll('.indicator').forEach((dot,idx)=>dot.classList.toggle('active',idx===active)); if(active!==lastActiveIndex){ lastActiveIndex=active; updateConciergeForPage(active); } }
         container.addEventListener('scroll',update); setTimeout(update,100);
     }
     function logout(){
@@ -1339,20 +1684,28 @@
         if(unsubscribeMeta) unsubscribeMeta();
         if(unsubscribeNames) unsubscribeNames();
         if(unsubscribeDebtors) unsubscribeDebtors();
+        if(unsubscribeMessages) unsubscribeMessages();
+        if(unsubscribeIncomes) unsubscribeIncomes();
+        if(unsubscribeGoals) unsubscribeGoals();
         document.getElementById('app-container').style.display='none';
         document.getElementById('login-container').style.display='block';
         currentUserId=null;
         loadSavedLogin();
     }
 
+    // Event listeners
     document.getElementById('name1').addEventListener('input',updateUserSelect);
     document.getElementById('name2').addEventListener('input',updateUserSelect);
     document.getElementById('enter-app-btn').addEventListener('click',initApp);
     document.getElementById('logoutBtn').addEventListener('click',logout);
     document.getElementById('add-expense-btn').addEventListener('click',saveExpense);
-    document.getElementById('cancel-edit-btn').addEventListener('click',()=>{ editingDocId=null; document.getElementById('expense-form').reset(); document.getElementById('add-expense-btn').textContent='💾 Salvar'; document.getElementById('cancel-edit-btn').style.display='none'; });
-    document.getElementById('split-type').addEventListener('change',()=>{ document.getElementById('custom-split').style.display=document.getElementById('split-type').value==='custom-percent'?'block':'none'; });
-    document.getElementById('valor-total').addEventListener('input',()=>{ const v=parseFloat(document.getElementById('valor-total').value)||0; const p=parseInt(document.getElementById('parcelas').value)||1; const pt=v/p; document.getElementById('preview-division').innerText=`Cada pessoa: ${formatMoney(pt/2)}/mês (${p}x)`; });
+    document.getElementById('cancel-edit-btn').addEventListener('click',()=>{ editingDocId=null; document.getElementById('expense-form').reset(); document.getElementById('add-expense-btn').textContent='💾 Salvar'; document.getElementById('cancel-edit-btn').style.display='none'; thirdParties=[]; document.getElementById('third-parties-container').style.display='none'; document.getElementById('has-third-parties').value='no'; });
+    document.getElementById('split-type').addEventListener('change',()=>{ document.getElementById('custom-split').style.display=document.getElementById('split-type').value==='custom-percent'?'block':'none'; updatePreviewDivision(); });
+    document.getElementById('valor-total').addEventListener('input',updatePreviewDivision);
+    document.getElementById('parcelas').addEventListener('input',updatePreviewDivision);
+    document.getElementById('custom-split').addEventListener('input',updatePreviewDivision);
+    document.getElementById('has-third-parties').addEventListener('change',(e)=>{ if(e.target.value === 'yes') { document.getElementById('third-parties-container').style.display = 'block'; if(thirdParties.length === 0) addThirdParty(); } else { document.getElementById('third-parties-container').style.display = 'none'; thirdParties = []; } updatePreviewDivision(); });
+    document.getElementById('add-third-party-btn')?.addEventListener('click', addThirdParty);
     document.getElementById('export-csv-btn').addEventListener('click',exportCSV);
     document.getElementById('quick-expense-btn').addEventListener('click',quickExpense);
     document.getElementById('add-budget-btn').addEventListener('click',async()=>{ const cat=document.getElementById('new-budget-cat').value.trim(), lim=parseFloat(document.getElementById('new-budget-value').value); if(cat&&!isNaN(lim)) await budgetsRef.doc(cat).set({limit:lim}); });
@@ -1375,6 +1728,15 @@
     document.getElementById('selectAllBtn')?.addEventListener('click',selectAllExpenses);
     document.getElementById('deleteSelectedBtn')?.addEventListener('click',deleteSelectedExpenses);
     document.getElementById('headerCheckbox')?.addEventListener('change',(e)=>{ if(e.target.checked) currentDisplayExpenses.forEach(exp=>selectedExpenses.add(exp.id)); else selectedExpenses.clear(); renderHistory(); });
+    document.getElementById('send-message-btn')?.addEventListener('click',sendMessage);
+    document.getElementById('message-input')?.addEventListener('keypress', (e) => { if(e.key === 'Enter') sendMessage(); });
+    document.getElementById('save-income-btn')?.addEventListener('click', saveIncomes);
+    document.getElementById('add-goal-btn')?.addEventListener('click', addGoal);
+    document.getElementById('conciergeAvatar')?.addEventListener('click', () => {
+        const activePage = Math.round(document.getElementById('swipeContainer').scrollLeft / document.getElementById('swipeContainer').clientWidth);
+        const msg = getConciergeMessage(activePage);
+        showConciergeMessage(msg, 8000);
+    });
 
     const themeToggle = document.getElementById('theme-toggle-btn');
     if(themeToggle){
