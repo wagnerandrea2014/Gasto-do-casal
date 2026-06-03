@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
-    <title>Finanças do Casal 💑</title>
+    <title>CASH CASAL - Finanças do Casal 💰</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
@@ -20,17 +20,17 @@
         }
         body {
             font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #0f172a 0%, #1e1b2e 100%);
+            background: linear-gradient(135deg, #2c1a0e 0%, #4a2c1a 100%);
             min-height: 100vh;
             overflow-x: hidden;
-            color: #f1f5f9;
+            color: #3e2723;
         }
         .login-container {
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            background: linear-gradient(135deg, #0f172a, #1e1b2e);
+            background: linear-gradient(135deg, #2c1a0e, #4a2c1a);
             position: fixed;
             top: 0;
             left: 0;
@@ -38,17 +38,18 @@
             z-index: 1000;
         }
         .login-card {
-            background: rgba(30, 41, 59, 0.8);
+            background: rgba(245, 230, 211, 0.95);
             backdrop-filter: blur(20px);
             border-radius: 48px;
             padding: 2rem;
             width: 90%;
             max-width: 400px;
-            border: 1px solid rgba(233, 30, 99, 0.3);
+            border: 1px solid rgba(212, 175, 55, 0.5);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.3);
         }
         .login-card h2 {
             text-align: center;
-            background: linear-gradient(135deg, #ff6b9d, #e91e63);
+            background: linear-gradient(135deg, #c9a03d, #8b691b);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
@@ -58,37 +59,38 @@
             width: 100%;
             padding: 14px 18px;
             margin-bottom: 16px;
-            background: rgba(15, 23, 42, 0.8);
-            border: 1px solid rgba(233, 30, 99, 0.4);
+            background: #fef7e8;
+            border: 1px solid #d4af37;
             border-radius: 40px;
-            color: white;
+            color: #3e2723;
             font-size: 16px;
         }
         .login-card button {
             width: 100%;
             padding: 14px;
-            background: linear-gradient(95deg, #e91e63, #c2185b);
+            background: linear-gradient(95deg, #c9a03d, #8b691b);
             border: none;
             border-radius: 40px;
             color: white;
             font-weight: 700;
             cursor: pointer;
             font-size: 16px;
+            transition: 0.2s;
         }
         .app-container {
             display: none;
             width: 100%;
             min-height: 100vh;
-            background: linear-gradient(135deg, #0f172a 0%, #1a1a2e 100%);
+            background: linear-gradient(135deg, #2c1a0e 0%, #3d2314 100%);
         }
         .app-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 12px 16px;
-            background: rgba(15, 23, 42, 0.8);
+            background: rgba(44, 26, 14, 0.9);
             backdrop-filter: blur(12px);
-            border-bottom: 1px solid rgba(233, 30, 99, 0.3);
+            border-bottom: 1px solid #d4af37;
             position: sticky;
             top: 0;
             z-index: 100;
@@ -102,27 +104,29 @@
         }
         .logo-area i {
             font-size: 1.6rem;
-            color: #e91e63;
+            color: #d4af37;
         }
         .logo-area h2 {
             font-size: 1.2rem;
             font-weight: 600;
+            color: #f5e6d3;
         }
         .profile-btn {
             display: flex;
             align-items: center;
             gap: 12px;
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.15);
             padding: 6px 12px;
             border-radius: 40px;
             cursor: pointer;
+            border: 1px solid #d4af37;
         }
         .profile-avatar {
             width: 36px;
             height: 36px;
             border-radius: 50%;
-            background: #e91e63;
-            color: white;
+            background: #c9a03d;
+            color: #3e2723;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -139,13 +143,14 @@
             border-radius: 40px;
         }
         .month-nav button {
-            background: rgba(233,30,99,0.6);
+            background: #c9a03d;
             border: none;
             width: 30px;
             height: 30px;
             border-radius: 50%;
-            color: white;
+            color: #3e2723;
             cursor: pointer;
+            font-weight: bold;
         }
         .swipe-container {
             display: flex;
@@ -180,21 +185,23 @@
             width: 8px;
             height: 8px;
             border-radius: 50%;
-            background: rgba(255, 255, 255, 0.4);
+            background: rgba(245, 230, 211, 0.5);
             transition: 0.2s;
         }
         .indicator.active {
             width: 24px;
             border-radius: 10px;
-            background: #e91e63;
+            background: #d4af37;
         }
         .card {
-            background: rgba(30, 41, 59, 0.7);
-            backdrop-filter: blur(12px);
+            background: rgba(245, 230, 211, 0.95);
+            backdrop-filter: blur(8px);
             border-radius: 28px;
             padding: 1rem;
             margin-bottom: 1rem;
-            border: 1px solid rgba(233, 30, 99, 0.25);
+            border: 1px solid #d4af37;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            color: #3e2723;
         }
         .card-title {
             font-size: 1.1rem;
@@ -203,10 +210,10 @@
             display: flex;
             align-items: center;
             gap: 8px;
-            color: #ffb6c1;
+            color: #8b691b;
         }
         .expense-item, .debtor-item {
-            background: rgba(0, 0, 0, 0.3);
+            background: rgba(62, 39, 35, 0.08);
             border-radius: 20px;
             padding: 12px;
             margin-bottom: 10px;
@@ -215,6 +222,7 @@
             align-items: center;
             flex-wrap: wrap;
             gap: 8px;
+            border-left: 4px solid #d4af37;
         }
         .expense-info, .debtor-info {
             flex: 1;
@@ -227,14 +235,14 @@
         .btn-small {
             padding: 6px 12px;
             font-size: 0.7rem;
-            background: #ef4444;
+            background: #b5651e;
             color: white;
             border: none;
             border-radius: 40px;
             cursor: pointer;
         }
         .btn-quitar {
-            background: #10b981;
+            background: #2e7d32;
         }
         .dashboard-row {
             display: flex;
@@ -250,17 +258,17 @@
         .dashboard-card .value {
             font-size: 1.5rem;
             font-weight: 800;
-            color: #ffb74d;
+            color: #b5651e;
         }
         .progress-bar {
             height: 6px;
-            background: rgba(255, 255, 255, 0.2);
+            background: rgba(0, 0, 0, 0.2);
             border-radius: 10px;
             overflow: hidden;
             margin-top: 6px;
         }
         .progress-fill {
-            background: #e91e63;
+            background: #c9a03d;
             width: 0%;
             height: 100%;
         }
@@ -278,9 +286,9 @@
             width: 100%;
             padding: 10px 14px;
             border-radius: 40px;
-            border: 1px solid rgba(233, 30, 99, 0.5);
-            background: rgba(15, 23, 42, 0.8);
-            color: white;
+            border: 1px solid #d4af37;
+            background: #fef7e8;
+            color: #3e2723;
             font-size: 0.9rem;
         }
         .btn {
@@ -294,22 +302,23 @@
             justify-content: center;
             gap: 8px;
             font-size: 0.85rem;
+            transition: 0.2s;
         }
         .btn-primary {
-            background: linear-gradient(95deg, #e91e63, #c2185b);
+            background: linear-gradient(95deg, #c9a03d, #8b691b);
             color: white;
         }
         .btn-secondary {
-            background: rgba(255, 255, 255, 0.1);
-            color: white;
-            border: 1px solid rgba(233, 30, 99, 0.4);
+            background: rgba(62, 39, 35, 0.2);
+            color: #3e2723;
+            border: 1px solid #d4af37;
         }
         .btn-danger {
-            background: #ef4444;
+            background: #b5651e;
             color: white;
         }
         .btn-success {
-            background: #10b981;
+            background: #2e7d32;
             color: white;
         }
         table {
@@ -319,7 +328,7 @@
         }
         th, td {
             padding: 8px 4px;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
+            border-bottom: 1px solid rgba(0,0,0,0.1);
             text-align: left;
         }
         .debtor-form-group {
@@ -367,6 +376,27 @@
                 justify-content: flex-start;
             }
         }
+        .budget-item {
+            background: rgba(62, 39, 35, 0.08);
+            border-radius: 20px;
+            padding: 8px;
+            margin-bottom: 10px;
+        }
+        .delete-budget {
+            float: right;
+            background: none;
+            border: none;
+            color: #b5651e;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .info-message {
+            background: rgba(212, 175, 55, 0.15);
+            padding: 8px;
+            border-radius: 16px;
+            font-size: 0.7rem;
+            margin-top: 8px;
+        }
     </style>
 </head>
 <body>
@@ -374,14 +404,15 @@
 <!-- TELA DE SELEÇÃO DO PARCEIRO -->
 <div id="login-container" class="login-container">
     <div class="login-card">
-        <h2><i class="fas fa-hand-holding-heart"></i> Finanças do Casal</h2>
+        <h2><i class="fas fa-hand-holding-heart"></i> CASH CASAL</h2>
+        <p style="text-align: center; margin-bottom: 16px; font-size: 0.9rem;">Gestão Financeira para Dois</p>
         <input type="text" id="name1" placeholder="Nome do Parceiro 1 (ex: Wagner)">
         <input type="text" id="name2" placeholder="Nome do Parceiro 2 (ex: Andrea)">
         <select id="current-user-select">
             <option value="">-- Selecione quem está usando --</option>
         </select>
         <button id="enter-app-btn">Entrar no app</button>
-        <div style="margin-top: 16px; font-size: 0.7rem; text-align: center;">Os dados são sincronizados em tempo real</div>
+        <div style="margin-top: 16px; font-size: 0.7rem; text-align: center;">Fatura fecha dia 2 de cada mês</div>
     </div>
 </div>
 
@@ -390,7 +421,7 @@
     <div class="app-header">
         <div class="logo-area">
             <i class="fas fa-piggy-bank"></i>
-            <h2>Casal Finanças</h2>
+            <h2>CASH CASAL</h2>
         </div>
         <div class="month-nav">
             <button id="global-prev-month"><i class="fas fa-chevron-left"></i></button>
@@ -448,7 +479,7 @@
             <div class="card">
                 <div class="card-title"><i class="fas fa-user"></i> Gastos de <span id="partner1-name-label"></span></div>
                 <div style="display: flex; justify-content: flex-end; margin-bottom: 12px;">
-                    <div class="month-nav" style="background: rgba(0,0,0,0.3);">
+                    <div class="month-nav" style="background: rgba(0,0,0,0.2);">
                         <button id="partner1-prev-month"><i class="fas fa-chevron-left"></i></button>
                         <span id="partner1-month-display"></span>
                         <button id="partner1-next-month"><i class="fas fa-chevron-right"></i></button>
@@ -463,7 +494,7 @@
             <div class="card">
                 <div class="card-title"><i class="fas fa-user"></i> Gastos de <span id="partner2-name-label"></span></div>
                 <div style="display: flex; justify-content: flex-end; margin-bottom: 12px;">
-                    <div class="month-nav" style="background: rgba(0,0,0,0.3);">
+                    <div class="month-nav" style="background: rgba(0,0,0,0.2);">
                         <button id="partner2-prev-month"><i class="fas fa-chevron-left"></i></button>
                         <span id="partner2-month-display"></span>
                         <button id="partner2-next-month"><i class="fas fa-chevron-right"></i></button>
@@ -483,8 +514,12 @@
                         <div class="input-group"><label>Valor total</label><input type="number" id="valor-total" step="0.01" required></div>
                     </div>
                     <div class="form-row">
-                        <div class="input-group"><label>Parcelas</label><input type="number" id="parcelas" value="1" min="1"></div>
-                        <div class="input-group"><label>Data 1ª</label><input type="date" id="start-date"></div>
+                        <div class="input-group"><label>Total de parcelas</label><input type="number" id="parcelas" value="1" min="1" required></div>
+                        <div class="input-group"><label>Parcelas já pagas</label><input type="number" id="parcelasPagas" value="0" min="0" step="1"></div>
+                    </div>
+                    <div class="form-row">
+                        <div class="input-group"><label>Data da compra</label><input type="date" id="start-date" required></div>
+                        <div class="input-group"></div>
                     </div>
                     <div class="form-row">
                         <div class="input-group"><label>Quem pagou?</label><select id="paid-by"><option value="me">Eu</option><option value="her">Parceiro</option><option value="both">Dividido</option></select></div>
@@ -497,6 +532,10 @@
                     </div>
                     <div class="input-group"><label>Observação</label><input type="text" id="observacao"></div>
                     <div id="preview-division" style="margin: 8px 0; font-size: 0.7rem; opacity: 0.8;"></div>
+                    <div class="info-message">
+                        <i class="fas fa-info-circle"></i> Fatura fecha dia 2. Compras a partir do dia 2 vão para o mês seguinte.<br>
+                        <i class="fas fa-history"></i> Parcelas já pagas: informe quantas já foram pagas para continuar apenas com as restantes.
+                    </div>
                     <div style="display: flex; gap: 8px; margin-top: 8px;">
                         <button type="button" id="add-expense-btn" class="btn btn-primary">💾 Salvar</button>
                         <button type="button" id="cancel-edit-btn" class="btn btn-secondary" style="display:none;">Cancelar</button>
@@ -545,7 +584,7 @@
             </div>
             <div class="card">
                 <div class="card-title"><i class="fas fa-download"></i> Exportar dados</div>
-                <button id="export-csv-btn" class="btn btn-secondary" style="width:100%;">📎 Exportar CSV (mês atual)</button>
+                <button id="export-csv-btn" class="btn btn-secondary" style="width:100%;">📎 Exportar CSV</button>
             </div>
             <div class="card">
                 <div class="card-title"><i class="fas fa-palette"></i> Aparência</div>
@@ -634,43 +673,56 @@
         return { p1: parcelaValor / 2, p2: parcelaValor / 2 };
     }
 
-    function getInstallmentDate(exp, targetMonthYear) {
-        const start = new Date(exp.startDate);
-        const [targetYear, targetMonth] = targetMonthYear.split('-').map(Number);
-        for (let i = 0; i < exp.parcelas; i++) {
-            const due = new Date(start);
-            due.setMonth(start.getMonth() + i);
-            if (due.getFullYear() === targetYear && due.getMonth() + 1 === targetMonth) {
-                return due.toLocaleDateString('pt-BR');
+    // Função principal: determina a fatura correta baseada no dia 2
+    function getFaturaMonthYear(date) {
+        const day = date.getDate();
+        let month = date.getMonth();
+        let year = date.getFullYear();
+        
+        if (day <= 1) {
+            // Vai para o mês anterior
+            if (month === 0) {
+                month = 11;
+                year--;
+            } else {
+                month--;
             }
         }
-        return "Data desconhecida";
+        return `${year}-${String(month + 1).padStart(2, '0')}`;
     }
 
-    function generateInstallmentMonths(startDateISO, parcelas) {
+    // Gera as parcelas restantes baseado no número de parcelas já pagas
+    function generateInstallmentMonths(startDateISO, totalParcelas, parcelasPagas = 0) {
         const start = new Date(startDateISO);
         const months = [];
-        for (let i = 0; i < parcelas; i++) {
-            const due = new Date(start);
-            due.setMonth(start.getMonth() + i);
-            months.push(`${due.getFullYear()}-${String(due.getMonth() + 1).padStart(2, '0')}`);
+        
+        // Calcula a partir de qual parcela começar (index base 0)
+        const startIndex = parcelasPagas;
+        
+        // Gera apenas as parcelas restantes
+        for (let i = startIndex; i < totalParcelas; i++) {
+            const dueDate = new Date(start);
+            dueDate.setMonth(start.getMonth() + i);
+            const faturaMonth = getFaturaMonthYear(dueDate);
+            months.push(faturaMonth);
         }
+        
         return months;
     }
 
     async function generateRecurringForMonth(targetMonth) {
-        // Evita execução duplicada se já estiver gerando
         if (!recurringTemplates.length) return;
         for (const template of recurringTemplates) {
             const q = expensesRef.where('recurringTemplateId', '==', template.id).where('installmentMonths', 'array-contains', targetMonth);
             const snap = await q.get();
             if (snap.empty) {
                 const firstDay = new Date(currentYear, currentMonth, 1);
-                const newInstallments = generateInstallmentMonths(firstDay.toISOString().slice(0,10), template.parcelas);
+                const newInstallments = generateInstallmentMonths(firstDay.toISOString().slice(0,10), template.parcelas, 0);
                 await expensesRef.add({
                     descricao: template.descricao,
                     valorTotal: template.valorTotal,
                     parcelas: template.parcelas,
+                    parcelasPagas: 0,
                     startDate: firstDay.toISOString().slice(0,10),
                     paidBy: template.paidBy,
                     splitType: template.splitType,
@@ -684,6 +736,21 @@
                 });
             }
         }
+    }
+
+    function getInstallmentDate(exp, targetMonthYear) {
+        const start = new Date(exp.startDate);
+        const parcelasPagas = exp.parcelasPagas || 0;
+        
+        for (let i = parcelasPagas; i < exp.parcelas; i++) {
+            const due = new Date(start);
+            due.setMonth(start.getMonth() + i);
+            const dueMonthYear = `${due.getFullYear()}-${String(due.getMonth() + 1).padStart(2, '0')}`;
+            if (dueMonthYear === targetMonthYear) {
+                return due.toLocaleDateString('pt-BR');
+            }
+        }
+        return "Data desconhecida";
     }
 
     function updateUIWithNames() {
@@ -728,7 +795,7 @@
                     <span class="expense-date">${exp.data} - ${exp.categoria || 'Sem categoria'}</span>
                 </div>
                 <div style="display: flex; align-items: center; gap: 12px;">
-                    <span style="font-weight:700; color:#ffb74d;">${formatMoney(exp.valor)}</span>
+                    <span style="font-weight:700; color:#b5651e;">${formatMoney(exp.valor)}</span>
                     <button class="btn-small delete-partner-expense" data-id="${exp.id}">🗑️ Excluir</button>
                 </div>
             </div>
@@ -762,7 +829,7 @@
                         <span class="debtor-date">📅 ${dataFormatada}</span>
                     </div>
                     <div style="display: flex; align-items: center; gap: 12px;">
-                        <span style="font-weight:700; color:#ffb74d;">${formatMoney(d.valor)}</span>
+                        <span style="font-weight:700; color:#b5651e;">${formatMoney(d.valor)}</span>
                         <button class="btn-small btn-quitar" data-id="${d.id}" data-value="${d.valor}" data-name="${escapeHtml(d.nome)}">💰 Quitar</button>
                         <button class="btn-small" data-id="${d.id}" data-action="delete">🗑️ Excluir</button>
                     </div>
@@ -844,20 +911,24 @@
     }
 
     function updatePartnerPages() {
-        const targetMonth = `${currentYear}-${String(currentMonth+1).padStart(2,'0')}`;
+        const targetMonth = getFaturaMonthYear(new Date(currentYear, currentMonth, 1));
         renderPartnerExpenses('me', 'partner1-expenses-list', targetMonth);
         renderPartnerExpenses('her', 'partner2-expenses-list', targetMonth);
-        document.getElementById('partner1-month-display').innerText = new Date(currentYear, currentMonth).toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
-        document.getElementById('partner2-month-display').innerText = new Date(currentYear, currentMonth).toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
-        document.getElementById('global-month-display').innerText = new Date(currentYear, currentMonth).toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
+        document.getElementById('partner1-month-display').innerText = formatMonthYear(targetMonth);
+        document.getElementById('partner2-month-display').innerText = formatMonthYear(targetMonth);
+        document.getElementById('global-month-display').innerText = formatMonthYear(targetMonth);
+    }
+
+    function formatMonthYear(monthYear) {
+        const [year, month] = monthYear.split('-');
+        const date = new Date(parseInt(year), parseInt(month) - 1, 1);
+        return date.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
     }
 
     async function updateDashboard() {
         if (!currentUserId) return;
-        const targetMonth = `${currentYear}-${String(currentMonth+1).padStart(2,'0')}`;
-        // Gera recorrências para o mês atual ANTES de carregar as despesas
+        const targetMonth = getFaturaMonthYear(new Date(currentYear, currentMonth, 1));
         await generateRecurringForMonth(targetMonth);
-        
         const monthExpenses = allExpenses.filter(exp => exp.installmentMonths && exp.installmentMonths.includes(targetMonth));
         currentDisplayExpenses = monthExpenses;
         
@@ -903,7 +974,8 @@
         const futureParcels = [];
         for (const exp of expensesList) {
             const startDate = new Date(exp.startDate);
-            for (let i = 0; i < exp.parcelas; i++) {
+            const parcelasPagas = exp.parcelasPagas || 0;
+            for (let i = parcelasPagas; i < exp.parcelas; i++) {
                 const due = new Date(startDate);
                 due.setMonth(startDate.getMonth() + i);
                 if (due > today && due <= threeMonthsLater) {
@@ -915,7 +987,7 @@
         futureParcels.sort((a,b)=>a.date-b.date);
         for (let p of futureParcels.slice(0,6)) {
             const li = document.createElement('li');
-            li.style.background = 'rgba(0,0,0,0.3)';
+            li.style.background = 'rgba(0,0,0,0.05)';
             li.style.padding = '6px 12px';
             li.style.borderRadius = '40px';
             li.style.fontSize = '0.75rem';
@@ -937,13 +1009,13 @@
         const data = [...catMap.values()];
         if (categoryChart) categoryChart.destroy();
         const ctx = document.getElementById('categoryChart').getContext('2d');
-        categoryChart = new Chart(ctx, { type: 'pie', data: { labels, datasets: [{ data, backgroundColor: ['#e91e63','#ff6b9d','#c2185b','#f48fb1','#f06292','#ec407a'] }] } });
+        categoryChart = new Chart(ctx, { type: 'pie', data: { labels, datasets: [{ data, backgroundColor: ['#c9a03d', '#b5651e', '#8b691b', '#d4af37', '#f5e6d3', '#a0522d'] }] } });
         
         let totalMe=0, totalHer=0;
         expensesList.forEach(exp => { const {p1,p2}=calculateMonthlyShare(exp); totalMe+=p1; totalHer+=p2; });
         if (compareChart) compareChart.destroy();
         const ctx2 = document.getElementById('compareChart').getContext('2d');
-        compareChart = new Chart(ctx2, { type: 'bar', data: { labels: [partnerName.me, partnerName.her], datasets: [{ data: [totalMe, totalHer], backgroundColor: ['#e91e63', '#ffb74d'] }] } });
+        compareChart = new Chart(ctx2, { type: 'bar', data: { labels: [partnerName.me, partnerName.her], datasets: [{ data: [totalMe, totalHer], backgroundColor: ['#c9a03d', '#b5651e'] }] } });
     }
 
     function renderBudgets(expensesList) {
@@ -959,8 +1031,8 @@
             const div = document.createElement('div');
             div.className = 'budget-item';
             div.innerHTML = `<div style="display:flex; justify-content:space-between"><span>${cat}</span><span>${formatMoney(gasto)} / ${formatMoney(limit)}</span></div>
-            <div class="progress-bar"><div class="progress-fill" style="width:${Math.min(percent,100)}%; background:${over ? '#ef4444' : '#e91e63'}"></div></div>
-            ${over ? '<small style="color:#ef4444">⚠️ Estourou!</small>' : ''}
+            <div class="progress-bar"><div class="progress-fill" style="width:${Math.min(percent,100)}%; background:${over ? '#b5651e' : '#c9a03d'}"></div></div>
+            ${over ? '<small style="color:#b5651e">⚠️ Estourou!</small>' : ''}
             <button class="delete-budget" data-cat="${cat}">❌</button>`;
             budgetListDiv.appendChild(div);
         }
@@ -981,7 +1053,7 @@
             row.innerHTML = `
                 <td><strong>${exp.descricao}</strong><br><small>${exp.observacao || ''}</small></td>
                 <td>${formatMoney(exp.valorTotal)}</td>
-                <td>${exp.parcelas}x</td>
+                <td>${exp.parcelas}x (${exp.parcelasPagas || 0} pagas)</td>
                 <td>${formatMoney(p1 + p2)}</td>
                 <td>${payerText}</td>
                 <td><button class="edit-expense btn btn-secondary" data-id="${exp.id}" style="padding:4px 8px;">✏️</button> <button class="delete-expense btn btn-danger" data-id="${exp.id}" style="padding:4px 8px;">🗑️</button></td>
@@ -996,7 +1068,7 @@
     }
 
     function applyFilters() {
-        const targetMonth = `${currentYear}-${String(currentMonth+1).padStart(2,'0')}`;
+        const targetMonth = getFaturaMonthYear(new Date(currentYear, currentMonth, 1));
         let filtered = allExpenses.filter(exp => exp.installmentMonths && exp.installmentMonths.includes(targetMonth));
         const desc = document.getElementById('filter-desc').value.toLowerCase();
         const cat = document.getElementById('filter-category').value;
@@ -1022,6 +1094,7 @@
         document.getElementById('descricao').value = exp.descricao;
         document.getElementById('valor-total').value = exp.valorTotal;
         document.getElementById('parcelas').value = exp.parcelas;
+        document.getElementById('parcelasPagas').value = exp.parcelasPagas || 0;
         document.getElementById('start-date').value = exp.startDate.slice(0,10);
         document.getElementById('paid-by').value = exp.paidBy;
         document.getElementById('split-type').value = exp.splitType;
@@ -1043,11 +1116,19 @@
         const descricao = document.getElementById('descricao').value.trim();
         const valorTotal = parseFloat(document.getElementById('valor-total').value);
         const parcelas = parseInt(document.getElementById('parcelas').value);
+        const parcelasPagas = parseInt(document.getElementById('parcelasPagas').value) || 0;
         const startDateStr = document.getElementById('start-date').value;
+        
         if (!descricao || isNaN(valorTotal) || valorTotal <= 0 || parcelas < 1 || !startDateStr) {
             Swal.fire("Preencha todos os campos obrigatórios.");
             return;
         }
+        
+        if (parcelasPagas >= parcelas) {
+            Swal.fire("Atenção", "O número de parcelas já pagas não pode ser maior ou igual ao total de parcelas.", "warning");
+            return;
+        }
+        
         const paidBy = document.getElementById('paid-by').value;
         const splitType = document.getElementById('split-type').value;
         let customPercent = null;
@@ -1061,10 +1142,12 @@
         const categoria = document.getElementById('categoria').value.trim() || "Geral";
         const observacao = document.getElementById('observacao').value;
         const isRecurring = document.getElementById('recorrente').value === 'monthly';
-        const installmentMonths = generateInstallmentMonths(startDateStr, parcelas);
+        
+        // Gera apenas as parcelas restantes
+        const installmentMonths = generateInstallmentMonths(startDateStr, parcelas, parcelasPagas);
         
         const expenseData = {
-            descricao, valorTotal, parcelas, startDate: startDateStr,
+            descricao, valorTotal, parcelas, parcelasPagas, startDate: startDateStr,
             paidBy, splitType, customPercent, categoria, observacao,
             installmentMonths,
             updatedAt: firebase.firestore.FieldValue.serverTimestamp()
@@ -1076,9 +1159,9 @@
             editingDocId = null;
         } else {
             const newRef = await expensesRef.add(expenseData);
-            if (isRecurring) {
+            if (isRecurring && parcelasPagas === 0) {
                 await recurringRef.add({
-                    descricao, valorTotal, parcelas, startDate: startDateStr,
+                    descricao, valorTotal, parcelas, parcelasPagas, startDate: startDateStr,
                     paidBy, splitType, customPercent, categoria, observacao,
                     templateFor: newRef.id
                 });
@@ -1086,6 +1169,7 @@
         }
         document.getElementById('expense-form').reset();
         document.getElementById('parcelas').value = 1;
+        document.getElementById('parcelasPagas').value = 0;
         document.getElementById('start-date').valueAsDate = new Date();
         document.getElementById('add-expense-btn').textContent = '💾 Salvar';
         document.getElementById('cancel-edit-btn').style.display = 'none';
@@ -1098,15 +1182,15 @@
         else if (nm > 11) { nm = 0; ny++; }
         currentMonth = nm;
         currentYear = ny;
-        await updateDashboard(); // updateDashboard já chama generateRecurringForMonth
+        await updateDashboard();
     }
 
     function exportCSV() {
-        let csvRows = [["Descrição","Valor Total","Parcelas","Parcela Mês","Pagador","Categoria","Observação"]];
+        let csvRows = [["Descrição","Valor Total","Parcelas","Parcelas Pagas","Parcela Mês","Pagador","Categoria","Observação"]];
         for (let exp of currentDisplayExpenses) {
             const { p1, p2 } = calculateMonthlyShare(exp);
             const payerText = exp.paidBy === 'me' ? partnerName.me : (exp.paidBy === 'her' ? partnerName.her : 'Dividido');
-            csvRows.push([exp.descricao, exp.valorTotal, exp.parcelas, p1+p2, payerText, exp.categoria, exp.observacao]);
+            csvRows.push([exp.descricao, exp.valorTotal, exp.parcelas, exp.parcelasPagas || 0, p1+p2, payerText, exp.categoria, exp.observacao]);
         }
         const csv = csvRows.map(row => row.join(",")).join("\n");
         const blob = new Blob([csv], {type: "text/csv"});
@@ -1123,10 +1207,11 @@
             focusConfirm: false, preConfirm: () => ({ desc: document.getElementById('swal-desc').value, valor: parseFloat(document.getElementById('swal-valor').value), cat: document.getElementById('swal-cat').value })
         });
         if (formValues && formValues.desc && !isNaN(formValues.valor)) {
-            const startDate = new Date(currentYear, currentMonth, 1).toISOString().slice(0,10);
-            const installmentMonths = [`${currentYear}-${String(currentMonth+1).padStart(2,'0')}`];
+            const startDate = new Date(currentYear, currentMonth, 1);
+            const startDateStr = startDate.toISOString().slice(0,10);
+            const installmentMonths = generateInstallmentMonths(startDateStr, 1, 0);
             await expensesRef.add({
-                descricao: formValues.desc, valorTotal: formValues.valor, parcelas: 1, startDate,
+                descricao: formValues.desc, valorTotal: formValues.valor, parcelas: 1, parcelasPagas: 0, startDate: startDateStr,
                 paidBy: 'both', splitType: '50-50', categoria: formValues.cat, installmentMonths,
                 observacao: '', createdAt: firebase.firestore.FieldValue.serverTimestamp(),
                 updatedAt: firebase.firestore.FieldValue.serverTimestamp()
@@ -1146,9 +1231,9 @@
         }
         let html = `<div style="max-height: 300px; overflow-y: auto;">`;
         recurringTemplates.forEach(t => {
-            html += `<div style="background:rgba(0,0,0,0.4); border-radius:20px; padding:8px; margin-bottom:8px; display:flex; justify-content:space-between;">
+            html += `<div style="background:rgba(0,0,0,0.05); border-radius:20px; padding:8px; margin-bottom:8px; display:flex; justify-content:space-between;">
                         <div><strong>${t.descricao}</strong> - ${formatMoney(t.valorTotal)} (${t.parcelas}x) - ${t.categoria}</div>
-                        <button class="delete-template-btn" data-id="${t.id}" style="background:#ef4444; color:white; border:none; border-radius:40px; padding:4px 12px;">Excluir</button>
+                        <button class="delete-template-btn" data-id="${t.id}" style="background:#b5651e; color:white; border:none; border-radius:40px; padding:4px 12px;">Excluir</button>
                      </div>`;
         });
         html += `</div><p style="font-size:0.7rem;">Ao excluir, as despesas já geradas permanecem, mas novas não serão criadas.</p>`;
@@ -1259,7 +1344,7 @@
         document.getElementById('login-container').style.display = 'none';
         document.getElementById('app-container').style.display = 'block';
         setupFirestoreListeners();
-        const targetMonth = `${currentYear}-${String(currentMonth+1).padStart(2,'0')}`;
+        const targetMonth = getFaturaMonthYear(new Date(currentYear, currentMonth, 1));
         await generateRecurringForMonth(targetMonth);
         updateDashboard();
         setupSwipe();
@@ -1327,7 +1412,7 @@
     document.getElementById('add-debtor-btn').addEventListener('click', addDebtor);
     document.getElementById('save-debtors-btn').addEventListener('click', saveDebtors);
 
-    // Tema escuro
+    // Tema escuro alternativo
     const themeToggle = document.getElementById('theme-toggle-btn');
     if (themeToggle) {
         themeToggle.addEventListener('click', () => {
@@ -1337,7 +1422,7 @@
     }
     if (localStorage.getItem('darkTheme') === 'enabled') document.body.classList.add('dark-theme');
     const styleDark = document.createElement('style');
-    styleDark.textContent = `.dark-theme .card { background: rgba(0,0,0,0.6); }`;
+    styleDark.textContent = `.dark-theme .card { background: rgba(44, 26, 14, 0.95); color: #f5e6d3; } .dark-theme .card-title { color: #d4af37; } .dark-theme .dashboard-card .value { color: #d4af37; } .dark-theme input, .dark-theme select { background: #3e2723; color: #f5e6d3; border-color: #d4af37; }`;
     document.head.appendChild(styleDark);
 
     loadSavedLogin();
