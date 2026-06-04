@@ -460,7 +460,7 @@
         <div class="profile-btn" id="logoutBtn"><div id="userAvatar" class="profile-avatar">P</div><i class="fas fa-sign-out-alt"></i></div>
     </div>
     <div class="swipe-container" id="swipeContainer">
-        <!-- Página 0: Resumo (apenas gastos do mês de fatura atual) -->
+        <!-- Página 0: Resumo -->
         <div class="swipe-page" data-page="0">
             <div class="card">
                 <div class="card-title"><i class="fas fa-chart-line"></i> Resumo do Mês</div>
@@ -623,8 +623,8 @@
 
     let currentPartnerId = "";
     let partner1Name = "", partner2Name = "";
-    let selectedMonth = new Date().getMonth();      // mês selecionado (0-11)
-    let selectedYear = new Date().getFullYear();    // ano selecionado
+    let selectedMonth = new Date().getMonth();
+    let selectedYear = new Date().getFullYear();
     let allExpenses = [];
     let currentDisplayExpenses = [];
     let categoriesBudget = {};
@@ -646,20 +646,12 @@
     const escapeHtml = (str) => { if (!str) return ''; return str.replace(/[&<>]/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[m])); };
 
     // ========== REGRA DE FATURA (DIA 2) ==========
-    // Para uma data de compra, determina em qual fatura (mês/ano) ela será incluída.
-    // Compras com dia >= 2 entram na fatura do próprio mês.
-    // Compras com dia <= 1 entram na fatura do mês anterior (fatura que fecha no dia 2).
     function getFaturaMonthYear(date) {
         const day = date.getDate();
-        let month = date.getMonth();
-        let year = date.getFullYear();
+        let month = date.getMonth(), year = date.getFullYear();
         if (day <= 1) {
-            if (month === 0) {
-                month = 11;
-                year--;
-            } else {
-                month--;
-            }
+            if (month === 0) { month = 11; year--; }
+            else month--;
         }
         return `${year}-${String(month + 1).padStart(2, '0')}`;
     }
@@ -673,6 +665,56 @@
             months.push(getFaturaMonthYear(dueDate));
         }
         return months;
+    }
+
+    // ========== CORREÇÃO: DEFINE O VALOR QUE CADA PARCEIRO PAGA ==========
+    // Regra: se paidBy = 'partner1' -> todo o valor da parcela vai para partner1
+    //        se paidBy = 'partner2' -> todo o valor da parcela vai para partner2
+    //        se paidBy = 'both' -> divide conforme splitType
+    function calculateMonthlyShare(exp) {
+        const parcelaValor = exp.valorTotal / exp.parcelas;
+        let valorAposTerceiros = parcelaValor;
+        if (exp.thirdParties && exp.thirdParties.length > 0) {
+            const totalTerceiros = exp.thirdParties.reduce((sum, t) => sum + (t.valor || 0), 0);
+            valorAposTerceiros = Math.max(0, parcelaValor - totalTerceiros);
+        }
+        const paidBy = exp.paidBy;
+        if (paidBy === 'partner1') return { partner1: valorAposTerceiros, partner2: 0 };
+        if (paidBy === 'partner2') return { partner1: 0, partner2: valorAposTerceiros };
+        // paidBy === 'both'
+        const splitType = exp.splitType;
+        let p1 = 0, p2 = 0;
+        if (splitType === '50-50') {
+            p1 = valorAposTerceiros / 2;
+            p2 = valorAposTerceiros / 2;
+        } else if (splitType === 'custom-percent') {
+            const perc = exp.customPercent || 50;
+            p1 = valorAposTerceiros * (perc / 100);
+            p2 = valorAposTerceiros * ((100 - perc) / 100);
+        } else if (splitType === 'proportional-income') {
+            const totalIncome = incomes.partner1 + incomes.partner2;
+            if (totalIncome > 0) {
+                p1 = valorAposTerceiros * (incomes.partner1 / totalIncome);
+                p2 = valorAposTerceiros * (incomes.partner2 / totalIncome);
+            } else {
+                p1 = valorAposTerceiros / 2;
+                p2 = valorAposTerceiros / 2;
+            }
+        } else {
+            p1 = valorAposTerceiros / 2;
+            p2 = valorAposTerceiros / 2;
+        }
+        return { partner1: p1, partner2: p2 };
+    }
+
+    function getInstallmentDate(exp, targetMonthYear) {
+        const start = new Date(exp.startDate);
+        for (let i = exp.parcelasPagas || 0; i < exp.parcelas; i++) {
+            const due = new Date(start);
+            due.setMonth(start.getMonth() + i);
+            if (`${due.getFullYear()}-${String(due.getMonth() + 1).padStart(2, '0')}` === targetMonthYear) return due.toLocaleDateString('pt-BR');
+        }
+        return "Data desconhecida";
     }
 
     // ========== FUNÇÕES DO CHAT ==========
@@ -813,36 +855,7 @@
         Swal.fire('Meta salva!', `Meta de ${partner === 'partner1' ? partner1Name : partner2Name} atualizada.`, 'success');
     }
 
-    // ========== FUNÇÕES FINANCEIRAS ==========
-    function calculateMonthlyShare(exp) {
-        const parcelaValor = exp.valorTotal / exp.parcelas;
-        let valorAposTerceiros = parcelaValor;
-        if (exp.thirdParties && exp.thirdParties.length > 0) {
-            const totalTerceiros = exp.thirdParties.reduce((sum, t) => sum + (t.valor || 0), 0);
-            valorAposTerceiros = Math.max(0, parcelaValor - totalTerceiros);
-        }
-        const splitType = exp.splitType;
-        let p1 = 0, p2 = 0;
-        if (splitType === '50-50') { p1 = valorAposTerceiros / 2; p2 = valorAposTerceiros / 2; }
-        else if (splitType === 'custom-percent') { const perc = exp.customPercent || 50; p1 = valorAposTerceiros * (perc / 100); p2 = valorAposTerceiros * ((100 - perc) / 100); }
-        else if (splitType === 'proportional-income') {
-            const totalIncome = incomes.partner1 + incomes.partner2;
-            if (totalIncome > 0) { p1 = valorAposTerceiros * (incomes.partner1 / totalIncome); p2 = valorAposTerceiros * (incomes.partner2 / totalIncome); }
-            else { p1 = valorAposTerceiros / 2; p2 = valorAposTerceiros / 2; }
-        } else { p1 = valorAposTerceiros / 2; p2 = valorAposTerceiros / 2; }
-        return { partner1: p1, partner2: p2 };
-    }
-
-    function getInstallmentDate(exp, targetMonthYear) {
-        const start = new Date(exp.startDate);
-        for (let i = exp.parcelasPagas || 0; i < exp.parcelas; i++) {
-            const due = new Date(start);
-            due.setMonth(start.getMonth() + i);
-            if (`${due.getFullYear()}-${String(due.getMonth() + 1).padStart(2, '0')}` === targetMonthYear) return due.toLocaleDateString('pt-BR');
-        }
-        return "Data desconhecida";
-    }
-
+    // ========== FUNÇÕES DE RENDERIZAÇÃO ==========
     function updateUIWithNames() {
         document.getElementById('gasto-partner1-label').innerHTML = `🧑 Gasto de ${partner1Name}`;
         document.getElementById('gasto-partner2-label').innerHTML = `👩 Gasto de ${partner2Name}`;
@@ -941,12 +954,17 @@
         const parcelaValor = valorTotal / parcelas;
         const totalTerceiros = thirdParties.reduce((sum, tp) => sum + (tp.valor || 0), 0);
         const valorAposTerceiros = Math.max(0, parcelaValor - totalTerceiros);
+        const paidBy = document.getElementById('paid-by').value;
         const splitType = document.getElementById('split-type').value;
         let p1 = 0, p2 = 0;
-        if (splitType === '50-50') { p1 = valorAposTerceiros / 2; p2 = valorAposTerceiros / 2; }
-        else if (splitType === 'custom-percent') { const perc = parseFloat(document.getElementById('custom-split').value) || 50; p1 = valorAposTerceiros * (perc / 100); p2 = valorAposTerceiros * ((100 - perc) / 100); }
-        else if (splitType === 'proportional-income') { const totalIncome = incomes.partner1 + incomes.partner2; if (totalIncome > 0) { p1 = valorAposTerceiros * (incomes.partner1 / totalIncome); p2 = valorAposTerceiros * (incomes.partner2 / totalIncome); } else { p1 = valorAposTerceiros / 2; p2 = valorAposTerceiros / 2; } }
-        else { p1 = valorAposTerceiros / 2; p2 = valorAposTerceiros / 2; }
+        if (paidBy === 'partner1') { p1 = valorAposTerceiros; p2 = 0; }
+        else if (paidBy === 'partner2') { p1 = 0; p2 = valorAposTerceiros; }
+        else {
+            if (splitType === '50-50') { p1 = valorAposTerceiros / 2; p2 = valorAposTerceiros / 2; }
+            else if (splitType === 'custom-percent') { const perc = parseFloat(document.getElementById('custom-split').value) || 50; p1 = valorAposTerceiros * (perc / 100); p2 = valorAposTerceiros * ((100 - perc) / 100); }
+            else if (splitType === 'proportional-income') { const totalIncome = incomes.partner1 + incomes.partner2; if (totalIncome > 0) { p1 = valorAposTerceiros * (incomes.partner1 / totalIncome); p2 = valorAposTerceiros * (incomes.partner2 / totalIncome); } else { p1 = valorAposTerceiros / 2; p2 = valorAposTerceiros / 2; } }
+            else { p1 = valorAposTerceiros / 2; p2 = valorAposTerceiros / 2; }
+        }
         let preview = `💰 Parcela: ${formatMoney(parcelaValor)} | `;
         if (thirdParties.length > 0) preview += `👥 Terceiros pagam: ${formatMoney(totalTerceiros)} | `;
         preview += `💑 Casal paga: ${formatMoney(valorAposTerceiros)}<br>🧑 ${partner1Name}: ${formatMoney(p1)} | 👩 ${partner2Name}: ${formatMoney(p2)}`;
@@ -963,6 +981,7 @@
         document.getElementById('global-month-display').innerText = format(targetMonth);
     }
 
+    // ========== EXCLUSÃO E RECORRÊNCIA ==========
     async function deleteExpenseById(id) {
         try {
             const docRef = expensesRef.doc(id);
@@ -1105,7 +1124,7 @@
         if (!tbody) return;
         tbody.innerHTML = '';
         if (currentDisplayExpenses.length === 0) {
-            tbody.innerHTML = '<td><td colspan="7" style="text-align:center">Nenhuma despesa encontrada</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="7" style="text-align:center">Nenhuma despesa encontrada</td></tr>';
             return;
         }
         for (const exp of currentDisplayExpenses) {
@@ -1133,6 +1152,7 @@
                 </td>
             `;
         }
+        // Checkboxes
         document.querySelectorAll('.expense-checkbox').forEach(cb => {
             cb.removeEventListener('change', handleCheckboxChange);
             cb.addEventListener('change', handleCheckboxChange);
@@ -1144,6 +1164,7 @@
             updateSelectionBar();
             updateHeaderCheckbox();
         }
+        // Editar
         document.querySelectorAll('.edit-expense').forEach(btn => {
             btn.removeEventListener('click', handleEdit);
             btn.addEventListener('click', handleEdit);
@@ -1152,6 +1173,7 @@
             const id = e.currentTarget.getAttribute('data-id');
             startEditExpense(id);
         }
+        // Excluir
         document.querySelectorAll('.delete-expense').forEach(btn => {
             btn.removeEventListener('click', handleDelete);
             btn.addEventListener('click', handleDelete);
@@ -1292,8 +1314,7 @@
     }
 
     async function changeMonth(delta) {
-        let nm = selectedMonth + delta;
-        let ny = selectedYear;
+        let nm = selectedMonth + delta, ny = selectedYear;
         if (nm < 0) { nm = 11; ny--; }
         else if (nm > 11) { nm = 0; ny++; }
         selectedMonth = nm;
@@ -1527,10 +1548,7 @@
         document.getElementById('third-parties-container').style.display = 'none';
         document.getElementById('has-third-parties').value = 'no';
     });
-    document.getElementById('split-type').addEventListener('change', () => {
-        document.getElementById('custom-split').style.display = document.getElementById('split-type').value === 'custom-percent' ? 'block' : 'none';
-        updatePreviewDivision();
-    });
+    document.getElementById('split-type').addEventListener('change', updatePreviewDivision);
     document.getElementById('valor-total').addEventListener('input', updatePreviewDivision);
     document.getElementById('parcelas').addEventListener('input', updatePreviewDivision);
     document.getElementById('custom-split').addEventListener('input', updatePreviewDivision);
