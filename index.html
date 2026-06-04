@@ -153,9 +153,7 @@
             -webkit-overflow-scrolling: touch;
             scrollbar-width: none;
         }
-        .swipe-container::-webkit-scrollbar {
-            display: none;
-        }
+        .swipe-container::-webkit-scrollbar { display: none; }
         .swipe-page {
             flex: 0 0 100%;
             width: 100%;
@@ -424,7 +422,6 @@
             gap: 8px;
             margin-bottom: 16px;
         }
-        /* Estilos para metas individuais */
         .individual-goal-card {
             background: rgba(0,0,0,0.3);
             border-radius: 20px;
@@ -463,7 +460,7 @@
         <div class="profile-btn" id="logoutBtn"><div id="userAvatar" class="profile-avatar">P</div><i class="fas fa-sign-out-alt"></i></div>
     </div>
     <div class="swipe-container" id="swipeContainer">
-        <!-- Página 0: Resumo -->
+        <!-- Página 0: Resumo (apenas gastos do mês de fatura atual) -->
         <div class="swipe-page" data-page="0">
             <div class="card">
                 <div class="card-title"><i class="fas fa-chart-line"></i> Resumo do Mês</div>
@@ -582,7 +579,7 @@
                 <div style="display: flex; gap: 8px; margin-top: 12px;">
                     <button id="clear-mural-btn" class="btn btn-danger" style="width: 100%;"><i class="fas fa-trash-alt"></i> Limpar mural</button>
                 </div>
-                <div class="info-message" style="margin-top: 12px;"><i class="fas fa-info-circle"></i> Este mural é compartilhado entre o casal. Cada mensagem mostra o nome de quem enviou. O botão "Limpar mural" remove todas as mensagens permanentemente.</div>
+                <div class="info-message" style="margin-top: 12px;"><i class="fas fa-info-circle"></i> Este mural é compartilhado entre o casal. Cada mensagem mostra o nome de quem enviou.</div>
             </div>
         </div>
         <!-- Página 8: Metas de Economia do Casal -->
@@ -621,13 +618,13 @@
     const debtorsRef = db.collection(`shared/${COUPLE_ID}/debtors`);
     const messagesRef = db.collection(`shared/${COUPLE_ID}/messages`);
     const incomesRef = db.collection(`shared/${COUPLE_ID}/settings`).doc("incomes");
-    const goalsRef = db.collection(`shared/${COUPLE_ID}/goals`); // metas do casal
-    const individualGoalsRef = db.collection(`shared/${COUPLE_ID}/individualGoals`); // metas individuais
+    const goalsRef = db.collection(`shared/${COUPLE_ID}/goals`);
+    const individualGoalsRef = db.collection(`shared/${COUPLE_ID}/individualGoals`);
 
     let currentPartnerId = "";
     let partner1Name = "", partner2Name = "";
-    let currentMonth = new Date().getMonth();
-    let currentYear = new Date().getFullYear();
+    let selectedMonth = new Date().getMonth();      // mês selecionado (0-11)
+    let selectedYear = new Date().getFullYear();    // ano selecionado
     let allExpenses = [];
     let currentDisplayExpenses = [];
     let categoriesBudget = {};
@@ -637,7 +634,7 @@
     let debtors = [];
     let messages = [];
     let incomes = { partner1: 0, partner2: 0 };
-    let goals = []; // metas do casal
+    let goals = [];
     let individualGoal1 = { target: 0, current: 0 };
     let individualGoal2 = { target: 0, current: 0 };
     let thirdParties = [];
@@ -647,6 +644,36 @@
 
     const formatMoney = (val) => val.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
     const escapeHtml = (str) => { if (!str) return ''; return str.replace(/[&<>]/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[m])); };
+
+    // ========== REGRA DE FATURA (DIA 2) ==========
+    // Para uma data de compra, determina em qual fatura (mês/ano) ela será incluída.
+    // Compras com dia >= 2 entram na fatura do próprio mês.
+    // Compras com dia <= 1 entram na fatura do mês anterior (fatura que fecha no dia 2).
+    function getFaturaMonthYear(date) {
+        const day = date.getDate();
+        let month = date.getMonth();
+        let year = date.getFullYear();
+        if (day <= 1) {
+            if (month === 0) {
+                month = 11;
+                year--;
+            } else {
+                month--;
+            }
+        }
+        return `${year}-${String(month + 1).padStart(2, '0')}`;
+    }
+
+    function generateInstallmentMonths(startDateISO, totalParcelas, parcelasPagas = 0) {
+        const start = new Date(startDateISO);
+        const months = [];
+        for (let i = parcelasPagas; i < totalParcelas; i++) {
+            const dueDate = new Date(start);
+            dueDate.setMonth(start.getMonth() + i);
+            months.push(getFaturaMonthYear(dueDate));
+        }
+        return months;
+    }
 
     // ========== FUNÇÕES DO CHAT ==========
     function renderMessages() {
@@ -680,7 +707,6 @@
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#e91e63',
-            cancelButtonColor: '#6c757d',
             confirmButtonText: 'Sim, limpar tudo'
         });
         if (result.isConfirmed) {
@@ -696,7 +722,7 @@
     let conciergeTimeout = null;
     function getConciergeMessage(page) {
         const currentName = (currentPartnerId === 'partner1') ? partner1Name : partner2Name;
-        const targetMonth = getFaturaMonthYear(new Date(currentYear, currentMonth, 1));
+        const targetMonth = `${selectedYear}-${String(selectedMonth + 1).padStart(2, '0')}`;
         const monthExpenses = allExpenses.filter(exp => exp.installmentMonths && exp.installmentMonths.includes(targetMonth));
         let totalPartner1 = 0, totalPartner2 = 0;
         for (const exp of monthExpenses) { const { partner1, partner2 } = calculateMonthlyShare(exp); totalPartner1 += partner1; totalPartner2 += partner2; }
@@ -714,8 +740,8 @@
         }
         const msgs = {
             0: () => `Olá ${currentName}! 👋 Bem-vindo ao CASH CASAL. ${totalGasto > 0 ? `Este mês vocês gastaram ${formatMoney(totalGasto)}. ` : ''}${totalIncome > 0 && totalGasto > totalIncome * 0.7 ? `⚠️ Atenção: seus gastos estão em ${Math.round(totalGasto/totalIncome*100)}% da renda. ` : ''}${nearGoals.length > 0 ? `🎉 Faltam ${formatMoney(nearGoals[0].target - nearGoals[0].current)} para a meta "${nearGoals[0].name}"! ` : ''}${upcoming.length > 0 ? `📅 Em breve vence a parcela de "${upcoming[0].descricao}". ` : ''}💡 Clique no ícone de IA para mais dicas!`,
-            1: () => `📊 Aqui estão os gastos de ${partner1Name} em ${new Date(currentYear, currentMonth).toLocaleDateString('pt-BR', {month:'long'})}. Total: ${formatMoney(totalPartner1)}. Você também pode definir sua meta individual aqui.`,
-            2: () => `📊 Aqui estão os gastos de ${partner2Name} em ${new Date(currentYear, currentMonth).toLocaleDateString('pt-BR', {month:'long'})}. Total: ${formatMoney(totalPartner2)}. Defina sua meta individual abaixo.`,
+            1: () => `📊 Aqui estão os gastos de ${partner1Name} em ${new Date(selectedYear, selectedMonth).toLocaleDateString('pt-BR', {month:'long'})}. Total: ${formatMoney(totalPartner1)}.`,
+            2: () => `📊 Aqui estão os gastos de ${partner2Name} em ${new Date(selectedYear, selectedMonth).toLocaleDateString('pt-BR', {month:'long'})}. Total: ${formatMoney(totalPartner2)}.`,
             3: () => `➕ Adicione uma despesa com parcelamento, divisão personalizada ou até com amigos. Lembre-se: compras a partir do dia 2 vão para a fatura do mês seguinte!`,
             4: () => `📋 No histórico você pode filtrar por descrição, categoria ou pagador. Use os checkboxes para selecionar várias despesas e excluí-las de uma vez!`,
             5: () => `⚙️ Aqui você define a renda de cada um (para divisão proporcional), cria orçamentos por categoria e exporta seus dados.`,
@@ -728,7 +754,7 @@
     function showConciergeMessage(message, duration = 8000) { const b = document.getElementById('conciergeBubble'); if (!b) return; document.getElementById('conciergeMessage').innerText = message; b.style.display = 'block'; if (conciergeTimeout) clearTimeout(conciergeTimeout); conciergeTimeout = setTimeout(() => b.style.display = 'none', duration); }
     function updateConciergeForPage(page) { if (!currentPartnerId) return; showConciergeMessage(getConciergeMessage(page), 6000); }
 
-    // ========== METAS DO CASAL ==========
+    // ========== METAS (CASAL E INDIVIDUAIS) ==========
     async function renderGoals() {
         const container = document.getElementById('goals-list');
         if (!container) return;
@@ -760,7 +786,6 @@
 
     // ========== METAS INDIVIDUAIS ==========
     function updateIndividualGoalUI() {
-        // Para parceiro 1
         const target1 = individualGoal1.target || 0;
         const current1 = individualGoal1.current || 0;
         const percent1 = target1 > 0 ? (current1 / target1) * 100 : 0;
@@ -768,7 +793,6 @@
         document.getElementById('goal1-progress-text').innerText = `${Math.round(percent1)}% (${formatMoney(current1)} de ${formatMoney(target1)})`;
         document.getElementById('goal1-target').value = target1;
         document.getElementById('goal1-current').value = current1;
-        // Para parceiro 2
         const target2 = individualGoal2.target || 0;
         const current2 = individualGoal2.current || 0;
         const percent2 = target2 > 0 ? (current2 / target2) * 100 : 0;
@@ -776,7 +800,6 @@
         document.getElementById('goal2-progress-text').innerText = `${Math.round(percent2)}% (${formatMoney(current2)} de ${formatMoney(target2)})`;
         document.getElementById('goal2-target').value = target2;
         document.getElementById('goal2-current').value = current2;
-        // Atualiza nomes nas labels das metas individuais
         document.getElementById('goal-individual-name1').innerText = partner1Name;
         document.getElementById('goal-individual-name2').innerText = partner2Name;
     }
@@ -785,8 +808,7 @@
         const currentInput = document.getElementById(partner === 'partner1' ? 'goal1-current' : 'goal2-current');
         const target = parseFloat(targetInput.value) || 0;
         const current = parseFloat(currentInput.value) || 0;
-        if (target < 0) { Swal.fire('Erro', 'Valor alvo não pode ser negativo.', 'error'); return; }
-        if (current < 0) { Swal.fire('Erro', 'Valor atual não pode ser negativo.', 'error'); return; }
+        if (target < 0 || current < 0) { Swal.fire('Erro', 'Valores não podem ser negativos.', 'error'); return; }
         await individualGoalsRef.doc(partner).set({ target, current });
         Swal.fire('Meta salva!', `Meta de ${partner === 'partner1' ? partner1Name : partner2Name} atualizada.`, 'success');
     }
@@ -810,34 +832,7 @@
         } else { p1 = valorAposTerceiros / 2; p2 = valorAposTerceiros / 2; }
         return { partner1: p1, partner2: p2 };
     }
-    function getFaturaMonthYear(date) {
-        const day = date.getDate();
-        let month = date.getMonth(), year = date.getFullYear();
-        if (day <= 1) { if (month === 0) { month = 11; year--; } else month--; }
-        return `${year}-${String(month + 1).padStart(2, '0')}`;
-    }
-    function generateInstallmentMonths(startDateISO, totalParcelas, parcelasPagas = 0) {
-        const start = new Date(startDateISO);
-        const months = [];
-        for (let i = parcelasPagas; i < totalParcelas; i++) {
-            const dueDate = new Date(start);
-            dueDate.setMonth(start.getMonth() + i);
-            months.push(getFaturaMonthYear(dueDate));
-        }
-        return months;
-    }
-    async function generateRecurringForMonth(targetMonth) {
-        if (!recurringTemplates.length) return;
-        for (const template of recurringTemplates) {
-            const q = expensesRef.where('recurringTemplateId', '==', template.id).where('installmentMonths', 'array-contains', targetMonth);
-            const snap = await q.get();
-            if (snap.empty) {
-                const firstDay = new Date(currentYear, currentMonth, 1);
-                const newInstallments = generateInstallmentMonths(firstDay.toISOString().slice(0,10), template.parcelas, 0);
-                await expensesRef.add({ ...template, startDate: firstDay.toISOString().slice(0,10), installmentMonths: newInstallments, createdAt: firebase.firestore.FieldValue.serverTimestamp(), updatedAt: firebase.firestore.FieldValue.serverTimestamp(), recurringTemplateId: template.id });
-            }
-        }
-    }
+
     function getInstallmentDate(exp, targetMonthYear) {
         const start = new Date(exp.startDate);
         for (let i = exp.parcelasPagas || 0; i < exp.parcelas; i++) {
@@ -847,6 +842,7 @@
         }
         return "Data desconhecida";
     }
+
     function updateUIWithNames() {
         document.getElementById('gasto-partner1-label').innerHTML = `🧑 Gasto de ${partner1Name}`;
         document.getElementById('gasto-partner2-label').innerHTML = `👩 Gasto de ${partner2Name}`;
@@ -863,6 +859,7 @@
         if (filterPayer && filterPayer.options.length >= 2) { filterPayer.options[1].text = partner1Name; filterPayer.options[2].text = partner2Name; }
         updateIndividualGoalUI();
     }
+
     function renderPartnerExpenses(partnerKey, containerId, monthYear) {
         const container = document.getElementById(containerId);
         if (!container) return;
@@ -881,6 +878,7 @@
         container.innerHTML = filtered.map(exp => `<div class="expense-item"><div class="expense-info"><strong>${escapeHtml(exp.descricao)}</strong><br><span class="expense-date">${exp.data} - ${exp.categoria || 'Sem categoria'}</span></div><div style="display: flex; align-items: center; gap: 12px;"><span style="font-weight:700; color:#e91e63;">${formatMoney(exp.valor)}</span><button class="btn-small delete-partner-expense" data-id="${exp.id}">🗑️ Excluir</button></div></div>`).join('');
         document.querySelectorAll('.delete-partner-expense').forEach(btn => btn.addEventListener('click', async () => { if (await Swal.fire({ title: 'Confirmar', text: 'Remover esta despesa?', icon: 'warning', showCancelButton: true }).then(r=>r.isConfirmed)) await expensesRef.doc(btn.dataset.id).delete(); }));
     }
+
     function renderDebtors() {
         const container = document.getElementById('debtors-list');
         if (!container) return;
@@ -893,6 +891,7 @@
         document.querySelectorAll('.btn-quitar').forEach(btn => btn.addEventListener('click', async () => { const id = btn.dataset.id, valor = parseFloat(btn.dataset.value), nome = btn.dataset.name; if (await Swal.fire({ title: 'Quitar dívida', text: `Confirmar recebimento de ${formatMoney(valor)} de ${nome}?`, icon: 'question', showCancelButton: true }).then(r=>r.isConfirmed)) await debtorsRef.doc(id).delete(); }));
         document.querySelectorAll('.btn-small[data-action="delete"]').forEach(btn => btn.addEventListener('click', async () => { if (await Swal.fire({ title: 'Excluir devedor', text: 'Remover permanentemente?', icon: 'warning', showCancelButton: true }).then(r=>r.isConfirmed)) await debtorsRef.doc(btn.dataset.id).delete(); }));
     }
+
     async function addDebtor() {
         const nome = document.getElementById('new-debtor-name').value.trim();
         const valor = parseFloat(document.getElementById('new-debtor-value').value);
@@ -910,6 +909,7 @@
         document.getElementById('new-debtor-name').value = ''; document.getElementById('new-debtor-value').value = ''; document.getElementById('new-debtor-date').value = '';
         Swal.fire('Adicionado!', 'Débito registrado.', 'success');
     }
+
     async function saveIncomes() {
         const income1 = parseFloat(document.getElementById('income1').value) || 0;
         const income2 = parseFloat(document.getElementById('income2').value) || 0;
@@ -923,6 +923,7 @@
         Swal.fire('Rendas salvas!', 'Os valores foram atualizados.', 'success');
         updateDashboard();
     }
+
     function renderThirdParties() {
         const container = document.getElementById('third-parties-list');
         if (!container) return;
@@ -931,7 +932,9 @@
         document.querySelectorAll('.remove-third-party').forEach(btn => btn.addEventListener('click', () => { thirdParties.splice(parseInt(btn.dataset.idx), 1); renderThirdParties(); updatePreviewDivision(); }));
         document.querySelectorAll('.third-party-value').forEach(input => input.addEventListener('change', () => { thirdParties[parseInt(input.dataset.idx)].valor = parseFloat(input.value) || 0; updatePreviewDivision(); }));
     }
+
     function addThirdParty() { thirdParties.push({ nome: `Amigo ${thirdParties.length + 1}`, valor: 0 }); renderThirdParties(); updatePreviewDivision(); }
+
     function updatePreviewDivision() {
         const valorTotal = parseFloat(document.getElementById('valor-total').value) || 0;
         const parcelas = parseInt(document.getElementById('parcelas').value) || 1;
@@ -949,8 +952,9 @@
         preview += `💑 Casal paga: ${formatMoney(valorAposTerceiros)}<br>🧑 ${partner1Name}: ${formatMoney(p1)} | 👩 ${partner2Name}: ${formatMoney(p2)}`;
         document.getElementById('preview-division').innerHTML = preview;
     }
+
     function updatePartnerPages() {
-        const targetMonth = getFaturaMonthYear(new Date(currentYear, currentMonth, 1));
+        const targetMonth = `${selectedYear}-${String(selectedMonth + 1).padStart(2, '0')}`;
         renderPartnerExpenses('partner1', 'partner1-expenses-list', targetMonth);
         renderPartnerExpenses('partner2', 'partner2-expenses-list', targetMonth);
         const format = (ym) => { const [y,m]=ym.split('-'); return new Date(parseInt(y), parseInt(m)-1,1).toLocaleDateString('pt-BR',{month:'long',year:'numeric'}); };
@@ -959,47 +963,79 @@
         document.getElementById('global-month-display').innerText = format(targetMonth);
     }
 
-    // ========== EXCLUSÃO DE DESPESAS ==========
     async function deleteExpenseById(id) {
-        console.log("🔍 Tentando excluir despesa com ID:", id);
         try {
             const docRef = expensesRef.doc(id);
             const docSnap = await docRef.get();
             if (!docSnap.exists) {
-                console.warn("⚠️ Documento não encontrado no Firestore:", id);
                 allExpenses = allExpenses.filter(exp => exp.id !== id);
                 currentDisplayExpenses = currentDisplayExpenses.filter(exp => exp.id !== id);
                 selectedExpenses.delete(id);
                 renderHistory();
                 updateDashboard();
-                Swal.fire('Aviso', 'Esta despesa já não existe no banco de dados. A lista foi atualizada.', 'info');
+                Swal.fire('Aviso', 'Esta despesa já não existe.', 'info');
                 return;
             }
+            const expenseData = docSnap.data();
+            const isRecurring = !!expenseData.recurringTemplateId;
+            let deleteTemplate = false;
+            let confirm = true;
+            if (isRecurring) {
+                const result = await Swal.fire({
+                    title: 'Despesa recorrente',
+                    text: 'Deseja também excluir o template para que ela não seja recriada?',
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonText: 'Sim, excluir template',
+                    cancelButtonText: 'Apenas esta despesa'
+                });
+                if (result.isConfirmed) deleteTemplate = true;
+                else if (result.dismiss === Swal.DismissReason.cancel) { /* apenas esta */ }
+                else confirm = false;
+            } else {
+                const result = await Swal.fire({
+                    title: 'Confirmar exclusão',
+                    text: 'Remover esta despesa permanentemente?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#e91e63',
+                    confirmButtonText: 'Sim, excluir'
+                });
+                if (!result.isConfirmed) confirm = false;
+            }
+            if (!confirm) { Swal.fire('Cancelado', '', 'info'); return; }
             await docRef.delete();
-            console.log("✅ Exclusão bem-sucedida para ID:", id);
+            if (deleteTemplate && expenseData.recurringTemplateId) {
+                await recurringRef.doc(expenseData.recurringTemplateId).delete();
+                recurringTemplates = recurringTemplates.filter(t => t.id !== expenseData.recurringTemplateId);
+            }
             allExpenses = allExpenses.filter(exp => exp.id !== id);
             currentDisplayExpenses = currentDisplayExpenses.filter(exp => exp.id !== id);
             selectedExpenses.delete(id);
             renderHistory();
             updateDashboard();
-            Swal.fire('Excluído!', 'Despesa removida com sucesso.', 'success');
+            Swal.fire('Excluído!', 'Despesa removida.', 'success');
         } catch (error) {
-            console.error("❌ Erro detalhado ao excluir:", error);
-            let mensagem = 'Não foi possível excluir a despesa. ';
-            if (error.code === 'permission-denied') {
-                mensagem += 'Permissão negada. Verifique as regras de segurança do Firestore.';
-            } else if (error.code === 'not-found') {
-                mensagem += 'Documento não encontrado.';
-            } else {
-                mensagem += error.message;
+            Swal.fire('Erro', error.message, 'error');
+        }
+    }
+
+    async function generateRecurringForMonth(targetMonth) {
+        if (!recurringTemplates.length) return;
+        for (const template of recurringTemplates) {
+            const q = expensesRef.where('recurringTemplateId', '==', template.id).where('installmentMonths', 'array-contains', targetMonth);
+            const snap = await q.get();
+            if (snap.empty) {
+                const firstDay = new Date(selectedYear, selectedMonth, 1);
+                const newInstallments = generateInstallmentMonths(firstDay.toISOString().slice(0,10), template.parcelas, 0);
+                await expensesRef.add({ ...template, startDate: firstDay.toISOString().slice(0,10), installmentMonths: newInstallments, createdAt: firebase.firestore.FieldValue.serverTimestamp(), updatedAt: firebase.firestore.FieldValue.serverTimestamp(), recurringTemplateId: template.id });
             }
-            Swal.fire('Erro', mensagem, 'error');
         }
     }
 
     async function updateDashboard() {
         if (!currentPartnerId) return;
-        const targetMonth = getFaturaMonthYear(new Date(currentYear, currentMonth, 1));
+        const targetMonth = `${selectedYear}-${String(selectedMonth + 1).padStart(2, '0')}`;
         await generateRecurringForMonth(targetMonth);
         const monthExpenses = allExpenses.filter(exp => exp.installmentMonths && exp.installmentMonths.includes(targetMonth));
         currentDisplayExpenses = monthExpenses;
@@ -1015,10 +1051,11 @@
         progresso = Math.min(100, progresso);
         document.getElementById('meta-progress').innerText = `${Math.round(progresso)}%`;
         document.getElementById('meta-fill').style.width = `${progresso}%`;
-        
+        // Próximas parcelas
         const container = document.getElementById('upcoming-installments');
         container.innerHTML = '';
-        const today = new Date(), threeMonthsLater = new Date(); threeMonthsLater.setMonth(today.getMonth() + 3);
+        const today = new Date();
+        const threeMonthsLater = new Date(); threeMonthsLater.setMonth(today.getMonth() + 3);
         const future = [];
         for (const exp of monthExpenses) {
             for (let i = exp.parcelasPagas || 0; i < exp.parcelas; i++) {
@@ -1031,7 +1068,7 @@
         }
         future.sort((a,b)=>a.date-b.date).slice(0,6).forEach(p => { const li = document.createElement('li'); li.style.background = 'rgba(233,30,99,0.1)'; li.style.padding = '6px 12px'; li.style.borderRadius = '40px'; li.style.fontSize = '0.75rem'; li.textContent = `📌 ${p.desc} - ${formatMoney(p.value)} (${p.date.toLocaleDateString()})`; container.appendChild(li); });
         if(future.length===0) container.innerHTML = '<li style="background:transparent">Nenhuma parcela futura</li>';
-        
+        // Gráficos
         const catMap = new Map();
         monthExpenses.forEach(exp => {
             const { partner1, partner2 } = calculateMonthlyShare(exp);
@@ -1043,7 +1080,7 @@
         categoryChart = new Chart(document.getElementById('categoryChart'), { type: 'pie', data: { labels: [...catMap.keys()], datasets: [{ data: [...catMap.values()], backgroundColor: ['#e91e63','#ff6b9d','#c2185b','#f48fb1','#f06292','#ec407a'] }] } });
         if (compareChart) compareChart.destroy();
         compareChart = new Chart(document.getElementById('compareChart'), { type: 'bar', data: { labels: [partner1Name, partner2Name], datasets: [{ data: [totalPartner1, totalPartner2], backgroundColor: ['#e91e63', '#ffb74d'] }] } });
-        
+        // Orçamentos
         const budgetDiv = document.getElementById('budget-list');
         budgetDiv.innerHTML = '';
         for (let [cat, limit] of Object.entries(categoriesBudget)) {
@@ -1055,9 +1092,9 @@
             budgetDiv.appendChild(div);
         }
         document.querySelectorAll('.delete-budget').forEach(btn => btn.addEventListener('click', async () => await budgetsRef.doc(btn.dataset.cat).delete()));
-        
+        // Histórico
         renderHistory();
-        
+        // Categorias do filtro
         const cats = [...new Set(monthExpenses.map(e=>e.categoria).filter(c=>c))];
         document.getElementById('filter-category').innerHTML = '<option value="">Todas categorias</option>' + cats.map(c=>`<option>${c}</option>`).join('');
         updatePartnerPages();
@@ -1068,7 +1105,7 @@
         if (!tbody) return;
         tbody.innerHTML = '';
         if (currentDisplayExpenses.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="7" style="text-align:center">Nenhuma despesa encontrada</td></td>';
+            tbody.innerHTML = '<td><td colspan="7" style="text-align:center">Nenhuma despesa encontrada</td></tr>';
             return;
         }
         for (const exp of currentDisplayExpenses) {
@@ -1096,7 +1133,6 @@
                 </td>
             `;
         }
-        // Checkboxes
         document.querySelectorAll('.expense-checkbox').forEach(cb => {
             cb.removeEventListener('change', handleCheckboxChange);
             cb.addEventListener('change', handleCheckboxChange);
@@ -1108,7 +1144,6 @@
             updateSelectionBar();
             updateHeaderCheckbox();
         }
-        // Editar
         document.querySelectorAll('.edit-expense').forEach(btn => {
             btn.removeEventListener('click', handleEdit);
             btn.addEventListener('click', handleEdit);
@@ -1117,24 +1152,13 @@
             const id = e.currentTarget.getAttribute('data-id');
             startEditExpense(id);
         }
-        // Excluir individual
         document.querySelectorAll('.delete-expense').forEach(btn => {
             btn.removeEventListener('click', handleDelete);
             btn.addEventListener('click', handleDelete);
         });
         async function handleDelete(e) {
             const id = e.currentTarget.getAttribute('data-id');
-            const result = await Swal.fire({
-                title: 'Confirmar exclusão',
-                text: 'Remover esta despesa permanentemente?',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#e91e63',
-                confirmButtonText: 'Sim, excluir'
-            });
-            if (result.isConfirmed) {
-                await deleteExpenseById(id);
-            }
+            await deleteExpenseById(id);
         }
         updateSelectionBar();
         updateHeaderCheckbox();
@@ -1181,7 +1205,7 @@
         }
     }
     function applyFilters() {
-        const targetMonth = getFaturaMonthYear(new Date(currentYear, currentMonth, 1));
+        const targetMonth = `${selectedYear}-${String(selectedMonth + 1).padStart(2, '0')}`;
         let filtered = allExpenses.filter(exp => exp.installmentMonths && exp.installmentMonths.includes(targetMonth));
         const desc = document.getElementById('filter-desc').value.toLowerCase();
         const cat = document.getElementById('filter-category').value;
@@ -1268,9 +1292,12 @@
     }
 
     async function changeMonth(delta) {
-        let nm = currentMonth + delta, ny = currentYear;
-        if (nm < 0) { nm = 11; ny--; } else if (nm > 11) { nm = 0; ny++; }
-        currentMonth = nm; currentYear = ny;
+        let nm = selectedMonth + delta;
+        let ny = selectedYear;
+        if (nm < 0) { nm = 11; ny--; }
+        else if (nm > 11) { nm = 0; ny++; }
+        selectedMonth = nm;
+        selectedYear = ny;
         selectedExpenses.clear();
         await updateDashboard();
     }
@@ -1287,7 +1314,7 @@
             csv.push([exp.descricao, exp.valorTotal, exp.parcelas, exp.parcelasPagas || 0, partner1+partner2, payerText, exp.categoria, exp.observacao, terceirosText]);
         }
         const blob = new Blob([csv.map(r => r.join(",")).join("\n")], { type: "text/csv" });
-        const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `financas_${currentYear}-${currentMonth+1}.csv`; a.click();
+        const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `financas_${selectedYear}-${selectedMonth+1}.csv`; a.click();
     }
 
     async function quickExpense() {
@@ -1298,10 +1325,12 @@
             preConfirm: () => ({ desc: document.getElementById('swal-desc').value, valor: parseFloat(document.getElementById('swal-valor').value), cat: document.getElementById('swal-cat').value })
         });
         if (fv && fv.desc && !isNaN(fv.valor)) {
-            const startDate = new Date(currentYear, currentMonth, 1).toISOString().slice(0,10);
+            const startDate = new Date(selectedYear, selectedMonth, 1);
+            const startDateStr = startDate.toISOString().slice(0,10);
+            const installmentMonths = generateInstallmentMonths(startDateStr, 1, 0);
             await expensesRef.add({
-                descricao: fv.desc, valorTotal: fv.valor, parcelas: 1, parcelasPagas: 0, startDate,
-                paidBy: 'both', splitType: '50-50', categoria: fv.cat, installmentMonths: generateInstallmentMonths(startDate, 1, 0),
+                descricao: fv.desc, valorTotal: fv.valor, parcelas: 1, parcelasPagas: 0, startDate: startDateStr,
+                paidBy: 'both', splitType: '50-50', categoria: fv.cat, installmentMonths,
                 observacao: '', thirdParties: [], createdAt: firebase.firestore.FieldValue.serverTimestamp(),
                 updatedAt: firebase.firestore.FieldValue.serverTimestamp()
             });
@@ -1311,7 +1340,7 @@
 
     async function setSavingsGoal(v) { await metaRef.set({ value: v }); }
     function showManageRecurring() {
-        if (!recurringTemplates.length) { Swal.fire('Nenhum template recorrente', 'Adicione uma despesa recorrente.', 'info'); return; }
+        if (!recurringTemplates.length) { Swal.fire('Nenhum template recorrente', '', 'info'); return; }
         let html = '<div style="max-height:300px;overflow-y:auto;">';
         recurringTemplates.forEach(t => {
             html += `<div style="background:rgba(233,30,99,0.1);border-radius:20px;padding:8px;margin-bottom:8px;display:flex;justify-content:space-between;"><div><strong>${t.descricao}</strong> - ${formatMoney(t.valorTotal)} (${t.parcelas}x)</div><button class="delete-template-btn" data-id="${t.id}" style="background:#e91e63;color:white;border:none;border-radius:40px;padding:4px 12px;">Excluir</button></div>`;
