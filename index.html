@@ -12,15 +12,55 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
         body {
             font-family: 'Inter', sans-serif;
             background: #000000;
             color: #ffffff;
             transition: background 0.2s, color 0.2s;
             overflow-x: hidden;
+            font-size: 16px;
         }
-        body.light-theme { background: #ffe4e8; color: #1a1a1a; }
+        body.light-theme {
+            background: #ffe4e8;
+            color: #1a1a1a;
+        }
+        button, .btn, .btn-small, input, select, textarea, .profile-btn, .month-nav button, .concierge-avatar, .theme-icon {
+            touch-action: manipulation;
+        }
+        button, .btn, .btn-small {
+            min-height: 40px;
+            padding: 8px 14px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            border-radius: 40px;
+            cursor: pointer;
+            border: none;
+        }
+        .btn-small {
+            padding: 6px 12px;
+            font-size: 0.8rem;
+            min-height: 34px;
+        }
+        input, select, textarea {
+            font-size: 0.9rem;
+            padding: 10px 14px;
+            border-radius: 40px;
+            min-height: 42px;
+            background: #1a1a1a;
+            border: 1px solid #e91e63;
+            color: #ffffff;
+            width: 100%;
+        }
+        body.light-theme input, body.light-theme select, body.light-theme textarea {
+            background: #ffffff;
+            color: #1a1a1a;
+        }
         .login-container {
             min-height: 100vh;
             display: flex;
@@ -32,46 +72,26 @@
             left: 0;
             width: 100%;
             z-index: 1000;
+            padding: 20px;
         }
         .login-card {
             background: #111111;
             backdrop-filter: blur(20px);
             border-radius: 48px;
-            padding: 2rem;
-            width: 90%;
-            max-width: 400px;
+            padding: 2rem 1.5rem;
+            width: 100%;
+            max-width: 450px;
             border: 1px solid #e91e63;
             box-shadow: 0 12px 30px rgba(233,30,99,0.2);
         }
         .login-card h2 {
+            font-size: 1.6rem;
             text-align: center;
             background: linear-gradient(135deg, #e91e63, #ff6b9d);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
             margin-bottom: 1.5rem;
-        }
-        .login-card input, .login-card select {
-            width: 100%;
-            padding: 14px 18px;
-            margin-bottom: 16px;
-            background: #1a1a1a;
-            border: 1px solid #e91e63;
-            border-radius: 40px;
-            color: #ffffff;
-            font-size: 16px;
-        }
-        .login-card button {
-            width: 100%;
-            padding: 14px;
-            background: linear-gradient(95deg, #e91e63, #c2185b);
-            border: none;
-            border-radius: 40px;
-            color: white;
-            font-weight: 700;
-            cursor: pointer;
-            font-size: 16px;
-            transition: 0.2s;
         }
         .app-container {
             display: none;
@@ -80,11 +100,12 @@
             background: #000000;
             flex-direction: column;
         }
+        /* Cabeçalho reduzido */
         .app-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 12px 16px;
+            padding: 8px 12px;
             background: rgba(0, 0, 0, 0.9);
             backdrop-filter: blur(12px);
             border-bottom: 1px solid #e91e63;
@@ -94,56 +115,94 @@
             flex-wrap: wrap;
             gap: 8px;
         }
-        .logo-area { display: flex; align-items: center; gap: 10px; }
-        .logo-area i { font-size: 1.6rem; color: #e91e63; }
-        .logo-area h2 { font-size: 1.2rem; font-weight: 600; color: #ffffff; }
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .logo-area i {
+            font-size: 1.4rem;
+            color: #e91e63;
+        }
+        .logo-area h2 {
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
         .profile-btn {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 8px;
             background: rgba(255, 255, 255, 0.1);
-            padding: 6px 12px;
+            padding: 4px 12px;
             border-radius: 40px;
             cursor: pointer;
             border: 1px solid #e91e63;
+            min-height: 36px;
         }
         .profile-avatar {
-            min-width: 40px;
-            height: 36px;
+            min-width: 32px;
+            height: 32px;
             border-radius: 40px;
             background: #e91e63;
             color: #000000;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: 600;
+            font-weight: 700;
             font-size: 0.8rem;
-            padding: 0 10px;
+            padding: 0 8px;
             text-transform: uppercase;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            max-width: 120px;
+            max-width: 90px;
         }
         .month-nav {
             display: flex;
             align-items: center;
             gap: 8px;
             background: rgba(0,0,0,0.6);
-            padding: 4px 12px;
+            padding: 2px 10px;
             border-radius: 40px;
         }
         .month-nav button {
+            width: 32px;
+            height: 32px;
             background: #e91e63;
             border: none;
-            width: 30px;
-            height: 30px;
             border-radius: 50%;
             color: white;
             cursor: pointer;
             font-weight: bold;
+            font-size: 1rem;
         }
-        /* CORREÇÃO DO SWIPE – PÁGINAS SEPARADAS */
+        .month-nav span {
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+        /* Ícone de tema */
+        .theme-icon {
+            background: none;
+            border: none;
+            font-size: 1.3rem;
+            color: #e91e63;
+            cursor: pointer;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: 0.2s;
+        }
+        .theme-icon:hover {
+            background: rgba(233,30,99,0.2);
+        }
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
         .swipe-container {
             display: flex;
             overflow-x: auto;
@@ -154,9 +213,7 @@
             -webkit-overflow-scrolling: touch;
             scrollbar-width: none;
         }
-        .swipe-container::-webkit-scrollbar {
-            display: none;
-        }
+        .swipe-container::-webkit-scrollbar { display: none; }
         .swipe-page {
             flex: 0 0 100%;
             width: 100%;
@@ -189,24 +246,118 @@
             border-radius: 10px;
             background: #e91e63;
         }
-        /* Estilos gerais */
         .card {
             background: #111111;
             border-radius: 28px;
             padding: 1rem;
             margin-bottom: 1rem;
             border: 1px solid #e91e63;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-            color: #ffffff;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+        body.light-theme .card, body.light-theme .login-card {
+            background: #ffffff;
+            color: #1a1a1a;
         }
         .card-title {
-            font-size: 1.1rem;
-            font-weight: 600;
+            font-size: 1.2rem;
+            font-weight: 700;
             margin-bottom: 0.8rem;
             display: flex;
             align-items: center;
             gap: 8px;
             color: #e91e63;
+        }
+        .dashboard-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            justify-content: space-between;
+        }
+        .dashboard-card {
+            flex: 1;
+            min-width: 120px;
+            text-align: center;
+            background: rgba(233,30,99,0.1);
+            padding: 8px;
+            border-radius: 20px;
+        }
+        .dashboard-card h4 {
+            font-size: 0.8rem;
+            font-weight: 500;
+            margin-bottom: 6px;
+        }
+        .dashboard-card .value {
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: #e91e63;
+        }
+        .progress-bar {
+            height: 6px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 8px;
+        }
+        .progress-fill {
+            background: #e91e63;
+            width: 0%;
+            height: 100%;
+        }
+        .form-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+        .input-group {
+            flex: 1;
+            min-width: 130px;
+        }
+        .input-group label {
+            display: block;
+            margin-bottom: 4px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            opacity: 0.8;
+        }
+        .goal-item, .expense-item, .debtor-item, .message-item, .budget-item, .category-item {
+            background: rgba(233,30,99,0.1);
+            border-radius: 20px;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+        .debtor-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .category-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .messages-container {
+            max-height: 55vh;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+        .selection-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            padding: 8px;
+            background: rgba(233,30,99,0.15);
+            border-radius: 24px;
+            flex-wrap: wrap;
+            gap: 8px;
         }
         .concierge-container {
             position: fixed;
@@ -221,12 +372,10 @@
         .concierge-bubble {
             background: #e91e63;
             border-radius: 24px 24px 24px 8px;
-            padding: 12px 16px;
-            max-width: 280px;
-            font-size: 0.85rem;
+            padding: 10px 14px;
+            max-width: 250px;
+            font-size: 0.8rem;
             box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-            animation: fadeInUp 0.3s ease;
-            position: relative;
         }
         .concierge-avatar {
             width: 48px;
@@ -238,217 +387,137 @@
             justify-content: center;
             cursor: pointer;
             box-shadow: 0 4px 12px rgba(233,30,99,0.4);
-            transition: transform 0.2s;
         }
-        .concierge-avatar i { font-size: 1.8rem; color: white; }
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .goal-item {
-            background: rgba(233,30,99,0.1);
-            border-radius: 20px;
-            padding: 12px;
-            margin-bottom: 12px;
-        }
-        .goal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 8px;
-        }
-        .goal-name { font-weight: 600; font-size: 1rem; }
-        .goal-actions button { background: none; border: none; color: #e91e63; cursor: pointer; margin-left: 8px; }
-        .goal-progress { margin: 8px 0; }
-        .goal-values { display: flex; justify-content: space-between; font-size: 0.75rem; margin-top: 4px; }
-        .expense-item, .debtor-item, .message-item {
-            background: rgba(233,30,99,0.1);
-            border-radius: 20px;
-            padding: 12px;
-            margin-bottom: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 8px;
-            border-left: 4px solid #e91e63;
-        }
-        .message-item { flex-direction: column; align-items: flex-start; }
-        .message-header { display: flex; align-items: center; gap: 12px; width: 100%; }
-        .message-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: #e91e63;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            font-size: 1.1rem;
-            text-transform: uppercase;
-        }
-        .message-info { flex: 1; }
-        .message-author { font-weight: 600; font-size: 0.9rem; }
-        .message-time { font-size: 0.65rem; opacity: 0.6; }
-        .message-content { margin-top: 8px; padding-left: 52px; font-size: 0.9rem; word-break: break-word; }
-        .message-actions { display: flex; gap: 8px; margin-top: 8px; padding-left: 52px; }
-        .expense-info, .debtor-info { flex: 1; font-size: 0.85rem; }
-        .expense-date, .debtor-date { font-size: 0.7rem; opacity: 0.7; }
-        .btn-small {
-            padding: 6px 12px;
-            font-size: 0.7rem;
-            background: #e91e63;
+        .concierge-avatar i {
+            font-size: 1.6rem;
             color: white;
-            border: none;
-            border-radius: 40px;
-            cursor: pointer;
         }
-        .btn-quitar { background: #4caf50; }
-        .dashboard-row { display: flex; flex-wrap: wrap; gap: 12px; justify-content: space-between; }
-        .dashboard-card { flex: 1; min-width: 140px; text-align: center; }
-        .dashboard-card .value { font-size: 1.5rem; font-weight: 800; color: #e91e63; }
-        .progress-bar {
-            height: 6px;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 10px;
-            overflow: hidden;
-            margin-top: 6px;
-        }
-        .progress-fill { background: #e91e63; width: 0%; height: 100%; }
-        .form-row { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 12px; }
-        .input-group { flex: 1; min-width: 120px; }
-        input, select, textarea {
+        table {
             width: 100%;
-            padding: 10px 14px;
-            border-radius: 40px;
-            border: 1px solid #e91e63;
-            background: #1a1a1a;
-            color: #ffffff;
-            font-size: 0.9rem;
+            border-collapse: collapse;
         }
-        .btn {
-            padding: 10px 16px;
-            border-radius: 40px;
+        th, td {
+            padding: 8px 6px;
+            text-align: left;
+            border-bottom: 1px solid rgba(233,30,99,0.3);
+            vertical-align: middle;
+        }
+        th {
+            font-size: 0.75rem;
             font-weight: 600;
-            border: none;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            font-size: 0.85rem;
-            transition: 0.2s;
         }
-        .btn-primary { background: linear-gradient(95deg, #e91e63, #c2185b); color: white; }
-        .btn-secondary { background: rgba(255, 255, 255, 0.1); color: white; border: 1px solid #e91e63; }
-        .btn-danger { background: #e91e63; color: white; }
-        .btn-success { background: #4caf50; color: white; }
-        table { width: 100%; font-size: 0.75rem; border-collapse: collapse; }
-        th, td { padding: 8px 4px; border-bottom: 1px solid rgba(233,30,99,0.3); text-align: left; }
-        th:first-child, td:first-child { width: 30px; text-align: center; }
-        .debtor-form-group, .third-party-group {
+        @media (max-width: 680px) {
+            thead {
+                display: none;
+            }
+            tr {
+                display: block;
+                margin-bottom: 12px;
+                border: 1px solid #e91e63;
+                border-radius: 20px;
+                padding: 8px;
+            }
+            td {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 8px 0;
+                border: none;
+                font-size: 0.85rem;
+            }
+            td:before {
+                content: attr(data-label);
+                font-weight: 700;
+                width: 45%;
+                color: #e91e63;
+            }
+            .checkbox-col {
+                justify-content: flex-start;
+            }
+            .checkbox-col:before {
+                display: none;
+            }
+            .dashboard-card .value {
+                font-size: 1.1rem;
+            }
+            .card-title {
+                font-size: 1.1rem;
+            }
+            button, .btn, .btn-small {
+                font-size: 0.85rem;
+                padding: 8px 12px;
+            }
+        }
+        .income-row {
             display: flex;
             gap: 12px;
-            margin-top: 16px;
-            flex-wrap: wrap;
-            align-items: flex-end;
-        }
-        .third-party-item {
-            background: rgba(233,30,99,0.15);
-            border-radius: 20px;
-            padding: 10px;
-            margin-bottom: 8px;
-        }
-        .third-party-header {
-            display: flex;
-            justify-content: space-between;
             align-items: center;
-            margin-bottom: 8px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
         }
-        .debtor-form-group .field-name, .third-party-group .field-name { flex: 2; min-width: 0; }
-        .debtor-form-group .field-value, .third-party-group .field-value { flex: 1; min-width: 0; }
-        .debtor-form-group .field-date, .third-party-group .field-date { flex: 1.2; min-width: 0; }
-        .debtor-form-group .field-button, .third-party-group .field-button { flex: 0 0 auto; }
-        .debtor-form-group label, .third-party-group label { font-size: 0.7rem; opacity: 0.8; display: block; margin-bottom: 4px; }
-        .income-row { display: flex; gap: 12px; align-items: center; margin-bottom: 12px; }
-        .income-row input { flex: 1; }
-        .chat-input-area { display: flex; gap: 12px; margin-top: 16px; flex-wrap: wrap; }
-        .chat-input-area input { flex: 1; }
-        @media (max-width: 550px) {
-            .debtor-form-group, .third-party-group { flex-direction: column; align-items: stretch; }
-            .debtor-form-group .field-button button, .third-party-group .field-button button { margin-top: 8px; width: 100%; }
-            .debtor-item, .message-item { flex-direction: column; align-items: stretch; }
-            .message-content { padding-left: 0; }
-            .message-actions { padding-left: 0; }
-            table, thead, tbody, th, td, tr { display: block; }
-            thead tr { position: absolute; top: -9999px; left: -9999px; }
-            tr { margin-bottom: 12px; border: 1px solid #e91e63; border-radius: 16px; padding: 8px; }
-            td { display: flex; justify-content: space-between; align-items: center; padding: 6px 8px; border: none; }
-            td:before { content: attr(data-label); font-weight: 600; width: 40%; }
-            td:first-child { justify-content: center; }
-            td:first-child:before { display: none; }
-            .concierge-bubble { max-width: 220px; font-size: 0.75rem; }
-            .profile-avatar { font-size: 0.7rem; padding: 0 6px; min-width: 30px; max-width: 90px; }
-            .dashboard-card { min-width: 120px; }
+        .income-row span {
+            min-width: 90px;
+            font-weight: 500;
         }
-        .budget-item {
-            background: rgba(233,30,99,0.1);
-            border-radius: 20px;
-            padding: 8px;
-            margin-bottom: 10px;
-        }
-        .delete-budget { float: right; background: none; border: none; color: #e91e63; cursor: pointer; font-weight: bold; }
         .info-message {
             background: rgba(233,30,99,0.1);
             padding: 8px;
             border-radius: 16px;
-            font-size: 0.7rem;
+            font-size: 0.75rem;
             margin-top: 8px;
         }
-        .selection-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 12px;
-            padding: 8px;
-            background: rgba(233,30,99,0.15);
-            border-radius: 20px;
-            flex-wrap: wrap;
-            gap: 8px;
+        .btn-primary {
+            background: linear-gradient(95deg, #e91e63, #c2185b);
+            color: white;
         }
-        .selection-count { font-size: 0.85rem; font-weight: 600; }
-        .checkbox-col { width: 30px; text-align: center; }
-        .checkbox-col input { width: 18px; height: 18px; cursor: pointer; accent-color: #e91e63; }
-        .messages-container {
-            max-height: 55vh;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            margin-bottom: 16px;
+        .btn-success {
+            background: #4caf50;
+            color: white;
         }
-        .individual-goal-card {
-            background: rgba(0,0,0,0.3);
-            border-radius: 20px;
-            padding: 12px;
-            margin-top: 12px;
+        .btn-danger {
+            background: #e91e63;
+            color: white;
         }
-        body.light-theme .individual-goal-card {
+        .btn-secondary {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid #e91e63;
+            color: white;
+        }
+        body.light-theme .btn-secondary {
             background: rgba(0,0,0,0.05);
+            color: #1a1a1a;
+        }
+        /* Ajustes para página de devedores */
+        .debtor-form-group {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 16px;
+        }
+        .debtor-form-group .field-name { flex: 2; min-width: 120px; }
+        .debtor-form-group .field-value { flex: 1; min-width: 100px; }
+        .debtor-form-group .field-date { flex: 1; min-width: 110px; }
+        .debtor-form-group .field-button { flex: 0 0 auto; }
+        @media (max-width: 550px) {
+            .debtor-form-group { flex-direction: column; }
+            .debtor-form-group .field-button button { width: 100%; }
+        }
+        .third-party-item {
+            background: rgba(233,30,99,0.08);
+            border-radius: 20px;
+            padding: 8px;
+            margin-bottom: 8px;
         }
     </style>
 </head>
 <body>
 
-<!-- TELA DE SELEÇÃO DO PARCEIRO -->
 <div id="login-container" class="login-container">
     <div class="login-card">
         <h2><i class="fas fa-hand-holding-heart"></i> CASH CASAL</h2>
         <p style="text-align: center; margin-bottom: 16px; font-size: 0.9rem;">Gestão Financeira para Dois</p>
-        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;"><span>🧑 Parceiro 1 (masculino)</span></div>
-        <input type="text" id="name1" placeholder="Ex: Wagner">
-        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px; margin-top: 8px;"><span>👩 Parceiro 2 (feminino)</span></div>
-        <input type="text" id="name2" placeholder="Ex: Andrea">
+        <input type="text" id="name1" placeholder="Parceiro 1 (ex: Wagner)">
+        <input type="text" id="name2" placeholder="Parceiro 2 (ex: Andrea)">
         <select id="current-user-select">
             <option value="">-- Selecione quem está usando --</option>
         </select>
@@ -457,150 +526,113 @@
     </div>
 </div>
 
-<!-- APP PRINCIPAL -->
 <div id="app-container" class="app-container">
     <div class="app-header">
         <div class="logo-area"><i class="fas fa-piggy-bank"></i><h2>CASH CASAL</h2></div>
         <div class="month-nav"><button id="global-prev-month"><i class="fas fa-chevron-left"></i></button><span id="global-month-display"></span><button id="global-next-month"><i class="fas fa-chevron-right"></i></button></div>
-        <div class="profile-btn" id="logoutBtn"><div id="userAvatar" class="profile-avatar">P</div><i class="fas fa-sign-out-alt"></i></div>
+        <div class="header-actions">
+            <button id="theme-icon-header" class="theme-icon"><i class="fas fa-moon"></i></button>
+            <div class="profile-btn" id="logoutBtn"><div id="userAvatar" class="profile-avatar">P</div><i class="fas fa-sign-out-alt"></i></div>
+        </div>
     </div>
     <div class="swipe-container" id="swipeContainer">
-        <!-- Página 0: Resumo -->
+        <!-- Página 0: Dashboard -->
         <div class="swipe-page" data-page="0">
             <div class="card">
                 <div class="card-title"><i class="fas fa-chart-line"></i> Resumo do Mês</div>
                 <div class="dashboard-row">
                     <div class="dashboard-card"><h4 id="gasto-partner1-label">🧑 Gasto de </h4><div class="value" id="gasto-partner1">R$ 0,00</div></div>
                     <div class="dashboard-card"><h4 id="gasto-partner2-label">👩 Gasto de </h4><div class="value" id="gasto-partner2">R$ 0,00</div></div>
+                    <div class="dashboard-card"><h4><i class="fas fa-hand-holding-usd"></i> Total a receber</h4><div class="value" id="total-a-receber">R$ 0,00</div><small id="debtors-count"></small></div>
                 </div>
-                <div style="margin-top: 12px;"><h4>🎯 Meta de economia do casal</h4><div style="display: flex; gap: 8px; align-items: center;"><input type="number" id="meta-valor" step="100" value="500" style="flex:1;"><button class="btn btn-primary" id="set-meta-btn">Definir</button></div><div class="progress-bar" style="margin-top: 10px;"><div class="progress-fill" id="meta-fill"></div></div><div id="meta-progress" style="text-align: center; margin-top: 4px;">0%</div></div>
+                <div style="margin-top: 12px;"><h4>🎯 Meta de economia do casal</h4><div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 6px;"><input type="number" id="meta-valor" step="100" value="500" style="flex:2;"><button class="btn btn-primary" id="set-meta-btn" style="flex:1;">Definir</button></div><div class="progress-bar"><div class="progress-fill" id="meta-fill"></div></div><div id="meta-progress" style="text-align: center; margin-top: 4px;">0%</div></div>
             </div>
-            <div class="card"><div class="card-title"><i class="fas fa-chart-pie"></i> Gráficos</div><canvas id="categoryChart" style="max-height: 200px; margin-bottom: 16px;"></canvas><canvas id="compareChart" style="max-height: 150px;"></canvas></div>
-            <div class="card"><div class="card-title"><i class="fas fa-calendar-alt"></i> Próximas parcelas</div><ul id="upcoming-installments" style="list-style: none; padding: 0; display: flex; flex-wrap: wrap; gap: 8px;"></ul></div>
+            <div class="card"><div class="card-title"><i class="fas fa-chart-line"></i> Evolução mensal (últimos 6 meses)</div><canvas id="evolutionChart" style="max-height: 200px;"></canvas></div>
+            <div class="card"><div class="card-title"><i class="fas fa-chart-pie"></i> Gráficos</div><canvas id="categoryChart" style="max-height: 200px;"></canvas><canvas id="compareChart" style="max-height: 150px; margin-top: 16px;"></canvas></div>
+            <div class="card"><div class="card-title"><i class="fas fa-calendar-alt"></i> Próximas parcelas</div><ul id="upcoming-installments" style="list-style: none; padding: 0; display: flex; flex-direction: column; gap: 6px;"></ul></div>
         </div>
-        <!-- Página 1: Gastos Parceiro 1 + Meta individual -->
+        <!-- Página 1: Gastos Parceiro 1 -->
         <div class="swipe-page" data-page="1" id="page-partner1">
-            <div class="card">
-                <div class="card-title"><i class="fas fa-user"></i> Gastos de <span id="partner1-name-label"></span></div>
-                <div style="display: flex; justify-content: flex-end; margin-bottom: 12px;">
-                    <div class="month-nav" style="background: rgba(0,0,0,0.2);">
-                        <button id="partner1-prev-month"><i class="fas fa-chevron-left"></i></button>
-                        <span id="partner1-month-display"></span>
-                        <button id="partner1-next-month"><i class="fas fa-chevron-right"></i></button>
-                    </div>
-                </div>
-                <div id="partner1-expenses-list"></div>
-            </div>
-            <div class="card individual-goal-card">
-                <div class="card-title"><i class="fas fa-bullseye"></i> Meta de economia individual de <span id="goal-individual-name1"></span></div>
-                <div class="dashboard-row" style="gap: 8px;">
-                    <div class="input-group" style="flex:1"><label>Valor alvo (R$)</label><input type="number" id="goal1-target" step="100" placeholder="0" value="0" style="background:#1a1a1a;"></div>
-                    <div class="input-group" style="flex:1"><label>Valor atual (R$)</label><input type="number" id="goal1-current" step="100" placeholder="0" value="0" style="background:#1a1a1a;"></div>
-                </div>
-                <button id="save-goal1-btn" class="btn btn-primary" style="margin-top:8px;"><i class="fas fa-save"></i> Salvar meta</button>
-                <div class="progress-bar" style="margin-top: 12px;"><div class="progress-fill" id="goal1-progress-fill"></div></div>
-                <div id="goal1-progress-text" style="text-align: center; margin-top: 4px;">0%</div>
-            </div>
+            <div class="card"><div class="card-title"><i class="fas fa-user"></i> Gastos de <span id="partner1-name-label"></span></div><div id="partner1-expenses-list"></div></div>
+            <div class="card"><div class="card-title"><i class="fas fa-bullseye"></i> Meta individual de <span id="goal-individual-name1"></span></div><input type="number" id="goal1-target" placeholder="Alvo R$" style="margin-bottom:8px;"><input type="number" id="goal1-current" placeholder="Atual R$" style="margin-bottom:8px;"><button id="save-goal1-btn" class="btn btn-primary">Salvar meta</button><div class="progress-bar"><div class="progress-fill" id="goal1-progress-fill"></div></div><div id="goal1-progress-text" style="text-align:center; margin-top:4px;">0%</div></div>
         </div>
-        <!-- Página 2: Gastos Parceiro 2 + Meta individual -->
+        <!-- Página 2: Gastos Parceiro 2 -->
         <div class="swipe-page" data-page="2" id="page-partner2">
-            <div class="card">
-                <div class="card-title"><i class="fas fa-user"></i> Gastos de <span id="partner2-name-label"></span></div>
-                <div style="display: flex; justify-content: flex-end; margin-bottom: 12px;">
-                    <div class="month-nav" style="background: rgba(0,0,0,0.2);">
-                        <button id="partner2-prev-month"><i class="fas fa-chevron-left"></i></button>
-                        <span id="partner2-month-display"></span>
-                        <button id="partner2-next-month"><i class="fas fa-chevron-right"></i></button>
-                    </div>
-                </div>
-                <div id="partner2-expenses-list"></div>
-            </div>
-            <div class="card individual-goal-card">
-                <div class="card-title"><i class="fas fa-bullseye"></i> Meta de economia individual de <span id="goal-individual-name2"></span></div>
-                <div class="dashboard-row" style="gap: 8px;">
-                    <div class="input-group" style="flex:1"><label>Valor alvo (R$)</label><input type="number" id="goal2-target" step="100" placeholder="0" value="0" style="background:#1a1a1a;"></div>
-                    <div class="input-group" style="flex:1"><label>Valor atual (R$)</label><input type="number" id="goal2-current" step="100" placeholder="0" value="0" style="background:#1a1a1a;"></div>
-                </div>
-                <button id="save-goal2-btn" class="btn btn-primary" style="margin-top:8px;"><i class="fas fa-save"></i> Salvar meta</button>
-                <div class="progress-bar" style="margin-top: 12px;"><div class="progress-fill" id="goal2-progress-fill"></div></div>
-                <div id="goal2-progress-text" style="text-align: center; margin-top: 4px;">0%</div>
-            </div>
+            <div class="card"><div class="card-title"><i class="fas fa-user"></i> Gastos de <span id="partner2-name-label"></span></div><div id="partner2-expenses-list"></div></div>
+            <div class="card"><div class="card-title"><i class="fas fa-bullseye"></i> Meta individual de <span id="goal-individual-name2"></span></div><input type="number" id="goal2-target" placeholder="Alvo R$" style="margin-bottom:8px;"><input type="number" id="goal2-current" placeholder="Atual R$" style="margin-bottom:8px;"><button id="save-goal2-btn" class="btn btn-primary">Salvar meta</button><div class="progress-bar"><div class="progress-fill" id="goal2-progress-fill"></div></div><div id="goal2-progress-text" style="text-align:center; margin-top:4px;">0%</div></div>
         </div>
-        <!-- Página 3: Adicionar despesa -->
+        <!-- Página 3: Nova despesa -->
         <div class="swipe-page" data-page="3">
             <div class="card"><div class="card-title"><i class="fas fa-plus-circle"></i> Nova despesa</div>
                 <form id="expense-form">
-                    <div class="form-row"><div class="input-group"><label>Descrição</label><input type="text" id="descricao" required></div><div class="input-group"><label>Valor total</label><input type="number" id="valor-total" step="0.01" required></div></div>
-                    <div class="form-row"><div class="input-group"><label>Total de parcelas</label><input type="number" id="parcelas" value="1" min="1" required></div><div class="input-group"><label>Parcelas já pagas</label><input type="number" id="parcelasPagas" value="0" min="0" step="1"></div></div>
-                    <div class="form-row"><div class="input-group"><label>Data da compra</label><input type="date" id="start-date" required></div><div class="input-group"></div></div>
+                    <div class="form-row"><div class="input-group"><label>Descrição</label><input type="text" id="descricao" required placeholder="Ex: Supermercado"></div><div class="input-group"><label>Valor total (R$)</label><input type="number" id="valor-total" step="0.01" required placeholder="0,00"></div></div>
+                    <div class="form-row"><div class="input-group"><label>Total parcelas</label><input type="number" id="parcelas" value="1" min="1" required></div><div class="input-group"><label>Parcelas já pagas</label><input type="number" id="parcelasPagas" value="0" min="0"></div></div>
+                    <div class="form-row"><div class="input-group"><label>Data da compra</label><input type="date" id="start-date" required></div><div class="input-group"><label>Categoria</label><select id="categoria"></select></div></div>
                     <div class="form-row"><div class="input-group"><label>Quem pagou?</label><select id="paid-by"><option value="partner1">Parceiro 1</option><option value="partner2">Parceiro 2</option><option value="both">Dividido</option></select></div>
                         <div class="input-group"><label>Divisão</label><select id="split-type"><option value="50-50">50/50</option><option value="custom-percent">% custom</option><option value="proportional-income">Proporcional à renda</option><option value="100-payer">100% para quem pagou</option></select></div>
                         <div class="input-group"><label>% p/ parceiro 1</label><input type="number" id="custom-split" step="1" min="0" max="100" style="display:none;"></div>
                     </div>
-                    <div class="form-row"><div class="input-group"><label>Categoria</label><input type="text" id="categoria" list="categorias-sugeridas"></div><div class="input-group"><label>Recorrente?</label><select id="recorrente"><option value="none">Não</option><option value="monthly">Mensal</option></select></div></div>
-                    <div class="form-row"><div class="input-group"><label>Dividir com terceiros?</label><select id="has-third-parties"><option value="no">Não</option><option value="yes">Sim</option></select></div></div>
-                    <div id="third-parties-container" style="display: none;"><div class="card-title" style="font-size:0.9rem; margin-top:8px;"><i class="fas fa-users"></i> Amigos/terceiros na divisão</div><div id="third-parties-list"></div><button type="button" id="add-third-party-btn" class="btn btn-secondary" style="margin-top:8px;"><i class="fas fa-plus"></i> Adicionar pessoa</button><div class="info-message" style="margin-top:8px;">Os valores informados serão descontados do total antes de dividir entre o casal.</div></div>
-                    <div class="input-group"><label>Observação</label><input type="text" id="observacao"></div>
-                    <div id="preview-division" style="margin: 8px 0; font-size: 0.7rem; opacity: 0.8;"></div>
-                    <div class="info-message"><i class="fas fa-info-circle"></i> Fatura fecha dia 2. Compras a partir do dia 2 vão para o mês seguinte.<br><i class="fas fa-history"></i> Parcelas já pagas: informe quantas já foram pagas para continuar apenas com as restantes.</div>
-                    <div style="display: flex; gap: 8px; margin-top: 8px;"><button type="button" id="add-expense-btn" class="btn btn-primary">💾 Salvar</button><button type="button" id="cancel-edit-btn" class="btn btn-secondary" style="display:none;">Cancelar</button></div>
+                    <div class="form-row"><div class="input-group"><label>Recorrente?</label><select id="recorrente"><option value="none">Não</option><option value="monthly">Mensal</option></select></div>
+                        <div class="input-group"><label>Dividir com terceiros?</label><select id="has-third-parties"><option value="no">Não</option><option value="yes">Sim</option></select></div>
+                    </div>
+                    <div id="third-parties-container" style="display: none;"><div id="third-parties-list"></div><button type="button" id="add-third-party-btn" class="btn btn-secondary" style="margin-top:8px; width:100%;">+ Adicionar pessoa</button></div>
+                    <div class="input-group"><label>Observação</label><input type="text" id="observacao" placeholder="Opcional"></div>
+                    <div id="preview-division" style="margin: 8px 0; font-size: 0.75rem;"></div>
+                    <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px;"><button type="button" id="add-expense-btn" class="btn btn-primary" style="flex:1;">💾 Salvar</button><button type="button" id="cancel-edit-btn" class="btn btn-secondary" style="display:none; flex:1;">Cancelar</button></div>
                 </form>
             </div>
-            <div class="card"><div class="card-title"><i class="fas fa-bolt"></i> Despesa rápida</div><button id="quick-expense-btn" class="btn btn-secondary" style="width:100%;">⚡ Clique aqui</button></div>
+            <div class="card"><button id="quick-expense-btn" class="btn btn-secondary" style="width:100%;">⚡ Despesa rápida</button></div>
         </div>
         <!-- Página 4: Histórico -->
         <div class="swipe-page" data-page="4">
             <div class="card">
-                <div class="card-title"><i class="fas fa-history"></i> Histórico de despesas</div>
-                <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px;">
-                    <input type="text" id="filter-desc" placeholder="Filtrar descrição" style="flex:1;">
-                    <select id="filter-category" style="flex:1;"><option value="">Todas cats</option></select>
+                <div class="card-title"><i class="fas fa-history"></i> Histórico</div>
+                <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px;">
+                    <input type="text" id="filter-desc" placeholder="Filtrar descrição" style="flex:2;">
+                    <select id="filter-category" style="flex:1;"><option value="">Todas categorias</option></select>
                     <select id="filter-payer" style="flex:1;"><option value="">Todos</option><option value="partner1">Parceiro 1</option><option value="partner2">Parceiro 2</option></select>
                     <button id="clear-filters" class="btn btn-secondary">Limpar</button>
-                    <button id="manage-recurring-btn" class="btn btn-secondary" style="padding: 6px 12px;">🔄 Ver templates</button>
                 </div>
-                <div id="selectionBar" class="selection-bar" style="display: none;">
-                    <div class="selection-count"><span id="selectedCount">0</span> despesa(s) selecionada(s)</div>
-                    <div style="display: flex; gap: 8px;"><button id="selectAllBtn" class="btn btn-secondary" style="padding: 6px 12px;">Selecionar todos</button><button id="deleteSelectedBtn" class="btn btn-danger" style="padding: 6px 12px;"><i class="fas fa-trash"></i> Excluir selecionados</button></div>
+                <div id="selectionBar" class="selection-bar" style="display:none;">
+                    <span id="selectedCount">0</span> selecionada(s)
+                    <div style="display: flex; gap: 8px;"><button id="selectAllBtn" class="btn btn-secondary">Selecionar todos</button><button id="deleteSelectedBtn" class="btn btn-danger">Excluir</button></div>
                 </div>
-                <div style="overflow-x: auto;"><table id="historyTable" style="min-width: 500px;"><thead><tr><th><input type="checkbox" id="headerCheckbox" style="width: 18px; height: 18px; cursor: pointer;"></th><th>Descrição</th><th>Total</th><th>Parc</th><th>Parc.Mês</th><th>Pagador</th><th>Ações</th></tr></thead><tbody id="tabela-historico"></tbody></table></div>
+                <div style="overflow-x: auto;"><table id="historyTable"><thead><tr><th style="width:30px"><input type="checkbox" id="headerCheckbox" style="width:16px;height:16px;"></th><th>Descrição</th><th>Valor mês</th><th>Data parcela</th><th>Categoria</th><th>Ações</th></tr></thead><tbody id="tabela-historico"></tbody></table></div>
             </div>
         </div>
         <!-- Página 5: Configurações -->
         <div class="swipe-page" data-page="5">
-            <div class="card"><div class="card-title"><i class="fas fa-chart-line"></i> Renda Compartilhada</div><div class="income-row"><span>💰 Renda de <span id="income-name1"></span>:</span><input type="number" id="income1" step="100" placeholder="R$ 0,00" value="0"></div><div class="income-row"><span>💰 Renda de <span id="income-name2"></span>:</span><input type="number" id="income2" step="100" placeholder="R$ 0,00" value="0"></div><div id="income-summary" class="info-message" style="margin-top:8px;"></div><button id="save-income-btn" class="btn btn-primary" style="margin-top:8px;"><i class="fas fa-save"></i> Salvar rendas</button></div>
-            <div class="card"><div class="card-title"><i class="fas fa-tasks"></i> Orçamento por categoria</div><div id="budget-list"></div><div style="display: flex; gap: 8px; margin-top: 12px;"><input type="text" id="new-budget-cat" placeholder="Categoria" style="flex:2;"><input type="number" id="new-budget-value" placeholder="R$" step="0.01" style="flex:1;"><button id="add-budget-btn" class="btn btn-primary">Definir</button></div></div>
-            <div class="card"><div class="card-title"><i class="fas fa-download"></i> Exportar dados</div><button id="export-csv-btn" class="btn btn-secondary" style="width:100%;">📎 Exportar CSV</button></div>
-            <div class="card"><div class="card-title"><i class="fas fa-palette"></i> Aparência</div><button id="theme-toggle-btn" class="btn btn-secondary" style="width:100%;">🌓 Alternar tema</button></div>
+            <div class="card"><div class="card-title"><i class="fas fa-chart-line"></i> Renda compartilhada</div><div class="income-row"><span>💰 <span id="income-name1"></span>:</span><input type="number" id="income1" step="100" value="0" style="flex:2;"></div><div class="income-row"><span>💰 <span id="income-name2"></span>:</span><input type="number" id="income2" step="100" value="0" style="flex:2;"></div><div id="income-summary" class="info-message"></div><button id="save-income-btn" class="btn btn-primary">Salvar rendas</button></div>
+            <div class="card"><div class="card-title"><i class="fas fa-tasks"></i> Orçamento por categoria</div><div id="budget-list"></div><div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px;"><input type="text" id="new-budget-cat" placeholder="Categoria" list="categoryList" style="flex:2;"><input type="number" id="new-budget-value" placeholder="Limite R$" style="flex:1;"><button id="add-budget-btn" class="btn btn-primary">Definir</button></div></div>
+            <div class="card"><div class="card-title"><i class="fas fa-tags"></i> Gerenciar categorias</div><div id="categories-list"></div><div style="display: flex; gap: 8px; margin-top: 12px;"><input type="text" id="new-category-name" placeholder="Nova categoria" style="flex:2;"><button id="add-category-btn" class="btn btn-primary">Adicionar</button></div></div>
+            <div class="card"><div class="card-title"><i class="fas fa-database"></i> Backup / Restauração</div><button id="export-all-btn" class="btn btn-secondary" style="width:100%; margin-bottom:8px;">📥 Exportar todos os dados (JSON)</button><button id="import-all-btn" class="btn btn-secondary" style="width:100%;">📤 Importar dados (JSON)</button><input type="file" id="import-file" accept=".json" style="display:none;"></div>
         </div>
-        <!-- Página 6: Devedores -->
-        <div class="swipe-page" data-page="6"><div class="card"><div class="card-title"><i class="fas fa-hand-holding-usd"></i> Devedores (terceiros)</div><div id="debtors-list" class="debtors-grid"></div><div class="debtor-form-group"><div class="field-name"><label>Nome completo</label><input type="text" id="new-debtor-name" placeholder="Ex: João Silva"></div><div class="field-value"><label>Valor (R$)</label><input type="number" id="new-debtor-value" placeholder="0,00" step="0.01"></div><div class="field-date"><label>Data de referência</label><input type="date" id="new-debtor-date"></div><div class="field-button"><button id="add-debtor-btn" class="btn btn-success"><i class="fas fa-plus"></i> Adicionar</button></div></div><button id="save-debtors-btn" class="btn btn-primary" style="margin-top: 16px; width: 100%;"><i class="fas fa-save"></i> Salvar alterações</button></div></div>
-        <!-- Página 7: Mural do Casal -->
-        <div class="swipe-page" data-page="7">
+        <!-- Página 6: Devedores (otimizada) -->
+        <div class="swipe-page" data-page="6">
             <div class="card">
-                <div class="card-title"><i class="fas fa-comments"></i> Mural do Casal</div>
-                <div id="messages-container" class="messages-container"></div>
-                <div class="chat-input-area">
-                    <input type="text" id="message-input" placeholder="Digite uma mensagem, lembrete ou observação..." maxlength="500">
-                    <button id="send-message-btn" class="btn btn-primary"><i class="fas fa-paper-plane"></i> Enviar</button>
+                <div class="card-title"><i class="fas fa-hand-holding-usd"></i> Devedores (terceiros)</div>
+                <div id="debtors-list"></div>
+                <div class="debtor-form-group">
+                    <div class="field-name"><label>Nome</label><input type="text" id="new-debtor-name" placeholder="Ex: João"></div>
+                    <div class="field-value"><label>Valor (R$)</label><input type="number" id="new-debtor-value" placeholder="0,00" step="0.01"></div>
+                    <div class="field-date"><label>Data</label><input type="date" id="new-debtor-date"></div>
+                    <div class="field-button"><button id="add-debtor-btn" class="btn btn-success">Adicionar</button></div>
                 </div>
-                <div style="display: flex; gap: 8px; margin-top: 12px;">
-                    <button id="clear-mural-btn" class="btn btn-danger" style="width: 100%;"><i class="fas fa-trash-alt"></i> Limpar mural</button>
-                </div>
-                <div class="info-message" style="margin-top: 12px;"><i class="fas fa-info-circle"></i> Este mural é compartilhado entre o casal. Cada mensagem mostra o nome de quem enviou.</div>
             </div>
         </div>
-        <!-- Página 8: Metas de Economia do Casal -->
-        <div class="swipe-page" data-page="8"><div class="card"><div class="card-title"><i class="fas fa-bullseye"></i> Metas de Economia do Casal</div><div id="goals-list"></div><div class="form-row" style="margin-top: 12px;"><div class="input-group"><label>Nome da meta</label><input type="text" id="new-goal-name" placeholder="Ex: Viagem dos sonhos"></div><div class="input-group"><label>Valor alvo (R$)</label><input type="number" id="new-goal-target" step="100" placeholder="0,00"></div></div><div class="form-row"><div class="input-group"><label>Valor atual (R$)</label><input type="number" id="new-goal-current" step="100" placeholder="0,00" value="0"></div><div class="input-group"><label>Prazo (opcional)</label><input type="date" id="new-goal-deadline"></div></div><button id="add-goal-btn" class="btn btn-primary" style="width:100%;"><i class="fas fa-plus"></i> Adicionar meta</button><div class="info-message" style="margin-top: 12px;"><i class="fas fa-chart-simple"></i> Acompanhe suas metas e veja o progresso.</div></div></div>
+        <!-- Página 7: Mural -->
+        <div class="swipe-page" data-page="7">
+            <div class="card"><div class="card-title"><i class="fas fa-comments"></i> Mural do Casal</div><div id="messages-container" class="messages-container"></div><div style="display: flex; gap: 8px; flex-wrap: wrap;"><input type="text" id="message-input" placeholder="Digite uma mensagem..." style="flex:3;"><button id="send-message-btn" class="btn btn-primary" style="flex:1;">Enviar</button></div><button id="clear-mural-btn" class="btn btn-danger" style="margin-top: 12px; width:100%;">Limpar mural</button></div>
+        </div>
+        <!-- Página 8: Metas do casal -->
+        <div class="swipe-page" data-page="8">
+            <div class="card"><div class="card-title"><i class="fas fa-bullseye"></i> Metas de Economia do Casal</div><div id="goals-list"></div><div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px;"><input type="text" id="new-goal-name" placeholder="Nome da meta" style="flex:2;"><input type="number" id="new-goal-target" placeholder="Alvo R$" style="flex:1;"><input type="number" id="new-goal-current" placeholder="Atual R$" value="0" style="flex:1;"><input type="date" id="new-goal-deadline" placeholder="Prazo" style="flex:1;"><button id="add-goal-btn" class="btn btn-primary">Adicionar</button></div></div>
+        </div>
     </div>
     <div class="page-indicators" id="pageIndicators"></div>
 </div>
 
-<!-- IA Concierge -->
-<div class="concierge-container" id="conciergeContainer">
-    <div class="concierge-bubble" id="conciergeBubble" style="display: none;"><span id="conciergeMessage"></span></div>
-    <div class="concierge-avatar" id="conciergeAvatar"><i class="fas fa-robot"></i></div>
-</div>
+<div class="concierge-container"><div class="concierge-bubble" id="conciergeBubble" style="display: none;"><span id="conciergeMessage"></span></div><div class="concierge-avatar" id="conciergeAvatar"><i class="fas fa-robot"></i></div></div>
 
 <script>
     // Firebase config
@@ -610,13 +642,10 @@
         projectId: "gestao-casal",
         storageBucket: "gestao-casal.firebasestorage.app",
         messagingSenderId: "588977469279",
-        appId: "1:588977469279:web:113cacee18c2acdc0e68ea",
-        measurementId: "G-DFDX6Q8GWW"
+        appId: "1:588977469279:web:113cacee18c2acdc0e68ea"
     };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
-    const auth = firebase.auth();
-
     const COUPLE_ID = "coupleData";
     const expensesRef = db.collection(`shared/${COUPLE_ID}/expenses`);
     const budgetsRef = db.collection(`shared/${COUPLE_ID}/budgets`);
@@ -628,278 +657,199 @@
     const incomesRef = db.collection(`shared/${COUPLE_ID}/settings`).doc("incomes");
     const goalsRef = db.collection(`shared/${COUPLE_ID}/goals`);
     const individualGoalsRef = db.collection(`shared/${COUPLE_ID}/individualGoals`);
+    const categoriesRef = db.collection(`shared/${COUPLE_ID}/categories`);
 
-    let currentPartnerId = "";
-    let partner1Name = "", partner2Name = "";
-    let selectedMonth = new Date().getMonth();
-    let selectedYear = new Date().getFullYear();
-    let allExpenses = [];
-    let currentDisplayExpenses = [];
-    let categoriesBudget = {};
-    let recurringTemplates = [];
-    let editingDocId = null;
-    let savingsGoal = 500;
-    let debtors = [];
-    let messages = [];
-    let incomes = { partner1: 0, partner2: 0 };
-    let goals = [];
-    let individualGoal1 = { target: 0, current: 0 };
-    let individualGoal2 = { target: 0, current: 0 };
-    let thirdParties = [];
-    let categoryChart = null, compareChart = null;
-    let unsubscribeExpenses, unsubscribeBudgets, unsubscribeRecurring, unsubscribeMeta, unsubscribeNames, unsubscribeDebtors, unsubscribeMessages, unsubscribeIncomes, unsubscribeGoals, unsubscribeIndividualGoals;
+    let currentPartnerId = "", partner1Name = "", partner2Name = "";
+    let selectedMonth = new Date().getMonth(), selectedYear = new Date().getFullYear();
+    let allExpenses = [], currentDisplayExpenses = [], categoriesBudget = {}, recurringTemplates = [], editingDocId = null;
+    let savingsGoal = 500, debtors = [], messages = [], incomes = { partner1: 0, partner2: 0 }, goals = [];
+    let individualGoal1 = { target: 0, current: 0 }, individualGoal2 = { target: 0, current: 0 };
+    let thirdParties = [], categoriesList = [];
     let selectedExpenses = new Set();
+    let categoryChart = null, compareChart = null, evolutionChart = null;
+    let conciergeTimeout = null;
 
     const formatMoney = (val) => val.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-    const escapeHtml = (str) => { if (!str) return ''; return str.replace(/[&<>]/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[m])); };
+    const escapeHtml = (str) => str?.replace(/[&<>]/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[m])) || '';
 
-    // ========== FATURA DIA 2 ==========
     function getFaturaMonthYear(date) {
         const day = date.getDate();
-        let month = date.getMonth();
-        let year = date.getFullYear();
-        if (day <= 1) {
-            if (month === 0) { month = 11; year--; }
-            else month--;
-        }
-        return `${year}-${String(month + 1).padStart(2, '0')}`;
+        let month = date.getMonth(), year = date.getFullYear();
+        if (day <= 1) { if (month === 0) { month = 11; year--; } else month--; }
+        return `${year}-${String(month+1).padStart(2,'0')}`;
     }
     function generateInstallmentMonths(startDateISO, totalParcelas, parcelasPagas = 0) {
         const start = new Date(startDateISO);
         const months = [];
         for (let i = parcelasPagas; i < totalParcelas; i++) {
-            const dueDate = new Date(start);
-            dueDate.setMonth(start.getMonth() + i);
-            months.push(getFaturaMonthYear(dueDate));
+            const due = new Date(start); due.setMonth(start.getMonth() + i);
+            months.push(getFaturaMonthYear(due));
         }
         return months;
     }
-
-    // ========== CÁLCULO DA DIVISÃO ==========
+    function getInstallmentDateForMonth(exp, targetMonthYear) {
+        const start = new Date(exp.startDate);
+        for (let i = exp.parcelasPagas || 0; i < exp.parcelas; i++) {
+            const due = new Date(start); due.setMonth(start.getMonth() + i);
+            if (`${due.getFullYear()}-${String(due.getMonth()+1).padStart(2,'0')}` === targetMonthYear) return due;
+        }
+        return null;
+    }
     function calculateMonthlyShare(exp) {
         const parcelaValor = exp.valorTotal / exp.parcelas;
         let valorAposTerceiros = parcelaValor;
-        if (exp.thirdParties && exp.thirdParties.length > 0) {
-            const totalTerceiros = exp.thirdParties.reduce((sum, t) => sum + (t.valor || 0), 0);
-            valorAposTerceiros = Math.max(0, parcelaValor - totalTerceiros);
-        }
-        const splitType = exp.splitType;
-        let p1 = 0, p2 = 0;
-        if (splitType === '50-50') {
-            p1 = valorAposTerceiros / 2;
-            p2 = valorAposTerceiros / 2;
-        } else if (splitType === 'custom-percent') {
-            const perc = exp.customPercent || 50;
-            p1 = valorAposTerceiros * (perc / 100);
-            p2 = valorAposTerceiros * ((100 - perc) / 100);
-        } else if (splitType === 'proportional-income') {
-            const totalIncome = incomes.partner1 + incomes.partner2;
-            if (totalIncome > 0) {
-                p1 = valorAposTerceiros * (incomes.partner1 / totalIncome);
-                p2 = valorAposTerceiros * (incomes.partner2 / totalIncome);
-            } else {
-                p1 = valorAposTerceiros / 2;
-                p2 = valorAposTerceiros / 2;
-            }
-        } else if (splitType === '100-payer') {
-            if (exp.paidBy === 'partner1') { p1 = valorAposTerceiros; p2 = 0; }
-            else if (exp.paidBy === 'partner2') { p1 = 0; p2 = valorAposTerceiros; }
-            else { p1 = valorAposTerceiros / 2; p2 = valorAposTerceiros / 2; }
-        } else {
-            p1 = valorAposTerceiros / 2;
-            p2 = valorAposTerceiros / 2;
-        }
+        if (exp.thirdParties?.length) valorAposTerceiros = Math.max(0, parcelaValor - exp.thirdParties.reduce((s,t)=>s+(t.valor||0),0));
+        const split = exp.splitType;
+        let p1=0, p2=0;
+        if (split === '50-50') { p1 = valorAposTerceiros/2; p2 = valorAposTerceiros/2; }
+        else if (split === 'custom-percent') { const perc = exp.customPercent||50; p1 = valorAposTerceiros*perc/100; p2 = valorAposTerceiros*(100-perc)/100; }
+        else if (split === 'proportional-income') { const total = incomes.partner1+incomes.partner2; if(total>0){ p1 = valorAposTerceiros*incomes.partner1/total; p2 = valorAposTerceiros*incomes.partner2/total; } else { p1=p2=valorAposTerceiros/2; } }
+        else if (split === '100-payer') { if(exp.paidBy==='partner1'){ p1=valorAposTerceiros; p2=0; } else if(exp.paidBy==='partner2'){ p1=0; p2=valorAposTerceiros; } else { p1=p2=valorAposTerceiros/2; } }
+        else { p1=p2=valorAposTerceiros/2; }
         return { partner1: p1, partner2: p2 };
     }
 
-    function getInstallmentDate(exp, targetMonthYear) {
-        const start = new Date(exp.startDate);
-        for (let i = exp.parcelasPagas || 0; i < exp.parcelas; i++) {
-            const due = new Date(start);
-            due.setMonth(start.getMonth() + i);
-            if (`${due.getFullYear()}-${String(due.getMonth() + 1).padStart(2, '0')}` === targetMonthYear) return due.toLocaleDateString('pt-BR');
+    async function loadCategories() {
+        const snapshot = await categoriesRef.get();
+        if (snapshot.empty) {
+            const defaultCats = ["Alimentação", "Lazer", "Moradia", "Transporte", "Saúde", "Educação", "Outros"];
+            for (const cat of defaultCats) await categoriesRef.add({ name: cat });
+            return loadCategories();
         }
-        return "Data desconhecida";
+        categoriesList = snapshot.docs.map(doc => ({ id: doc.id, name: doc.data().name }));
+        const selectCategoria = document.getElementById('categoria');
+        const filterCat = document.getElementById('filter-category');
+        const budgetCat = document.getElementById('new-budget-cat');
+        if (selectCategoria) {
+            selectCategoria.innerHTML = categoriesList.map(c => `<option value="${escapeHtml(c.name)}">${escapeHtml(c.name)}</option>`).join('');
+        }
+        if (filterCat) {
+            filterCat.innerHTML = '<option value="">Todas categorias</option>' + categoriesList.map(c => `<option value="${escapeHtml(c.name)}">${escapeHtml(c.name)}</option>`).join('');
+        }
+        if (budgetCat) {
+            let datalist = document.getElementById('categoryList');
+            if (!datalist) {
+                datalist = document.createElement('datalist');
+                datalist.id = 'categoryList';
+                document.body.appendChild(datalist);
+            }
+            datalist.innerHTML = categoriesList.map(c => `<option value="${escapeHtml(c.name)}">`).join('');
+            budgetCat.setAttribute('list', 'categoryList');
+        }
+        renderCategoriesManager();
+    }
+    async function renderCategoriesManager() {
+        const container = document.getElementById('categories-list');
+        if (!container) return;
+        if (categoriesList.length === 0) { container.innerHTML = '<div>Nenhuma categoria cadastrada.</div>'; return; }
+        container.innerHTML = categoriesList.map(cat => `<div class="category-item"><span>${escapeHtml(cat.name)}</span><div><button class="edit-category btn-small" data-id="${cat.id}" data-name="${escapeHtml(cat.name)}">✏️</button><button class="delete-category btn-small btn-danger" data-id="${cat.id}">🗑️</button></div></div>`).join('');
+        document.querySelectorAll('.edit-category').forEach(btn => btn.addEventListener('click', async () => {
+            const { value: newName } = await Swal.fire({ title: 'Editar categoria', input: 'text', inputValue: btn.dataset.name, showCancelButton: true });
+            if (newName && newName.trim()) await categoriesRef.doc(btn.dataset.id).update({ name: newName.trim() });
+        }));
+        document.querySelectorAll('.delete-category').forEach(btn => btn.addEventListener('click', async () => {
+            if (await Swal.fire({ title: 'Confirmar', text: 'Remover esta categoria?', icon: 'warning', showCancelButton: true }).then(r=>r.isConfirmed))
+                await categoriesRef.doc(btn.dataset.id).delete();
+        }));
     }
 
     function updateUIWithNames() {
         document.getElementById('gasto-partner1-label').innerHTML = `🧑 Gasto de ${partner1Name}`;
         document.getElementById('gasto-partner2-label').innerHTML = `👩 Gasto de ${partner2Name}`;
-        document.getElementById('userAvatar').innerText = (currentPartnerId === 'partner1') ? partner1Name : partner2Name;
+        document.getElementById('userAvatar').innerText = currentPartnerId === 'partner1' ? partner1Name : partner2Name;
         document.getElementById('partner1-name-label').innerText = partner1Name;
         document.getElementById('partner2-name-label').innerText = partner2Name;
         document.getElementById('income-name1').innerText = partner1Name;
         document.getElementById('income-name2').innerText = partner2Name;
         document.getElementById('goal-individual-name1').innerText = partner1Name;
         document.getElementById('goal-individual-name2').innerText = partner2Name;
-        const paidBySelect = document.getElementById('paid-by');
-        if (paidBySelect) { paidBySelect.options[0].text = partner1Name; paidBySelect.options[1].text = partner2Name; }
+        const paidBy = document.getElementById('paid-by');
+        if(paidBy) { paidBy.options[0].text = partner1Name; paidBy.options[1].text = partner2Name; }
         const filterPayer = document.getElementById('filter-payer');
-        if (filterPayer && filterPayer.options.length >= 2) { filterPayer.options[1].text = partner1Name; filterPayer.options[2].text = partner2Name; }
+        if(filterPayer && filterPayer.options.length>=2) { filterPayer.options[1].text = partner1Name; filterPayer.options[2].text = partner2Name; }
     }
 
-    function renderPartnerExpenses(partnerKey, containerId, monthYear) {
+    async function renderPartnerExpenses(partnerKey, containerId, monthYear) {
         const container = document.getElementById(containerId);
         if (!container) return;
-        const monthExpenses = allExpenses.filter(exp => exp.installmentMonths && exp.installmentMonths.includes(monthYear));
-        const targetPartner = (partnerKey === 'partner1') ? 'partner1' : 'partner2';
-        const filtered = monthExpenses.filter(exp => {
+        let filtered = allExpenses.filter(exp => exp.installmentMonths?.includes(monthYear));
+        const targetPartner = partnerKey === 'partner1' ? 'partner1' : 'partner2';
+        let items = [];
+        for (const exp of filtered) {
             const { partner1, partner2 } = calculateMonthlyShare(exp);
-            return (targetPartner === 'partner1' && partner1 > 0) || (targetPartner === 'partner2' && partner2 > 0);
-        }).map(exp => {
-            const { partner1, partner2 } = calculateMonthlyShare(exp);
-            const valor = (targetPartner === 'partner1') ? partner1 : partner2;
-            const dateStr = getInstallmentDate(exp, monthYear);
-            return { id: exp.id, descricao: exp.descricao, valor, data: dateStr, categoria: exp.categoria };
-        });
-        if (filtered.length === 0) { container.innerHTML = '<div style="text-align:center; padding:20px;">Nenhum gasto neste mês.</div>'; return; }
-        container.innerHTML = filtered.map(exp => `<div class="expense-item"><div class="expense-info"><strong>${escapeHtml(exp.descricao)}</strong><br><span class="expense-date">${exp.data} - ${exp.categoria || 'Sem categoria'}</span></div><div style="display: flex; align-items: center; gap: 12px;"><span style="font-weight:700; color:#e91e63;">${formatMoney(exp.valor)}</span><button class="btn-small delete-partner-expense" data-id="${exp.id}">🗑️ Excluir</button></div></div>`).join('');
-        document.querySelectorAll('.delete-partner-expense').forEach(btn => btn.addEventListener('click', async () => { if (await Swal.fire({ title: 'Confirmar', text: 'Remover esta despesa?', icon: 'warning', showCancelButton: true }).then(r=>r.isConfirmed)) await expensesRef.doc(btn.dataset.id).delete(); }));
+            const valor = targetPartner === 'partner1' ? partner1 : partner2;
+            if (valor <= 0) continue;
+            const dueDate = getInstallmentDateForMonth(exp, monthYear);
+            items.push({ id: exp.id, descricao: exp.descricao, valor, data: dueDate, categoria: exp.categoria });
+        }
+        items.sort((a,b) => (a.data || 0) - (b.data || 0));
+        if (items.length === 0) { container.innerHTML = '<div style="text-align:center; padding:16px;">Nenhum gasto neste mês.</div>'; return; }
+        container.innerHTML = items.map(exp => `<div class="expense-item"><div><strong>${escapeHtml(exp.descricao)}</strong><br><span class="expense-date">${exp.data ? exp.data.toLocaleDateString('pt-BR') : 'Data?'} - ${exp.categoria || ''}</span></div><div>${formatMoney(exp.valor)}<button class="btn-small delete-partner-expense" data-id="${exp.id}">🗑️</button></div></div>`).join('');
+        document.querySelectorAll('.delete-partner-expense').forEach(btn => btn.addEventListener('click', async () => { if(await Swal.fire({title:'Confirmar',text:'Remover?',icon:'warning',showCancelButton:true}).then(r=>r.isConfirmed)) await expensesRef.doc(btn.dataset.id).delete(); }));
     }
 
     function renderDebtors() {
         const container = document.getElementById('debtors-list');
         if (!container) return;
-        if (debtors.length === 0) { container.innerHTML = '<div style="text-align:center; padding:20px;">Nenhum devedor cadastrado.</div>'; return; }
-        const sorted = [...debtors].sort((a, b) => (b.data || '').localeCompare(a.data || ''));
-        container.innerHTML = sorted.map(d => {
-            const dataFormatada = d.data ? new Date(d.data).toLocaleDateString('pt-BR') : 'Data não informada';
-            return `<div class="debtor-item" data-id="${d.id}"><div class="debtor-info"><strong>${escapeHtml(d.nome)}</strong><br><span class="debtor-date">📅 ${dataFormatada}</span></div><div style="display: flex; align-items: center; gap: 12px;"><span style="font-weight:700; color:#e91e63;">${formatMoney(d.valor)}</span><button class="btn-small btn-quitar" data-id="${d.id}" data-value="${d.valor}" data-name="${escapeHtml(d.nome)}">💰 Quitar</button><button class="btn-small" data-id="${d.id}" data-action="delete">🗑️ Excluir</button></div></div>`;
-        }).join('');
-        document.querySelectorAll('.btn-quitar').forEach(btn => btn.addEventListener('click', async () => { const id = btn.dataset.id, valor = parseFloat(btn.dataset.value), nome = btn.dataset.name; if (await Swal.fire({ title: 'Quitar dívida', text: `Confirmar recebimento de ${formatMoney(valor)} de ${nome}?`, icon: 'question', showCancelButton: true }).then(r=>r.isConfirmed)) await debtorsRef.doc(id).delete(); }));
-        document.querySelectorAll('.btn-small[data-action="delete"]').forEach(btn => btn.addEventListener('click', async () => { if (await Swal.fire({ title: 'Excluir devedor', text: 'Remover permanentemente?', icon: 'warning', showCancelButton: true }).then(r=>r.isConfirmed)) await debtorsRef.doc(btn.dataset.id).delete(); }));
+        if (debtors.length === 0) { container.innerHTML = '<div style="text-align:center; padding:16px;">Nenhum devedor cadastrado.</div>'; return; }
+        const total = debtors.reduce((s,d)=>s+d.valor,0);
+        document.getElementById('total-a-receber').innerText = formatMoney(total);
+        document.getElementById('debtors-count').innerHTML = `${debtors.length} devedor(es)`;
+        container.innerHTML = debtors.map(d => `<div class="debtor-item"><div><strong>${escapeHtml(d.nome)}</strong><br>${d.data ? new Date(d.data).toLocaleDateString('pt-BR') : ''}</div><div>${formatMoney(d.valor)}<button class="btn-small btn-quitar" data-id="${d.id}" data-val="${d.valor}" data-name="${escapeHtml(d.nome)}">💰 Quitar</button><button class="btn-small delete-debtor" data-id="${d.id}">🗑️</button></div></div>`).join('');
+        document.querySelectorAll('.btn-quitar').forEach(btn => btn.addEventListener('click', async () => { if(await Swal.fire({title:'Receber',text:`Confirmar recebimento de ${formatMoney(parseFloat(btn.dataset.val))} de ${btn.dataset.name}?`,icon:'question',showCancelButton:true}).then(r=>r.isConfirmed)) await debtorsRef.doc(btn.dataset.id).delete(); }));
+        document.querySelectorAll('.delete-debtor').forEach(btn => btn.addEventListener('click', async () => { if(await Swal.fire({title:'Excluir',text:'Remover devedor?',icon:'warning',showCancelButton:true}).then(r=>r.isConfirmed)) await debtorsRef.doc(btn.dataset.id).delete(); }));
     }
 
     async function addDebtor() {
         const nome = document.getElementById('new-debtor-name').value.trim();
         const valor = parseFloat(document.getElementById('new-debtor-value').value);
-        let dataStr = document.getElementById('new-debtor-date').value;
-        if (!nome || isNaN(valor) || valor <= 0) { Swal.fire('Erro', 'Preencha nome e valor válido.', 'error'); return; }
-        if (!dataStr) {
-            const hoje = new Date();
-            dataStr = hoje.toISOString().slice(0,10);
-        } else {
-            const dataObj = new Date(dataStr);
-            if (isNaN(dataObj.getTime())) { Swal.fire('Erro', 'Data inválida.', 'error'); return; }
-            dataStr = dataObj.toISOString().slice(0,10);
-        }
-        await debtorsRef.add({ nome, valor, data: dataStr, criadoEm: firebase.firestore.FieldValue.serverTimestamp() });
-        document.getElementById('new-debtor-name').value = ''; document.getElementById('new-debtor-value').value = ''; document.getElementById('new-debtor-date').value = '';
-        Swal.fire('Adicionado!', 'Débito registrado.', 'success');
+        let data = document.getElementById('new-debtor-date').value;
+        if (!nome || isNaN(valor) || valor<=0) { Swal.fire('Erro','Preencha nome e valor válido.','error'); return; }
+        if (!data) data = new Date().toISOString().slice(0,10);
+        await debtorsRef.add({ nome, valor, data });
+        document.getElementById('new-debtor-name').value = '';
+        document.getElementById('new-debtor-value').value = '';
+        document.getElementById('new-debtor-date').value = '';
+        Swal.fire('Adicionado!','','success');
     }
 
     async function saveIncomes() {
-        const income1 = parseFloat(document.getElementById('income1').value) || 0;
-        const income2 = parseFloat(document.getElementById('income2').value) || 0;
-        await incomesRef.set({ income1, income2 });
-        incomes.partner1 = income1;
-        incomes.partner2 = income2;
-        const total = income1 + income2;
-        const perc1 = total > 0 ? (income1 / total * 100).toFixed(1) : 50;
-        const perc2 = total > 0 ? (income2 / total * 100).toFixed(1) : 50;
-        document.getElementById('income-summary').innerHTML = `<strong>📊 Proporção de contribuição:</strong><br>${partner1Name}: ${formatMoney(income1)} (${perc1}%)<br>${partner2Name}: ${formatMoney(income2)} (${perc2}%)`;
-        Swal.fire('Rendas salvas!', 'Os valores foram atualizados.', 'success');
+        const i1 = parseFloat(document.getElementById('income1').value)||0, i2 = parseFloat(document.getElementById('income2').value)||0;
+        await incomesRef.set({ income1: i1, income2: i2 });
+        incomes.partner1 = i1; incomes.partner2 = i2;
+        const total = i1+i2, p1 = total>0?(i1/total*100).toFixed(1):50, p2 = total>0?(i2/total*100).toFixed(1):50;
+        document.getElementById('income-summary').innerHTML = `${partner1Name}: ${formatMoney(i1)} (${p1}%)<br>${partner2Name}: ${formatMoney(i2)} (${p2}%)`;
+        Swal.fire('Rendas salvas!','','success');
         updateDashboard();
     }
 
     function renderThirdParties() {
         const container = document.getElementById('third-parties-list');
         if (!container) return;
-        if (thirdParties.length === 0) { container.innerHTML = '<div style="text-align:center; padding:10px;">Nenhum terceiro adicionado</div>'; return; }
-        container.innerHTML = thirdParties.map((tp, idx) => `<div class="third-party-item"><div class="third-party-header"><strong>${escapeHtml(tp.nome)}</strong><button type="button" class="btn-small remove-third-party" data-idx="${idx}">🗑️ Remover</button></div><div style="display:flex; gap:8px; flex-wrap:wrap;"><div style="flex:1"><label>Valor (R$)</label><input type="number" class="third-party-value" data-idx="${idx}" value="${tp.valor}" step="0.01" style="width:100%;"></div></div></div>`).join('');
+        if (thirdParties.length === 0) { container.innerHTML = '<div style="text-align:center; padding:8px;">Nenhum terceiro adicionado</div>'; return; }
+        container.innerHTML = thirdParties.map((tp, idx) => `<div class="third-party-item"><div><strong>${escapeHtml(tp.nome)}</strong><button type="button" class="btn-small remove-third-party" data-idx="${idx}" style="float:right;">🗑️</button></div><div><input type="number" class="third-party-value" data-idx="${idx}" value="${tp.valor}" step="0.01" style="width:100%; margin-top:4px;"></div></div>`).join('');
         document.querySelectorAll('.remove-third-party').forEach(btn => btn.addEventListener('click', () => { thirdParties.splice(parseInt(btn.dataset.idx), 1); renderThirdParties(); updatePreviewDivision(); }));
         document.querySelectorAll('.third-party-value').forEach(input => input.addEventListener('change', () => { thirdParties[parseInt(input.dataset.idx)].valor = parseFloat(input.value) || 0; updatePreviewDivision(); }));
     }
-
-    function addThirdParty() { thirdParties.push({ nome: `Amigo ${thirdParties.length + 1}`, valor: 0 }); renderThirdParties(); updatePreviewDivision(); }
-
+    function addThirdParty() { thirdParties.push({ nome: `Amigo ${thirdParties.length+1}`, valor: 0 }); renderThirdParties(); updatePreviewDivision(); }
     function updatePreviewDivision() {
         const valorTotal = parseFloat(document.getElementById('valor-total').value) || 0;
         const parcelas = parseInt(document.getElementById('parcelas').value) || 1;
         const parcelaValor = valorTotal / parcelas;
-        const totalTerceiros = thirdParties.reduce((sum, tp) => sum + (tp.valor || 0), 0);
+        const totalTerceiros = thirdParties.reduce((s,t)=>s+(t.valor||0),0);
         const valorAposTerceiros = Math.max(0, parcelaValor - totalTerceiros);
         const splitType = document.getElementById('split-type').value;
         const paidBy = document.getElementById('paid-by').value;
-        let p1 = 0, p2 = 0;
-        if (splitType === '50-50') { p1 = valorAposTerceiros / 2; p2 = valorAposTerceiros / 2; }
-        else if (splitType === 'custom-percent') { const perc = parseFloat(document.getElementById('custom-split').value) || 50; p1 = valorAposTerceiros * (perc / 100); p2 = valorAposTerceiros * ((100 - perc) / 100); }
-        else if (splitType === 'proportional-income') { const totalIncome = incomes.partner1 + incomes.partner2; if (totalIncome > 0) { p1 = valorAposTerceiros * (incomes.partner1 / totalIncome); p2 = valorAposTerceiros * (incomes.partner2 / totalIncome); } else { p1 = valorAposTerceiros / 2; p2 = valorAposTerceiros / 2; } }
-        else if (splitType === '100-payer') {
-            if (paidBy === 'partner1') { p1 = valorAposTerceiros; p2 = 0; }
-            else if (paidBy === 'partner2') { p1 = 0; p2 = valorAposTerceiros; }
-            else { p1 = valorAposTerceiros / 2; p2 = valorAposTerceiros / 2; }
-        } else { p1 = valorAposTerceiros / 2; p2 = valorAposTerceiros / 2; }
+        let p1=0, p2=0;
+        if (splitType === '50-50') { p1 = valorAposTerceiros/2; p2 = valorAposTerceiros/2; }
+        else if (splitType === 'custom-percent') { const perc = parseFloat(document.getElementById('custom-split').value)||50; p1 = valorAposTerceiros*perc/100; p2 = valorAposTerceiros*(100-perc)/100; }
+        else if (splitType === 'proportional-income') { const total = incomes.partner1+incomes.partner2; if(total>0){ p1 = valorAposTerceiros*incomes.partner1/total; p2 = valorAposTerceiros*incomes.partner2/total; } else { p1=p2=valorAposTerceiros/2; } }
+        else if (splitType === '100-payer') { if(paidBy==='partner1'){ p1=valorAposTerceiros; p2=0; } else if(paidBy==='partner2'){ p1=0; p2=valorAposTerceiros; } else { p1=p2=valorAposTerceiros/2; } }
+        else { p1=p2=valorAposTerceiros/2; }
         let preview = `💰 Parcela: ${formatMoney(parcelaValor)} | `;
-        if (thirdParties.length > 0) preview += `👥 Terceiros pagam: ${formatMoney(totalTerceiros)} | `;
+        if (thirdParties.length) preview += `👥 Terceiros: ${formatMoney(totalTerceiros)} | `;
         preview += `💑 Casal paga: ${formatMoney(valorAposTerceiros)}<br>🧑 ${partner1Name}: ${formatMoney(p1)} | 👩 ${partner2Name}: ${formatMoney(p2)}`;
         document.getElementById('preview-division').innerHTML = preview;
-    }
-
-    function updatePartnerPages() {
-        const targetMonth = `${selectedYear}-${String(selectedMonth + 1).padStart(2, '0')}`;
-        renderPartnerExpenses('partner1', 'partner1-expenses-list', targetMonth);
-        renderPartnerExpenses('partner2', 'partner2-expenses-list', targetMonth);
-        const format = (ym) => { const [y,m]=ym.split('-'); return new Date(parseInt(y), parseInt(m)-1,1).toLocaleDateString('pt-BR',{month:'long',year:'numeric'}); };
-        document.getElementById('partner1-month-display').innerText = format(targetMonth);
-        document.getElementById('partner2-month-display').innerText = format(targetMonth);
-        document.getElementById('global-month-display').innerText = format(targetMonth);
-    }
-
-    async function deleteExpenseById(id) {
-        try {
-            const docRef = expensesRef.doc(id);
-            const docSnap = await docRef.get();
-            if (!docSnap.exists) {
-                allExpenses = allExpenses.filter(exp => exp.id !== id);
-                currentDisplayExpenses = currentDisplayExpenses.filter(exp => exp.id !== id);
-                selectedExpenses.delete(id);
-                renderHistory();
-                updateDashboard();
-                Swal.fire('Aviso', 'Esta despesa já não existe.', 'info');
-                return;
-            }
-            const expenseData = docSnap.data();
-            const isRecurring = !!expenseData.recurringTemplateId;
-            let deleteTemplate = false, confirm = true;
-            if (isRecurring) {
-                const result = await Swal.fire({
-                    title: 'Despesa recorrente',
-                    text: 'Deseja também excluir o template?',
-                    icon: 'question',
-                    showCancelButton: true,
-                    confirmButtonText: 'Sim, excluir template',
-                    cancelButtonText: 'Apenas esta despesa'
-                });
-                if (result.isConfirmed) deleteTemplate = true;
-                else if (result.dismiss === Swal.DismissReason.cancel) { /* ok */ }
-                else confirm = false;
-            } else {
-                const result = await Swal.fire({
-                    title: 'Confirmar exclusão',
-                    text: 'Remover esta despesa permanentemente?',
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#e91e63',
-                    confirmButtonText: 'Sim, excluir'
-                });
-                if (!result.isConfirmed) confirm = false;
-            }
-            if (!confirm) { Swal.fire('Cancelado', '', 'info'); return; }
-            await docRef.delete();
-            if (deleteTemplate && expenseData.recurringTemplateId) {
-                await recurringRef.doc(expenseData.recurringTemplateId).delete();
-                recurringTemplates = recurringTemplates.filter(t => t.id !== expenseData.recurringTemplateId);
-            }
-            allExpenses = allExpenses.filter(exp => exp.id !== id);
-            currentDisplayExpenses = currentDisplayExpenses.filter(exp => exp.id !== id);
-            selectedExpenses.delete(id);
-            renderHistory();
-            updateDashboard();
-            Swal.fire('Excluído!', 'Despesa removida.', 'success');
-        } catch (error) {
-            Swal.fire('Erro', error.message, 'error');
-        }
     }
 
     async function generateRecurringForMonth(targetMonth) {
@@ -917,135 +867,131 @@
 
     async function updateDashboard() {
         if (!currentPartnerId) return;
-        const targetMonth = `${selectedYear}-${String(selectedMonth + 1).padStart(2, '0')}`;
+        const targetMonth = `${selectedYear}-${String(selectedMonth+1).padStart(2,'0')}`;
         await generateRecurringForMonth(targetMonth);
-        const monthExpenses = allExpenses.filter(exp => exp.installmentMonths && exp.installmentMonths.includes(targetMonth));
+        const monthExpenses = allExpenses.filter(exp => exp.installmentMonths?.includes(targetMonth));
         currentDisplayExpenses = monthExpenses;
-        let totalPartner1 = 0, totalPartner2 = 0;
-        for (const exp of monthExpenses) {
+        let totalP1=0, totalP2=0;
+        for(const exp of monthExpenses) {
             const { partner1, partner2 } = calculateMonthlyShare(exp);
-            totalPartner1 += partner1; totalPartner2 += partner2;
+            totalP1 += partner1; totalP2 += partner2;
         }
-        document.getElementById('gasto-partner1').innerText = formatMoney(totalPartner1);
-        document.getElementById('gasto-partner2').innerText = formatMoney(totalPartner2);
-        const totalGasto = totalPartner1 + totalPartner2;
-        let progresso = Math.max(0, (savingsGoal - totalGasto) / savingsGoal * 100);
-        progresso = Math.min(100, progresso);
+        document.getElementById('gasto-partner1').innerText = formatMoney(totalP1);
+        document.getElementById('gasto-partner2').innerText = formatMoney(totalP2);
+        const totalGasto = totalP1+totalP2;
+        let progresso = Math.max(0, (savingsGoal - totalGasto)/savingsGoal*100);
+        progresso = Math.min(100,progresso);
         document.getElementById('meta-progress').innerText = `${Math.round(progresso)}%`;
         document.getElementById('meta-fill').style.width = `${progresso}%`;
-        const container = document.getElementById('upcoming-installments');
-        container.innerHTML = '';
-        const today = new Date();
-        const threeMonthsLater = new Date(); threeMonthsLater.setMonth(today.getMonth() + 3);
-        const future = [];
-        for (const exp of monthExpenses) {
-            for (let i = exp.parcelasPagas || 0; i < exp.parcelas; i++) {
-                const due = new Date(exp.startDate); due.setMonth(due.getMonth() + i);
-                if (due > today && due <= threeMonthsLater) {
+        // Evolução mensal
+        const last6Months = [];
+        for (let i = 5; i >= 0; i--) {
+            let d = new Date(selectedYear, selectedMonth - i, 1);
+            let ym = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+            let total = 0;
+            for (const exp of allExpenses) {
+                if (exp.installmentMonths?.includes(ym)) {
                     const { partner1, partner2 } = calculateMonthlyShare(exp);
-                    future.push({ desc: exp.descricao, date: due, value: partner1 + partner2 });
+                    total += partner1 + partner2;
                 }
             }
+            last6Months.push({ ym, total });
         }
-        future.sort((a,b)=>a.date-b.date).slice(0,6).forEach(p => { const li = document.createElement('li'); li.style.background = 'rgba(233,30,99,0.1)'; li.style.padding = '6px 12px'; li.style.borderRadius = '40px'; li.style.fontSize = '0.75rem'; li.textContent = `📌 ${p.desc} - ${formatMoney(p.value)} (${p.date.toLocaleDateString()})`; container.appendChild(li); });
-        if(future.length===0) container.innerHTML = '<li style="background:transparent">Nenhuma parcela futura</li>';
+        if (evolutionChart) evolutionChart.destroy();
+        const ctx = document.getElementById('evolutionChart').getContext('2d');
+        evolutionChart = new Chart(ctx, {
+            type: 'line',
+            data: { labels: last6Months.map(m => m.ym), datasets: [{ label: 'Gastos totais', data: last6Months.map(m => m.total), borderColor: '#e91e63', backgroundColor: 'rgba(233,30,99,0.1)', tension: 0.2, fill: true }] }
+        });
+        // Gráfico de categorias
         const catMap = new Map();
         monthExpenses.forEach(exp => {
             const { partner1, partner2 } = calculateMonthlyShare(exp);
-            const total = partner1 + partner2;
+            const total = partner1+partner2;
             const cat = exp.categoria || "Outros";
-            catMap.set(cat, (catMap.get(cat) || 0) + total);
+            catMap.set(cat, (catMap.get(cat)||0)+total);
         });
         if (categoryChart) categoryChart.destroy();
         categoryChart = new Chart(document.getElementById('categoryChart'), { type: 'pie', data: { labels: [...catMap.keys()], datasets: [{ data: [...catMap.values()], backgroundColor: ['#e91e63','#ff6b9d','#c2185b','#f48fb1','#f06292','#ec407a'] }] } });
         if (compareChart) compareChart.destroy();
-        compareChart = new Chart(document.getElementById('compareChart'), { type: 'bar', data: { labels: [partner1Name, partner2Name], datasets: [{ data: [totalPartner1, totalPartner2], backgroundColor: ['#e91e63', '#ffb74d'] }] } });
+        compareChart = new Chart(document.getElementById('compareChart'), { type: 'bar', data: { labels: [partner1Name, partner2Name], datasets: [{ data: [totalP1, totalP2], backgroundColor: ['#e91e63', '#ffb74d'] }] } });
+        // Orçamentos
         const budgetDiv = document.getElementById('budget-list');
-        budgetDiv.innerHTML = '';
-        for (let [cat, limit] of Object.entries(categoriesBudget)) {
-            const gasto = monthExpenses.filter(e => e.categoria === cat).reduce((acc, e) => { const { partner1, partner2 } = calculateMonthlyShare(e); return acc + partner1 + partner2; }, 0);
-            const percent = (gasto / limit) * 100;
-            const over = gasto > limit;
-            const div = document.createElement('div'); div.className = 'budget-item';
-            div.innerHTML = `<div style="display:flex; justify-content:space-between"><span>${cat}</span><span>${formatMoney(gasto)} / ${formatMoney(limit)}</span></div><div class="progress-bar"><div class="progress-fill" style="width:${Math.min(percent,100)}%; background:${over ? '#c62828' : '#e91e63'}"></div></div>${over ? '<small style="color:#c62828">⚠️ Estourou!</small>' : ''}<button class="delete-budget" data-cat="${cat}">❌</button>`;
-            budgetDiv.appendChild(div);
+        if (budgetDiv) {
+            budgetDiv.innerHTML = '';
+            for (let [cat, limit] of Object.entries(categoriesBudget)) {
+                const gasto = monthExpenses.filter(e=>e.categoria===cat).reduce((acc,e)=>{ const {partner1,partner2}=calculateMonthlyShare(e); return acc+partner1+partner2; },0);
+                const percent = (gasto/limit)*100;
+                budgetDiv.innerHTML += `<div class="budget-item"><div>${cat}: ${formatMoney(gasto)} / ${formatMoney(limit)}</div><div class="progress-bar"><div class="progress-fill" style="width:${Math.min(percent,100)}%; background:${gasto>limit?'#c62828':'#e91e63'}"></div></div><button class="delete-budget" data-cat="${cat}">❌</button></div>`;
+            }
+            document.querySelectorAll('.delete-budget').forEach(btn => btn.addEventListener('click', async () => await budgetsRef.doc(btn.dataset.cat).delete()));
         }
-        document.querySelectorAll('.delete-budget').forEach(btn => btn.addEventListener('click', async () => await budgetsRef.doc(btn.dataset.cat).delete()));
+        // Próximas parcelas
+        const upcomingContainer = document.getElementById('upcoming-installments');
+        if (upcomingContainer) {
+            upcomingContainer.innerHTML = '';
+            const today = new Date();
+            const threeMonthsLater = new Date(); threeMonthsLater.setMonth(today.getMonth()+3);
+            const future = [];
+            for (const exp of monthExpenses) {
+                for (let i = exp.parcelasPagas||0; i < exp.parcelas; i++) {
+                    const due = new Date(exp.startDate); due.setMonth(due.getMonth()+i);
+                    if (due > today && due <= threeMonthsLater) {
+                        const { partner1, partner2 } = calculateMonthlyShare(exp);
+                        future.push({ desc: exp.descricao, date: due, value: partner1+partner2 });
+                    }
+                }
+            }
+            future.sort((a,b)=>a.date-b.date).slice(0,6).forEach(p => { const li = document.createElement('li'); li.style.background = 'rgba(233,30,99,0.1)'; li.style.padding = '6px 10px'; li.style.borderRadius = '30px'; li.style.fontSize = '0.75rem'; li.textContent = `📌 ${p.desc} - ${formatMoney(p.value)} (${p.date.toLocaleDateString()})`; upcomingContainer.appendChild(li); });
+            if(future.length===0) upcomingContainer.innerHTML = '<li style="background:transparent">Nenhuma parcela futura</li>';
+        }
         renderHistory();
-        const cats = [...new Set(monthExpenses.map(e=>e.categoria).filter(c=>c))];
-        document.getElementById('filter-category').innerHTML = '<option value="">Todas categorias</option>' + cats.map(c=>`<option>${c}</option>`).join('');
         updatePartnerPages();
+    }
+
+    function updatePartnerPages() {
+        const targetMonth = `${selectedYear}-${String(selectedMonth+1).padStart(2,'0')}`;
+        renderPartnerExpenses('partner1', 'partner1-expenses-list', targetMonth);
+        renderPartnerExpenses('partner2', 'partner2-expenses-list', targetMonth);
+        const format = (ym) => { const [y,m]=ym.split('-'); return new Date(parseInt(y), parseInt(m)-1,1).toLocaleDateString('pt-BR',{month:'long',year:'numeric'}); };
+        document.getElementById('global-month-display').innerText = format(targetMonth);
     }
 
     function renderHistory() {
         const tbody = document.getElementById('tabela-historico');
         if (!tbody) return;
-        tbody.innerHTML = '';
-        if (currentDisplayExpenses.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="7" style="text-align:center">Nenhuma despesa encontrada</td></tr>';
-            return;
-        }
+        const targetMonth = `${selectedYear}-${String(selectedMonth+1).padStart(2,'0')}`;
+        let items = [];
         for (const exp of currentDisplayExpenses) {
+            const dueDate = getInstallmentDateForMonth(exp, targetMonth);
+            if (!dueDate) continue;
             const { partner1, partner2 } = calculateMonthlyShare(exp);
-            let payerText = '';
-            if (exp.paidBy === 'partner1') payerText = partner1Name;
-            else if (exp.paidBy === 'partner2') payerText = partner2Name;
-            else payerText = '🤝 Dividido';
-            let terceirosText = '';
-            if (exp.thirdParties && exp.thirdParties.length > 0) {
-                terceirosText = `<br><small>👥 ${exp.thirdParties.map(t => `${t.nome}: ${formatMoney(t.valor)}`).join(', ')}</small>`;
-            }
-            const row = tbody.insertRow();
-            row.setAttribute('data-id', exp.id);
-            row.innerHTML = `
-                <td class="checkbox-col"><input type="checkbox" class="expense-checkbox" data-id="${exp.id}" ${selectedExpenses.has(exp.id) ? 'checked' : ''} style="accent-color:#e91e63;"></td>
-                <td data-label="Descrição"><strong>${escapeHtml(exp.descricao)}</strong>${terceirosText}<br><small>${escapeHtml(exp.observacao || '')}</small></td>
-                <td data-label="Total">${formatMoney(exp.valorTotal)}</td>
-                <td data-label="Parc">${exp.parcelas}x (${exp.parcelasPagas || 0} pagas)</td>
-                <td data-label="Parc.Mês">${formatMoney(partner1 + partner2)}</td>
-                <td data-label="Pagador">${payerText}</td>
-                <td data-label="Ações">
-                    <button class="edit-expense btn btn-secondary" data-id="${exp.id}" style="padding:4px 8px;">✏️</button>
-                    <button class="delete-expense btn btn-danger" data-id="${exp.id}" style="padding:4px 8px;">🗑️ Excluir</button>
-                </td>
-            `;
+            const valorMes = partner1+partner2;
+            items.push({ ...exp, dueDate, valorMes });
         }
-        document.querySelectorAll('.expense-checkbox').forEach(cb => {
-            cb.removeEventListener('change', handleCheckboxChange);
-            cb.addEventListener('change', handleCheckboxChange);
-        });
-        function handleCheckboxChange(e) {
-            const id = e.target.getAttribute('data-id');
-            if (e.target.checked) selectedExpenses.add(id);
-            else selectedExpenses.delete(id);
-            updateSelectionBar();
-            updateHeaderCheckbox();
-        }
-        document.querySelectorAll('.edit-expense').forEach(btn => {
-            btn.removeEventListener('click', handleEdit);
-            btn.addEventListener('click', handleEdit);
-        });
-        function handleEdit(e) {
-            const id = e.currentTarget.getAttribute('data-id');
-            startEditExpense(id);
-        }
-        document.querySelectorAll('.delete-expense').forEach(btn => {
-            btn.removeEventListener('click', handleDelete);
-            btn.addEventListener('click', handleDelete);
-        });
-        async function handleDelete(e) {
-            const id = e.currentTarget.getAttribute('data-id');
-            await deleteExpenseById(id);
-        }
+        items.sort((a,b) => a.dueDate - b.dueDate);
+        if (items.length === 0) { tbody.innerHTML = '<tr><td colspan="6" style="text-align:center">Nenhuma despesa</td></tr>'; return; }
+        tbody.innerHTML = items.map(exp => `
+            <tr data-id="${exp.id}">
+                <td class="checkbox-col" data-label=""><input type="checkbox" class="expense-checkbox" data-id="${exp.id}" ${selectedExpenses.has(exp.id) ? 'checked' : ''}></td>
+                <td data-label="Descrição">${escapeHtml(exp.descricao)}<br><small>${escapeHtml(exp.observacao||'')}</small></td>
+                <td data-label="Valor mês">${formatMoney(exp.valorMes)}</td>
+                <td data-label="Data parcela">${exp.dueDate.toLocaleDateString('pt-BR')}</td>
+                <td data-label="Categoria">${escapeHtml(exp.categoria||'')}</td>
+                <td data-label="Ações"><button class="edit-expense btn-small" data-id="${exp.id}">✏️</button> <button class="delete-expense btn-small btn-danger" data-id="${exp.id}">🗑️</button></td>
+            </tr>
+        `).join('');
+        document.querySelectorAll('.expense-checkbox').forEach(cb => cb.addEventListener('change', (e) => { if(e.target.checked) selectedExpenses.add(e.target.dataset.id); else selectedExpenses.delete(e.target.dataset.id); updateSelectionBar(); updateHeaderCheckbox(); }));
+        document.querySelectorAll('.edit-expense').forEach(btn => btn.addEventListener('click', () => startEditExpense(btn.dataset.id)));
+        document.querySelectorAll('.delete-expense').forEach(btn => btn.addEventListener('click', async () => await deleteExpenseById(btn.dataset.id)));
         updateSelectionBar();
         updateHeaderCheckbox();
     }
-
     function updateSelectionBar() {
         const bar = document.getElementById('selectionBar');
         const count = selectedExpenses.size;
         document.getElementById('selectedCount').innerText = count;
-        bar.style.display = count > 0 ? 'flex' : 'none';
+        if (bar) bar.style.display = count > 0 ? 'flex' : 'none';
     }
     function updateHeaderCheckbox() {
         const header = document.getElementById('headerCheckbox');
@@ -1064,26 +1010,26 @@
     async function deleteSelectedExpenses() {
         const count = selectedExpenses.size;
         if (count === 0) return;
-        const result = await Swal.fire({
-            title: 'Confirmar exclusão',
-            text: `Excluir ${count} despesa(s) permanentemente?`,
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#e91e63',
-            confirmButtonText: 'Sim, excluir'
-        });
+        const result = await Swal.fire({ title: 'Confirmar', text: `Excluir ${count} despesa(s)?`, icon: 'warning', showCancelButton: true });
         if (result.isConfirmed) {
             const batch = db.batch();
             selectedExpenses.forEach(id => batch.delete(expensesRef.doc(id)));
             await batch.commit();
             selectedExpenses.clear();
-            Swal.fire('Excluídas!', `${count} despesa(s) removida(s).`, 'success');
+            Swal.fire('Excluídas!', '', 'success');
+            await updateDashboard();
+        }
+    }
+    async function deleteExpenseById(id) {
+        if (await Swal.fire({ title: 'Confirmar', text: 'Remover esta despesa?', icon: 'warning', showCancelButton: true }).then(r=>r.isConfirmed)) {
+            await expensesRef.doc(id).delete();
+            selectedExpenses.delete(id);
             await updateDashboard();
         }
     }
     function applyFilters() {
-        const targetMonth = `${selectedYear}-${String(selectedMonth + 1).padStart(2, '0')}`;
-        let filtered = allExpenses.filter(exp => exp.installmentMonths && exp.installmentMonths.includes(targetMonth));
+        const targetMonth = `${selectedYear}-${String(selectedMonth+1).padStart(2,'0')}`;
+        let filtered = allExpenses.filter(exp => exp.installmentMonths?.includes(targetMonth));
         const desc = document.getElementById('filter-desc').value.toLowerCase();
         const cat = document.getElementById('filter-category').value;
         const payer = document.getElementById('filter-payer').value;
@@ -1095,7 +1041,6 @@
         selectedExpenses.clear();
         renderHistory();
     }
-
     async function startEditExpense(id) {
         const exp = allExpenses.find(e => e.id === id);
         if (!exp) return;
@@ -1126,7 +1071,6 @@
         document.getElementById('swipeContainer').scrollTo({ left: window.innerWidth * 3, behavior: 'smooth' });
         updatePreviewDivision();
     }
-
     async function saveExpense() {
         const descricao = document.getElementById('descricao').value.trim();
         const valorTotal = parseFloat(document.getElementById('valor-total').value);
@@ -1166,8 +1110,8 @@
         document.getElementById('has-third-parties').value = 'no';
         editingDocId = null;
         Swal.fire('Despesa salva!', '', 'success');
+        await updateDashboard();
     }
-
     async function changeMonth(delta) {
         let nm = selectedMonth + delta, ny = selectedYear;
         if (nm < 0) { nm = 11; ny--; }
@@ -1176,26 +1120,10 @@
         selectedExpenses.clear();
         await updateDashboard();
     }
-
-    function exportCSV() {
-        let csv = [["Descrição","Valor Total","Parcelas","Parcelas Pagas","Parcela Mês","Pagador","Categoria","Observação","Terceiros"]];
-        for (let exp of currentDisplayExpenses) {
-            const { partner1, partner2 } = calculateMonthlyShare(exp);
-            let payerText = '';
-            if (exp.paidBy === 'partner1') payerText = partner1Name;
-            else if (exp.paidBy === 'partner2') payerText = partner2Name;
-            else payerText = 'Dividido';
-            const terceirosText = exp.thirdParties ? exp.thirdParties.map(t => `${t.nome}:${t.valor}`).join(';') : '';
-            csv.push([exp.descricao, exp.valorTotal, exp.parcelas, exp.parcelasPagas || 0, partner1+partner2, payerText, exp.categoria, exp.observacao, terceirosText]);
-        }
-        const blob = new Blob([csv.map(r => r.join(",")).join("\n")], { type: "text/csv" });
-        const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `financas_${selectedYear}-${selectedMonth+1}.csv`; a.click();
-    }
-
     async function quickExpense() {
         const { value: fv } = await Swal.fire({
             title: 'Despesa rápida',
-            html: '<input id="swal-desc" placeholder="Descrição"><input id="swal-valor" type="number" step="0.01" placeholder="Valor total"><select id="swal-cat"><option>Alimentação</option><option>Lazer</option><option>Moradia</option></select>',
+            html: '<input id="swal-desc" placeholder="Descrição" class="swal2-input"><input id="swal-valor" type="number" step="0.01" placeholder="Valor total" class="swal2-input"><select id="swal-cat" class="swal2-select"><option>Alimentação</option><option>Lazer</option><option>Moradia</option></select>',
             focusConfirm: false,
             preConfirm: () => ({ desc: document.getElementById('swal-desc').value, valor: parseFloat(document.getElementById('swal-valor').value), cat: document.getElementById('swal-cat').value })
         });
@@ -1210,285 +1138,163 @@
                 updatedAt: firebase.firestore.FieldValue.serverTimestamp()
             });
             Swal.fire('Adicionada!', '', 'success');
+            await updateDashboard();
         }
     }
-
-    async function setSavingsGoal(v) { await metaRef.set({ value: v }); }
-
-    function showManageRecurring() {
-        if (!recurringTemplates.length) { Swal.fire('Nenhum template recorrente', '', 'info'); return; }
-        let html = '<div style="max-height:300px;overflow-y:auto;">';
-        recurringTemplates.forEach(t => {
-            html += `<div style="background:rgba(233,30,99,0.1);border-radius:20px;padding:8px;margin-bottom:8px;display:flex;justify-content:space-between;"><div><strong>${t.descricao}</strong> - ${formatMoney(t.valorTotal)} (${t.parcelas}x)</div><button class="delete-template-btn" data-id="${t.id}" style="background:#e91e63;color:white;border:none;border-radius:40px;padding:4px 12px;">Excluir</button></div>`;
-        });
-        html += '</div><p style="font-size:0.7rem;">Ao excluir, despesas futuras não serão criadas.</p>';
-        Swal.fire({ title: 'Gerenciar recorrências', html, showConfirmButton: false, showCloseButton: true, didRender: () => {
-            document.querySelectorAll('.delete-template-btn').forEach(btn => btn.addEventListener('click', async () => {
-                await recurringRef.doc(btn.dataset.id).delete();
-                Swal.close();
-                showManageRecurring();
-            }));
-        }});
-    }
-
+    async function setSavingsGoal(v) { await metaRef.set({ value: v }); updateDashboard(); }
     async function renderGoals() {
         const container = document.getElementById('goals-list');
         if (!container) return;
-        if (goals.length === 0) { container.innerHTML = '<div style="text-align:center; padding:20px;">Nenhuma meta cadastrada. Crie sua primeira meta!</div>'; return; }
+        if (goals.length === 0) { container.innerHTML = '<div>Nenhuma meta cadastrada.</div>'; return; }
         container.innerHTML = goals.map(goal => {
             const percent = (goal.current / goal.target) * 100;
             const remaining = goal.target - goal.current;
             const deadlineText = goal.deadline ? `📅 Prazo: ${new Date(goal.deadline).toLocaleDateString('pt-BR')}` : '';
-            return `<div class="goal-item" data-id="${goal.id}"><div class="goal-header"><span class="goal-name">🎯 ${escapeHtml(goal.name)}</span><div class="goal-actions"><button class="edit-goal" data-id="${goal.id}"><i class="fas fa-edit"></i></button><button class="delete-goal" data-id="${goal.id}"><i class="fas fa-trash"></i></button></div></div><div class="goal-progress"><div class="progress-bar"><div class="progress-fill" style="width:${Math.min(percent,100)}%"></div></div><div class="goal-values"><span>${formatMoney(goal.current)}</span><span>${formatMoney(goal.target)}</span></div></div><div style="font-size:0.7rem; margin-top:4px;">${deadlineText} ${remaining > 0 ? `🔹 Faltam ${formatMoney(remaining)}` : '✅ Meta atingida! 🎉'}</div></div>`;
+            return `<div class="goal-item"><div><strong>🎯 ${escapeHtml(goal.name)}</strong> <button class="edit-goal btn-small" data-id="${goal.id}">✏️</button> <button class="delete-goal btn-small btn-danger" data-id="${goal.id}">🗑️</button></div><div class="progress-bar"><div class="progress-fill" style="width:${Math.min(percent,100)}%"></div></div><div>${formatMoney(goal.current)} / ${formatMoney(goal.target)}</div><div class="goal-values">${deadlineText} ${remaining>0?`🔹 Faltam ${formatMoney(remaining)}`:'✅ Meta atingida!'}</div></div>`;
         }).join('');
         document.querySelectorAll('.edit-goal').forEach(btn => btn.addEventListener('click', async () => {
-            const goal = goals.find(g => g.id === btn.dataset.id);
-            if (!goal) return;
-            const { value: formValues } = await Swal.fire({ title: 'Editar meta', html: `<input id="goal-current" type="number" step="100" value="${goal.current}" placeholder="Valor atual (R$)" class="swal2-input"><input id="goal-deadline" type="date" value="${goal.deadline || ''}" class="swal2-input">`, focusConfirm: false, preConfirm: () => ({ current: parseFloat(document.getElementById('goal-current').value) || 0, deadline: document.getElementById('goal-deadline').value }) });
-            if (formValues) { await goalsRef.doc(goal.id).update({ current: formValues.current, deadline: formValues.deadline }); Swal.fire('Atualizado!', '', 'success'); }
+            const goal = goals.find(g=>g.id===btn.dataset.id);
+            const { value: form } = await Swal.fire({ title: 'Editar meta', html: `<input id="goal-current" type="number" value="${goal.current}" class="swal2-input"><input id="goal-deadline" type="date" value="${goal.deadline||''}" class="swal2-input">`, preConfirm: () => ({ current: parseFloat(document.getElementById('goal-current').value)||0, deadline: document.getElementById('goal-deadline').value }) });
+            if (form) await goalsRef.doc(goal.id).update({ current: form.current, deadline: form.deadline });
         }));
-        document.querySelectorAll('.delete-goal').forEach(btn => btn.addEventListener('click', async () => { if (await Swal.fire({ title: 'Confirmar', text: 'Excluir esta meta?', icon: 'warning', showCancelButton: true }).then(r => r.isConfirmed)) await goalsRef.doc(btn.dataset.id).delete(); }));
+        document.querySelectorAll('.delete-goal').forEach(btn => btn.addEventListener('click', async () => { if(await Swal.fire({title:'Confirmar',text:'Excluir meta?',icon:'warning',showCancelButton:true}).then(r=>r.isConfirmed)) await goalsRef.doc(btn.dataset.id).delete(); }));
     }
-
     async function addGoal() {
         const name = document.getElementById('new-goal-name').value.trim();
         const target = parseFloat(document.getElementById('new-goal-target').value);
-        const current = parseFloat(document.getElementById('new-goal-current').value) || 0;
+        const current = parseFloat(document.getElementById('new-goal-current').value)||0;
         const deadline = document.getElementById('new-goal-deadline').value;
-        if (!name || isNaN(target) || target <= 0) { Swal.fire('Erro', 'Preencha nome e valor alvo válido.', 'error'); return; }
+        if (!name || isNaN(target) || target<=0) { Swal.fire('Erro','Preencha nome e alvo.','error'); return; }
         await goalsRef.add({ name, target, current, deadline, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
-        document.getElementById('new-goal-name').value = ''; document.getElementById('new-goal-target').value = ''; document.getElementById('new-goal-current').value = '0'; document.getElementById('new-goal-deadline').value = '';
-        Swal.fire('Meta criada!', '', 'success');
+        document.getElementById('new-goal-name').value = '';
+        document.getElementById('new-goal-target').value = '';
+        document.getElementById('new-goal-current').value = '0';
+        document.getElementById('new-goal-deadline').value = '';
+        Swal.fire('Meta criada!','','success');
     }
-
     function updateIndividualGoalUI() {
-        const target1 = individualGoal1.target || 0;
-        const current1 = individualGoal1.current || 0;
-        const percent1 = target1 > 0 ? (current1 / target1) * 100 : 0;
-        document.getElementById('goal1-progress-fill').style.width = `${Math.min(percent1,100)}%`;
-        document.getElementById('goal1-progress-text').innerText = `${Math.round(percent1)}% (${formatMoney(current1)} de ${formatMoney(target1)})`;
-        document.getElementById('goal1-target').value = target1;
-        document.getElementById('goal1-current').value = current1;
-        const target2 = individualGoal2.target || 0;
-        const current2 = individualGoal2.current || 0;
-        const percent2 = target2 > 0 ? (current2 / target2) * 100 : 0;
-        document.getElementById('goal2-progress-fill').style.width = `${Math.min(percent2,100)}%`;
-        document.getElementById('goal2-progress-text').innerText = `${Math.round(percent2)}% (${formatMoney(current2)} de ${formatMoney(target2)})`;
-        document.getElementById('goal2-target').value = target2;
-        document.getElementById('goal2-current').value = current2;
-        document.getElementById('goal-individual-name1').innerText = partner1Name;
-        document.getElementById('goal-individual-name2').innerText = partner2Name;
+        const t1 = individualGoal1.target||0, c1 = individualGoal1.current||0;
+        const p1 = t1>0?(c1/t1*100):0;
+        document.getElementById('goal1-progress-fill').style.width = `${Math.min(p1,100)}%`;
+        document.getElementById('goal1-progress-text').innerText = `${Math.round(p1)}% (${formatMoney(c1)} de ${formatMoney(t1)})`;
+        document.getElementById('goal1-target').value = t1;
+        document.getElementById('goal1-current').value = c1;
+        const t2 = individualGoal2.target||0, c2 = individualGoal2.current||0;
+        const p2 = t2>0?(c2/t2*100):0;
+        document.getElementById('goal2-progress-fill').style.width = `${Math.min(p2,100)}%`;
+        document.getElementById('goal2-progress-text').innerText = `${Math.round(p2)}% (${formatMoney(c2)} de ${formatMoney(t2)})`;
+        document.getElementById('goal2-target').value = t2;
+        document.getElementById('goal2-current').value = c2;
     }
-
     async function saveIndividualGoal(partner) {
-        const targetInput = document.getElementById(partner === 'partner1' ? 'goal1-target' : 'goal2-target');
-        const currentInput = document.getElementById(partner === 'partner1' ? 'goal1-current' : 'goal2-current');
-        const target = parseFloat(targetInput.value) || 0;
-        const current = parseFloat(currentInput.value) || 0;
-        if (target < 0 || current < 0) { Swal.fire('Erro', 'Valores não podem ser negativos.', 'error'); return; }
+        const target = parseFloat(document.getElementById(partner==='partner1'?'goal1-target':'goal2-target').value)||0;
+        const current = parseFloat(document.getElementById(partner==='partner1'?'goal1-current':'goal2-current').value)||0;
         await individualGoalsRef.doc(partner).set({ target, current });
-        Swal.fire('Meta salva!', `Meta de ${partner === 'partner1' ? partner1Name : partner2Name} atualizada.`, 'success');
+        Swal.fire('Meta salva!', '', 'success');
     }
-
     function renderMessages() {
         const container = document.getElementById('messages-container');
         if (!container) return;
-        if (messages.length === 0) {
-            container.innerHTML = '<div style="text-align:center; padding:20px;">💬 Nenhuma mensagem ainda. Comece a conversa!</div>';
-            return;
-        }
-        const currentName = (currentPartnerId === 'partner1') ? partner1Name : partner2Name;
-        const sorted = [...messages].sort((a, b) => (a.createdAt ? new Date(a.createdAt) : 0) - (b.createdAt ? new Date(b.createdAt) : 0));
+        if (messages.length === 0) { container.innerHTML = '<div>💬 Nenhuma mensagem ainda.</div>'; return; }
+        const currentName = currentPartnerId === 'partner1' ? partner1Name : partner2Name;
+        const sorted = [...messages].sort((a,b)=> (a.createdAt?.toDate?.()||0) - (b.createdAt?.toDate?.()||0));
         container.innerHTML = sorted.map(msg => {
             const isOwn = msg.author === currentName;
-            return `<div class="message-item" style="border-left-color: ${isOwn ? '#e91e63' : '#4caf50'}"><div class="message-header"><div class="message-avatar" style="background: ${isOwn ? '#e91e63' : '#4caf50'}">${escapeHtml(msg.author.charAt(0).toUpperCase())}</div><div class="message-info"><div class="message-author">${escapeHtml(msg.author)}</div><div class="message-time">${msg.createdAt ? new Date(msg.createdAt).toLocaleString('pt-BR') : 'Data inválida'}</div></div></div><div class="message-content">${escapeHtml(msg.content)}</div>${isOwn ? `<div class="message-actions"><button class="btn-small delete-message" data-id="${msg.id}">🗑️ Excluir</button></div>` : ''}</div>`;
+            return `<div class="message-item" style="border-left-color: ${isOwn?'#e91e63':'#4caf50'}"><div><strong>${escapeHtml(msg.author)}</strong> <small>${msg.createdAt?.toDate().toLocaleString('pt-BR')||''}</small></div><div>${escapeHtml(msg.content)}</div>${isOwn?`<div><button class="btn-small delete-message" data-id="${msg.id}">🗑️</button></div>`:''}</div>`;
         }).join('');
-        document.querySelectorAll('.delete-message').forEach(btn => btn.addEventListener('click', async () => { if (await Swal.fire({ title: 'Confirmar', text: 'Excluir esta mensagem?', icon: 'warning', showCancelButton: true }).then(r => r.isConfirmed)) await messagesRef.doc(btn.dataset.id).delete(); }));
+        document.querySelectorAll('.delete-message').forEach(btn => btn.addEventListener('click', async () => { if(await Swal.fire({title:'Confirmar',text:'Excluir mensagem?',icon:'warning',showCancelButton:true}).then(r=>r.isConfirmed)) await messagesRef.doc(btn.dataset.id).delete(); }));
         container.scrollTop = container.scrollHeight;
     }
-
     async function sendMessage() {
-        const input = document.getElementById('message-input');
-        const content = input.value.trim();
+        const content = document.getElementById('message-input').value.trim();
         if (!content) return;
-        const author = (currentPartnerId === 'partner1') ? partner1Name : partner2Name;
+        const author = currentPartnerId === 'partner1' ? partner1Name : partner2Name;
         await messagesRef.add({ author, content, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
-        input.value = '';
+        document.getElementById('message-input').value = '';
     }
-
     async function clearMural() {
-        const result = await Swal.fire({
-            title: 'Limpar mural do casal',
-            text: 'Tem certeza que deseja remover TODAS as mensagens permanentemente? Esta ação não pode ser desfeita.',
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#e91e63',
-            confirmButtonText: 'Sim, limpar tudo'
-        });
-        if (result.isConfirmed) {
+        if (await Swal.fire({ title: 'Limpar mural?', text: 'Remover todas as mensagens?', icon: 'warning', showCancelButton: true }).then(r=>r.isConfirmed)) {
             const batch = db.batch();
-            const snapshot = await messagesRef.get();
-            snapshot.forEach(doc => batch.delete(doc.ref));
+            (await messagesRef.get()).forEach(doc => batch.delete(doc.ref));
             await batch.commit();
-            Swal.fire('Mural limpo!', 'Todas as mensagens foram removidas.', 'success');
+            Swal.fire('Mural limpo!','','success');
         }
     }
-
     function getConciergeMessage(page) {
-        const currentName = (currentPartnerId === 'partner1') ? partner1Name : partner2Name;
-        const targetMonth = `${selectedYear}-${String(selectedMonth + 1).padStart(2, '0')}`;
-        const monthExpenses = allExpenses.filter(exp => exp.installmentMonths && exp.installmentMonths.includes(targetMonth));
-        let totalPartner1 = 0, totalPartner2 = 0;
-        for (const exp of monthExpenses) { const { partner1, partner2 } = calculateMonthlyShare(exp); totalPartner1 += partner1; totalPartner2 += partner2; }
-        const totalGasto = totalPartner1 + totalPartner2;
-        const totalIncome = incomes.partner1 + incomes.partner2;
-        const nearGoals = goals.filter(g => g.current >= g.target * 0.9 && g.current < g.target);
-        const overBudget = Object.entries(categoriesBudget).filter(([cat, limit]) => { const gasto = monthExpenses.filter(e => e.categoria === cat).reduce((acc, e) => { const { partner1, partner2 } = calculateMonthlyShare(e); return acc + partner1 + partner2; }, 0); return gasto > limit; });
-        const today = new Date();
-        const upcoming = [];
-        for (const exp of monthExpenses) {
-            for (let i = exp.parcelasPagas || 0; i < exp.parcelas; i++) {
-                const due = new Date(exp.startDate); due.setMonth(due.getMonth() + i);
-                if (due > today && due <= new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000)) { upcoming.push(exp); break; }
-            }
-        }
         const msgs = {
-            0: () => `Olá ${currentName}! 👋 Bem-vindo ao CASH CASAL. ${totalGasto > 0 ? `Este mês vocês gastaram ${formatMoney(totalGasto)}. ` : ''}${totalIncome > 0 && totalGasto > totalIncome * 0.7 ? `⚠️ Atenção: seus gastos estão em ${Math.round(totalGasto/totalIncome*100)}% da renda. ` : ''}${nearGoals.length > 0 ? `🎉 Faltam ${formatMoney(nearGoals[0].target - nearGoals[0].current)} para a meta "${nearGoals[0].name}"! ` : ''}${upcoming.length > 0 ? `📅 Em breve vence a parcela de "${upcoming[0].descricao}". ` : ''}💡 Clique no ícone de IA para mais dicas!`,
-            1: () => `📊 Aqui estão os gastos de ${partner1Name} em ${new Date(selectedYear, selectedMonth).toLocaleDateString('pt-BR', {month:'long'})}. Total: ${formatMoney(totalPartner1)}.`,
-            2: () => `📊 Aqui estão os gastos de ${partner2Name} em ${new Date(selectedYear, selectedMonth).toLocaleDateString('pt-BR', {month:'long'})}. Total: ${formatMoney(totalPartner2)}.`,
-            3: () => `➕ Adicione uma despesa com parcelamento, divisão personalizada ou até com amigos. Lembre-se: compras a partir do dia 2 vão para a fatura do mês seguinte!`,
-            4: () => `📋 No histórico você pode filtrar por descrição, categoria ou pagador. Use os checkboxes para selecionar várias despesas e excluí-las de uma vez!`,
-            5: () => `⚙️ Aqui você define a renda de cada um (para divisão proporcional), cria orçamentos por categoria e exporta seus dados.`,
-            6: () => `💰 Gerencie devedores. Registre quem deve para o casal. Use "Quitar" quando receber o pagamento.`,
-            7: () => `💬 Este é o mural do casal! Todas as mensagens mostram o nome de quem enviou. Use o botão "Limpar mural" para remover todas as mensagens.`,
-            8: () => `🎯 Metas de economia do casal! ${goals.length === 0 ? 'Crie uma meta compartilhada agora!' : `Você tem ${goals.length} meta(s) como casal. Continue economizando juntos!`}`
+            0: `💡 Dica: arraste para os lados para ver todas as páginas.`,
+            1: `📊 Gastos de ${partner1Name}.`,
+            2: `📊 Gastos de ${partner2Name}.`,
+            3: `➕ Preencha os campos da despesa. Use parcelamento e divisão personalizada.`,
+            4: `📋 Use filtros e selecione várias despesas.`,
+            5: `⚙️ Configure rendas, categorias e faça backup.`,
+            6: `💰 Gerencie quem deve para o casal.`,
+            7: `💬 Mural compartilhado.`,
+            8: `🎯 Metas de economia do casal.`
         };
-        return msgs[page] ? msgs[page]() : `💡 Explore todas as páginas para gerenciar melhor suas finanças!`;
+        return msgs[page] || `Página ${page+1}`;
     }
+    function showConciergeMessage(msg, dur=6000) { const b = document.getElementById('conciergeBubble'); if(!b) return; document.getElementById('conciergeMessage').innerText = msg; b.style.display='block'; if(conciergeTimeout) clearTimeout(conciergeTimeout); conciergeTimeout = setTimeout(()=>b.style.display='none', dur); }
+    function updateConciergeForPage(page) { showConciergeMessage(getConciergeMessage(page), 5000); }
 
-    function showConciergeMessage(message, duration = 8000) { const b = document.getElementById('conciergeBubble'); if (!b) return; document.getElementById('conciergeMessage').innerText = message; b.style.display = 'block'; if (conciergeTimeout) clearTimeout(conciergeTimeout); conciergeTimeout = setTimeout(() => b.style.display = 'none', duration); }
-    function updateConciergeForPage(page) { if (!currentPartnerId) return; showConciergeMessage(getConciergeMessage(page), 6000); }
+    async function exportAllData() {
+        const collections = ['expenses', 'budgets', 'recurring', 'debtors', 'messages', 'goals', 'individualGoals', 'categories'];
+        const settingsDocs = ['savingsGoal', 'names', 'incomes'];
+        const data = {};
+        for (const col of collections) {
+            const snap = await db.collection(`shared/${COUPLE_ID}/${col}`).get();
+            data[col] = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        }
+        for (const docId of settingsDocs) {
+            const doc = await db.collection(`shared/${COUPLE_ID}/settings`).doc(docId).get();
+            if(doc.exists) data[docId] = { id: doc.id, ...doc.data() };
+        }
+        const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = `cashcasal_backup_${new Date().toISOString().slice(0,19)}.json`;
+        a.click();
+    }
+    async function importAllData(file) {
+        const reader = new FileReader();
+        reader.onload = async (e) => {
+            const data = JSON.parse(e.target.result);
+            const batch = db.batch();
+            for (const [col, docs] of Object.entries(data)) {
+                if (col === 'savingsGoal' || col === 'names' || col === 'incomes') {
+                    const docRef = db.collection(`shared/${COUPLE_ID}/settings`).doc(col);
+                    batch.set(docRef, docs);
+                } else {
+                    const collectionRef = db.collection(`shared/${COUPLE_ID}/${col}`);
+                    const snap = await collectionRef.get();
+                    snap.forEach(doc => batch.delete(doc.ref));
+                    docs.forEach(doc => {
+                        const { id, ...rest } = doc;
+                        batch.set(collectionRef.doc(id), rest);
+                    });
+                }
+            }
+            await batch.commit();
+            Swal.fire('Restauração concluída!', 'O app será recarregado.', 'success');
+            setTimeout(() => location.reload(), 2000);
+        };
+        reader.readAsText(file);
+    }
 
     function setupFirestoreListeners() {
-        if (unsubscribeExpenses) unsubscribeExpenses();
-        if (unsubscribeBudgets) unsubscribeBudgets();
-        if (unsubscribeRecurring) unsubscribeRecurring();
-        if (unsubscribeMeta) unsubscribeMeta();
-        if (unsubscribeNames) unsubscribeNames();
-        if (unsubscribeDebtors) unsubscribeDebtors();
-        if (unsubscribeMessages) unsubscribeMessages();
-        if (unsubscribeIncomes) unsubscribeIncomes();
-        if (unsubscribeGoals) unsubscribeGoals();
-        if (unsubscribeIndividualGoals) unsubscribeIndividualGoals();
-
-        unsubscribeExpenses = expensesRef.onSnapshot(snapshot => {
-            allExpenses = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-            updateDashboard();
-        });
-        unsubscribeBudgets = budgetsRef.onSnapshot(snapshot => {
-            categoriesBudget = {};
-            snapshot.forEach(doc => { categoriesBudget[doc.id] = doc.data().limit; });
-            updateDashboard();
-        });
-        unsubscribeRecurring = recurringRef.onSnapshot(snapshot => {
-            recurringTemplates = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        });
-        unsubscribeMeta = metaRef.onSnapshot(doc => {
-            savingsGoal = doc.exists ? doc.data().value : 500;
-            document.getElementById('meta-valor').value = savingsGoal;
-            updateDashboard();
-        });
-        unsubscribeNames = namesRef.onSnapshot(doc => {
-            if (doc.exists) {
-                const data = doc.data();
-                partner1Name = data.name1 || 'Parceiro 1';
-                partner2Name = data.name2 || 'Parceiro 2';
-            } else {
-                partner1Name = 'Parceiro 1';
-                partner2Name = 'Parceiro 2';
-            }
-            updateUIWithNames();
-            updateDashboard();
-        });
-        unsubscribeDebtors = debtorsRef.onSnapshot(snapshot => {
-            debtors = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-            renderDebtors();
-        });
-        unsubscribeMessages = messagesRef.orderBy('createdAt', 'desc').onSnapshot(snapshot => {
-            messages = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-            renderMessages();
-        });
-        unsubscribeIncomes = incomesRef.onSnapshot(doc => {
-            if (doc.exists) {
-                const data = doc.data();
-                incomes.partner1 = data.income1 || 0;
-                incomes.partner2 = data.income2 || 0;
-            } else {
-                incomes.partner1 = 0;
-                incomes.partner2 = 0;
-            }
-            document.getElementById('income1').value = incomes.partner1;
-            document.getElementById('income2').value = incomes.partner2;
-            const total = incomes.partner1 + incomes.partner2;
-            const perc1 = total > 0 ? (incomes.partner1 / total * 100).toFixed(1) : 50;
-            const perc2 = total > 0 ? (incomes.partner2 / total * 100).toFixed(1) : 50;
-            document.getElementById('income-summary').innerHTML = `<strong>📊 Proporção de contribuição:</strong><br>${partner1Name}: ${formatMoney(incomes.partner1)} (${perc1}%)<br>${partner2Name}: ${formatMoney(incomes.partner2)} (${perc2}%)`;
-            updateDashboard();
-        });
-        unsubscribeGoals = goalsRef.onSnapshot(snapshot => {
-            goals = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-            renderGoals();
-        });
-        unsubscribeIndividualGoals = individualGoalsRef.onSnapshot(snapshot => {
-            snapshot.forEach(doc => {
-                if (doc.id === 'partner1') individualGoal1 = doc.data();
-                if (doc.id === 'partner2') individualGoal2 = doc.data();
-            });
-            updateIndividualGoalUI();
-        });
+        expensesRef.onSnapshot(s => { allExpenses = s.docs.map(d=> ({ id: d.id, ...d.data() })); updateDashboard(); });
+        budgetsRef.onSnapshot(s => { categoriesBudget = {}; s.forEach(d=>{ categoriesBudget[d.id]=d.data().limit; }); updateDashboard(); });
+        recurringRef.onSnapshot(s => { recurringTemplates = s.docs.map(d=> ({ id: d.id, ...d.data() })); });
+        metaRef.onSnapshot(d => { savingsGoal = d.exists ? d.data().value : 500; document.getElementById('meta-valor').value = savingsGoal; updateDashboard(); });
+        namesRef.onSnapshot(d => { if(d.exists){ partner1Name = d.data().name1 || 'P1'; partner2Name = d.data().name2 || 'P2'; } updateUIWithNames(); updateDashboard(); });
+        debtorsRef.onSnapshot(s => { debtors = s.docs.map(d=> ({ id: d.id, ...d.data() })); renderDebtors(); });
+        messagesRef.orderBy('createdAt','desc').onSnapshot(s => { messages = s.docs.map(d=> ({ id: d.id, ...d.data() })); renderMessages(); });
+        incomesRef.onSnapshot(d => { if(d.exists){ incomes.partner1 = d.data().income1||0; incomes.partner2 = d.data().income2||0; } document.getElementById('income1').value = incomes.partner1; document.getElementById('income2').value = incomes.partner2; updateDashboard(); });
+        goalsRef.onSnapshot(s => { goals = s.docs.map(d=> ({ id: d.id, ...d.data() })); renderGoals(); });
+        individualGoalsRef.onSnapshot(s => { s.forEach(d=>{ if(d.id==='partner1') individualGoal1 = d.data(); if(d.id==='partner2') individualGoal2 = d.data(); }); updateIndividualGoalUI(); });
+        categoriesRef.onSnapshot(() => loadCategories());
     }
 
-    function loadSavedLogin() {
-        const n1 = localStorage.getItem('couple_name1');
-        const n2 = localStorage.getItem('couple_name2');
-        const last = localStorage.getItem('couple_last_user');
-        if (n1) document.getElementById('name1').value = n1;
-        if (n2) document.getElementById('name2').value = n2;
-        if (n1 && n2) updateUserSelect();
-        if (last && document.getElementById('current-user-select').querySelector(`option[value="${last}"]`))
-            document.getElementById('current-user-select').value = last;
-    }
-    function saveLoginData(n1, n2, sel) {
-        localStorage.setItem('couple_name1', n1);
-        localStorage.setItem('couple_name2', n2);
-        localStorage.setItem('couple_last_user', sel);
-    }
-    function updateUserSelect() {
-        const n1 = document.getElementById('name1').value.trim();
-        const n2 = document.getElementById('name2').value.trim();
-        const sel = document.getElementById('current-user-select');
-        sel.innerHTML = '<option value="">-- Selecione quem está usando --</option>';
-        if (n1) sel.innerHTML += `<option value="${n1}">${n1}</option>`;
-        if (n2) sel.innerHTML += `<option value="${n2}">${n2}</option>`;
-    }
-    async function initApp() {
-        const n1 = document.getElementById('name1').value.trim();
-        const n2 = document.getElementById('name2').value.trim();
-        const sel = document.getElementById('current-user-select').value;
-        if (!n1 || !n2 || !sel) { Swal.fire('Atenção', 'Preencha os dois nomes e selecione quem está usando.', 'warning'); return; }
-        saveLoginData(n1, n2, sel);
-        await namesRef.set({ name1: n1, name2: n2 });
-        partner1Name = n1;
-        partner2Name = n2;
-        currentPartnerId = (sel === n1) ? 'partner1' : 'partner2';
-        updateUIWithNames();
-        document.getElementById('login-container').style.display = 'none';
-        document.getElementById('app-container').style.display = 'flex';
-        setupFirestoreListeners();
-        await updateDashboard();
-        setupSwipe();
-        updateConciergeForPage(0);
-    }
     function setupSwipe() {
         const container = document.getElementById('swipeContainer');
         const indicators = document.getElementById('pageIndicators');
@@ -1509,27 +1315,58 @@
         container.addEventListener('scroll', update);
         setTimeout(update, 100);
     }
-    function logout() {
-        if (unsubscribeExpenses) unsubscribeExpenses();
-        if (unsubscribeBudgets) unsubscribeBudgets();
-        if (unsubscribeRecurring) unsubscribeRecurring();
-        if (unsubscribeMeta) unsubscribeMeta();
-        if (unsubscribeNames) unsubscribeNames();
-        if (unsubscribeDebtors) unsubscribeDebtors();
-        if (unsubscribeMessages) unsubscribeMessages();
-        if (unsubscribeIncomes) unsubscribeIncomes();
-        if (unsubscribeGoals) unsubscribeGoals();
-        if (unsubscribeIndividualGoals) unsubscribeIndividualGoals();
-        document.getElementById('app-container').style.display = 'none';
-        document.getElementById('login-container').style.display = 'block';
-        currentPartnerId = '';
-        loadSavedLogin();
+
+    async function initApp() {
+        const n1 = document.getElementById('name1').value.trim();
+        const n2 = document.getElementById('name2').value.trim();
+        const sel = document.getElementById('current-user-select').value;
+        if (!n1 || !n2 || !sel) { Swal.fire('Atenção','Preencha os dois nomes e selecione quem está usando.','warning'); return; }
+        localStorage.setItem('couple_name1', n1);
+        localStorage.setItem('couple_name2', n2);
+        localStorage.setItem('couple_last_user', sel);
+        await namesRef.set({ name1: n1, name2: n2 });
+        partner1Name = n1; partner2Name = n2;
+        currentPartnerId = (sel === n1) ? 'partner1' : 'partner2';
+        updateUIWithNames();
+        document.getElementById('login-container').style.display = 'none';
+        document.getElementById('app-container').style.display = 'flex';
+        setupFirestoreListeners();
+        await loadCategories();
+        await updateDashboard();
+        setupSwipe();
+    }
+    function logout() { location.reload(); }
+    function updateUserSelect() {
+        const n1 = document.getElementById('name1').value.trim();
+        const n2 = document.getElementById('name2').value.trim();
+        const sel = document.getElementById('current-user-select');
+        sel.innerHTML = '<option value="">-- Selecione --</option>';
+        if(n1) sel.innerHTML += `<option value="${n1}">${n1}</option>`;
+        if(n2) sel.innerHTML += `<option value="${n2}">${n2}</option>`;
+    }
+    function loadSavedLogin() {
+        const n1 = localStorage.getItem('couple_name1');
+        const n2 = localStorage.getItem('couple_name2');
+        if(n1) document.getElementById('name1').value = n1;
+        if(n2) document.getElementById('name2').value = n2;
+        if(n1 && n2) updateUserSelect();
+        const last = localStorage.getItem('couple_last_user');
+        if(last && document.getElementById('current-user-select').querySelector(`option[value="${last}"]`))
+            document.getElementById('current-user-select').value = last;
     }
 
-    let conciergeTimeout = null;
+    // Alternar tema via ícone no cabeçalho
+    function toggleTheme() {
+        document.body.classList.toggle('light-theme');
+        const isLight = document.body.classList.contains('light-theme');
+        localStorage.setItem('lightTheme', isLight ? 'enabled' : 'disabled');
+        const themeIcon = document.getElementById('theme-icon-header');
+        if (themeIcon) {
+            themeIcon.innerHTML = isLight ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
+        }
+    }
 
-    document.getElementById('name1').addEventListener('input', updateUserSelect);
-    document.getElementById('name2').addEventListener('input', updateUserSelect);
+    // Event listeners
     document.getElementById('enter-app-btn').addEventListener('click', initApp);
     document.getElementById('logoutBtn').addEventListener('click', logout);
     document.getElementById('add-expense-btn').addEventListener('click', saveExpense);
@@ -1542,84 +1379,49 @@
         document.getElementById('third-parties-container').style.display = 'none';
         document.getElementById('has-third-parties').value = 'no';
     });
+    document.getElementById('global-prev-month').addEventListener('click', () => changeMonth(-1));
+    document.getElementById('global-next-month').addEventListener('click', () => changeMonth(1));
+    document.getElementById('set-meta-btn').addEventListener('click', async () => { let v = parseFloat(document.getElementById('meta-valor').value); if(isNaN(v)||v<=0) v=500; await setSavingsGoal(v); });
+    document.getElementById('add-debtor-btn').addEventListener('click', addDebtor);
+    document.getElementById('save-income-btn').addEventListener('click', saveIncomes);
+    document.getElementById('add-goal-btn').addEventListener('click', addGoal);
+    document.getElementById('save-goal1-btn').addEventListener('click', () => saveIndividualGoal('partner1'));
+    document.getElementById('save-goal2-btn').addEventListener('click', () => saveIndividualGoal('partner2'));
+    document.getElementById('send-message-btn').addEventListener('click', sendMessage);
+    document.getElementById('clear-mural-btn').addEventListener('click', clearMural);
+    document.getElementById('export-all-btn').addEventListener('click', exportAllData);
+    document.getElementById('import-all-btn').addEventListener('click', () => document.getElementById('import-file').click());
+    document.getElementById('import-file').addEventListener('change', (e) => { if(e.target.files[0]) importAllData(e.target.files[0]); });
+    document.getElementById('add-budget-btn').addEventListener('click', async () => { const cat = document.getElementById('new-budget-cat').value.trim(); const lim = parseFloat(document.getElementById('new-budget-value').value); if(cat && !isNaN(lim)) await budgetsRef.doc(cat).set({ limit: lim }); });
+    document.getElementById('quick-expense-btn').addEventListener('click', quickExpense);
+    document.getElementById('theme-icon-header').addEventListener('click', toggleTheme);
+    document.getElementById('clear-filters').addEventListener('click', () => { document.getElementById('filter-desc').value = ''; document.getElementById('filter-category').value = ''; document.getElementById('filter-payer').value = ''; applyFilters(); });
+    document.getElementById('selectAllBtn')?.addEventListener('click', selectAllExpenses);
+    document.getElementById('deleteSelectedBtn')?.addEventListener('click', deleteSelectedExpenses);
+    document.getElementById('headerCheckbox')?.addEventListener('change', (e) => { if(e.target.checked) currentDisplayExpenses.forEach(exp=>selectedExpenses.add(exp.id)); else selectedExpenses.clear(); renderHistory(); });
     document.getElementById('split-type').addEventListener('change', () => {
-        document.getElementById('custom-split').style.display = document.getElementById('split-type').value === 'custom-percent' ? 'block' : 'none';
+        const isCustom = document.getElementById('split-type').value === 'custom-percent';
+        document.getElementById('custom-split').style.display = isCustom ? 'block' : 'none';
         updatePreviewDivision();
     });
     document.getElementById('valor-total').addEventListener('input', updatePreviewDivision);
     document.getElementById('parcelas').addEventListener('input', updatePreviewDivision);
-    document.getElementById('custom-split').addEventListener('input', updatePreviewDivision);
-    document.getElementById('has-third-parties').addEventListener('change', (e) => {
-        if (e.target.value === 'yes') {
-            document.getElementById('third-parties-container').style.display = 'block';
-            if (thirdParties.length === 0) addThirdParty();
-        } else {
-            document.getElementById('third-parties-container').style.display = 'none';
-            thirdParties = [];
-        }
-        updatePreviewDivision();
-    });
+    document.getElementById('has-third-parties').addEventListener('change', (e) => { document.getElementById('third-parties-container').style.display = e.target.value === 'yes' ? 'block' : 'none'; if(e.target.value==='yes' && thirdParties.length===0) addThirdParty(); updatePreviewDivision(); });
     document.getElementById('add-third-party-btn')?.addEventListener('click', addThirdParty);
-    document.getElementById('export-csv-btn').addEventListener('click', exportCSV);
-    document.getElementById('quick-expense-btn').addEventListener('click', quickExpense);
-    document.getElementById('add-budget-btn').addEventListener('click', async () => {
-        const cat = document.getElementById('new-budget-cat').value.trim();
-        const lim = parseFloat(document.getElementById('new-budget-value').value);
-        if (cat && !isNaN(lim)) await budgetsRef.doc(cat).set({ limit: lim });
-    });
     document.getElementById('filter-desc').addEventListener('input', applyFilters);
     document.getElementById('filter-category').addEventListener('change', applyFilters);
     document.getElementById('filter-payer').addEventListener('change', applyFilters);
-    document.getElementById('clear-filters').addEventListener('click', () => {
-        document.getElementById('filter-desc').value = '';
-        document.getElementById('filter-category').value = '';
-        document.getElementById('filter-payer').value = '';
-        applyFilters();
-    });
-    document.getElementById('manage-recurring-btn').addEventListener('click', showManageRecurring);
-    document.getElementById('set-meta-btn').addEventListener('click', async () => {
-        let ng = parseFloat(document.getElementById('meta-valor').value);
-        if (isNaN(ng) || ng <= 0) ng = 500;
-        await setSavingsGoal(ng);
-    });
     document.getElementById('start-date').valueAsDate = new Date();
     document.getElementById('custom-split').style.display = 'none';
-    document.getElementById('global-prev-month').addEventListener('click', () => changeMonth(-1));
-    document.getElementById('global-next-month').addEventListener('click', () => changeMonth(1));
-    document.getElementById('partner1-prev-month').addEventListener('click', () => changeMonth(-1));
-    document.getElementById('partner1-next-month').addEventListener('click', () => changeMonth(1));
-    document.getElementById('partner2-prev-month').addEventListener('click', () => changeMonth(-1));
-    document.getElementById('partner2-next-month').addEventListener('click', () => changeMonth(1));
-    document.getElementById('add-debtor-btn').addEventListener('click', addDebtor);
-    document.getElementById('save-debtors-btn').addEventListener('click', () => Swal.fire('Alterações já salvas', 'Os dados são sincronizados automaticamente.', 'info'));
-    document.getElementById('selectAllBtn')?.addEventListener('click', selectAllExpenses);
-    document.getElementById('deleteSelectedBtn')?.addEventListener('click', deleteSelectedExpenses);
-    document.getElementById('headerCheckbox')?.addEventListener('change', (e) => {
-        if (e.target.checked) currentDisplayExpenses.forEach(exp => selectedExpenses.add(exp.id));
-        else selectedExpenses.clear();
-        renderHistory();
-    });
-    document.getElementById('send-message-btn')?.addEventListener('click', sendMessage);
-    document.getElementById('message-input')?.addEventListener('keypress', (e) => { if (e.key === 'Enter') sendMessage(); });
-    document.getElementById('clear-mural-btn')?.addEventListener('click', clearMural);
-    document.getElementById('save-income-btn')?.addEventListener('click', saveIncomes);
-    document.getElementById('add-goal-btn')?.addEventListener('click', addGoal);
-    document.getElementById('save-goal1-btn')?.addEventListener('click', () => saveIndividualGoal('partner1'));
-    document.getElementById('save-goal2-btn')?.addEventListener('click', () => saveIndividualGoal('partner2'));
-    document.getElementById('conciergeAvatar')?.addEventListener('click', () => {
-        const activePage = Math.round(document.getElementById('swipeContainer').scrollLeft / document.getElementById('swipeContainer').clientWidth);
-        showConciergeMessage(getConciergeMessage(activePage), 8000);
-    });
-
-    const themeToggle = document.getElementById('theme-toggle-btn');
-    if (themeToggle) {
-        themeToggle.addEventListener('click', () => {
-            document.body.classList.toggle('light-theme');
-            localStorage.setItem('lightTheme', document.body.classList.contains('light-theme') ? 'enabled' : 'disabled');
-        });
+    if (localStorage.getItem('lightTheme') === 'enabled') {
+        document.body.classList.add('light-theme');
+        document.getElementById('theme-icon-header').innerHTML = '<i class="fas fa-sun"></i>';
+    } else {
+        document.getElementById('theme-icon-header').innerHTML = '<i class="fas fa-moon"></i>';
     }
-    if (localStorage.getItem('lightTheme') === 'enabled') document.body.classList.add('light-theme');
-
+    document.getElementById('conciergeAvatar').addEventListener('click', () => { const activePage = Math.round(document.getElementById('swipeContainer').scrollLeft / document.getElementById('swipeContainer').clientWidth); showConciergeMessage(getConciergeMessage(activePage), 8000); });
+    document.getElementById('name1').addEventListener('input', updateUserSelect);
+    document.getElementById('name2').addEventListener('input', updateUserSelect);
     loadSavedLogin();
     if (document.getElementById('name1').value.trim() && document.getElementById('name2').value.trim()) updateUserSelect();
 </script>
