@@ -733,6 +733,11 @@
             <div class="card"><div class="card-title"><i class="fas fa-database"></i> Backup / Restauração</div><button id="export-all-btn" class="btn btn-secondary" style="width:100%; margin-bottom:8px;">📥 Exportar dados (JSON)</button><button id="import-all-btn" class="btn btn-secondary" style="width:100%;">📤 Importar dados (JSON)</button><input type="file" id="import-file" accept=".json" style="display:none;"></div>
             <div class="card"><div class="card-title"><i class="fas fa-file-pdf"></i> Relatório mensal</div><button id="export-pdf-btn" class="btn btn-primary" style="width:100%;">📄 Exportar relatório em PDF</button></div>
             <div class="card"><div class="card-title"><i class="fas fa-palette"></i> Personalizar tema</div><div class="form-row"><div class="input-group"><label>Cor principal</label><input type="color" id="primary-color-picker" value="#e91e63"></div><div class="input-group"><label>Visualização</label><div class="color-preview" id="color-preview" style="background-color:#e91e63;"></div></div></div><button id="reset-color-btn" class="btn btn-secondary" style="width:100%; margin-top:8px;">🔄 Restaurar cor padrão (rosa)</button><div class="info-message" style="margin-top:8px;">A cor é salva no dispositivo e sincronizada entre seus dispositivos via Firebase.</div></div>
+            <!-- NOVO CARD: Remover todas as despesas recorrentes -->
+            <div class="card"><div class="card-title"><i class="fas fa-trash-alt"></i> Limpar dados recorrentes</div>
+                <button id="clear-recurring-btn" class="btn btn-danger" style="width:100%;"><i class="fas fa-sync-alt"></i> Remover todas as despesas recorrentes</button>
+                <div class="info-message" style="margin-top:8px;">⚠️ Esta ação irá excluir PERMANENTEMENTE todas as despesas marcadas como "Recorrente" e seus templates. As despesas normais não serão afetadas.</div>
+            </div>
         </div>
         <!-- Página 6: Devedores -->
         <div class="swipe-page" data-page="6">
@@ -803,8 +808,7 @@
     const formatMoney = (val) => val.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
     const escapeHtml = (str) => str?.replace(/[&<>]/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[m])) || '';
 
-    // ==================== CORREÇÃO DE DATA LOCAL ====================
-    // Função para obter a data atual no fuso horário local (YYYY-MM-DD)
+    // Função para obter data local do dispositivo
     function getLocalDateString() {
         const now = new Date();
         const year = now.getFullYear();
@@ -812,8 +816,52 @@
         const day = String(now.getDate()).padStart(2, '0');
         return `${year}-${month}-${day}`;
     }
-    // Usar sempre esta função para definir o valor do input date
-    // ================================================================
+
+    // ==================== REMOVER TODAS AS DESPESAS RECORRENTES ====================
+    async function deleteAllRecurringExpenses() {
+        const result = await Swal.fire({
+            title: '⚠️ Atenção!',
+            text: 'Tem certeza que deseja remover TODAS as despesas recorrentes (incluindo templates)? Esta ação é irreversível.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#e91e63',
+            confirmButtonText: 'Sim, remover tudo',
+            cancelButtonText: 'Cancelar'
+        });
+        if (!result.isConfirmed) return;
+        
+        Swal.fire({
+            title: 'Removendo...',
+            text: 'Aguarde enquanto as despesas recorrentes são excluídas.',
+            allowOutsideClick: false,
+            didOpen: () => { Swal.showLoading(); }
+        });
+        
+        try {
+            // Buscar todas as despesas que são recorrentes
+            const expensesSnapshot = await expensesRef.where('recorrente', '==', 'monthly').get();
+            const expensesWithTemplate = await expensesRef.where('recurringTemplateId', '!=', null).get();
+            const allRecurringIds = new Set();
+            expensesSnapshot.forEach(doc => allRecurringIds.add(doc.id));
+            expensesWithTemplate.forEach(doc => allRecurringIds.add(doc.id));
+            
+            // Buscar todos os templates de recorrência
+            const templatesSnapshot = await recurringRef.get();
+            
+            const batch = db.batch();
+            allRecurringIds.forEach(id => batch.delete(expensesRef.doc(id)));
+            templatesSnapshot.forEach(doc => batch.delete(recurringRef.doc(doc.id)));
+            
+            await batch.commit();
+            
+            Swal.fire('Removido!', 'Todas as despesas recorrentes e seus templates foram excluídos.', 'success');
+            await updateDashboard();
+        } catch (error) {
+            console.error(error);
+            Swal.fire('Erro', 'Não foi possível remover as despesas recorrentes. Tente novamente.', 'error');
+        }
+    }
+    // =============================================================================
 
     // Funções de tema e cor
     function applyPrimaryColor(color) {
@@ -1556,7 +1604,6 @@
         document.getElementById('expense-form').reset();
         document.getElementById('parcelas').value = 1;
         document.getElementById('parcelasPagas').value = 0;
-        // Usar a função de data local para preencher novamente
         document.getElementById('start-date').value = getLocalDateString();
         document.getElementById('add-expense-btn').textContent = '💾 Salvar';
         document.getElementById('cancel-edit-btn').style.display = 'none';
@@ -1849,7 +1896,6 @@
         await loadLimits();
         await loadTheme();
         setupFormDirtyTracking();
-        // Definir a data inicial do campo com a data local do dispositivo
         document.getElementById('start-date').value = getLocalDateString();
         await updateDashboard();
         setupSwipe();
@@ -1944,6 +1990,7 @@
     document.getElementById('export-pdf-btn').addEventListener('click', exportPDF);
     document.getElementById('primary-color-picker').addEventListener('change', (e) => savePrimaryColor(e.target.value));
     document.getElementById('reset-color-btn').addEventListener('click', resetPrimaryColor);
+    document.getElementById('clear-recurring-btn').addEventListener('click', deleteAllRecurringExpenses);
     document.getElementById('custom-split').style.display = 'none';
     document.getElementById('save-limit1-btn').addEventListener('click', () => { const val = parseFloat(document.getElementById('limit1').value); if (!isNaN(val) && val >= 0) saveLimit('partner1', val); else Swal.fire('Erro', 'Valor inválido', 'error'); });
     document.getElementById('save-limit2-btn').addEventListener('click', () => { const val = parseFloat(document.getElementById('limit2').value); if (!isNaN(val) && val >= 0) saveLimit('partner2', val); else Swal.fire('Erro', 'Valor inválido', 'error'); });
