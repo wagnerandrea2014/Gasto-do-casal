@@ -265,6 +265,7 @@
             gap: 8px;
             color: #e91e63;
         }
+        /* Alertas */
         .alert-warning {
             background: rgba(255, 152, 0, 0.2);
             border-left: 4px solid #ff9800;
@@ -275,6 +276,10 @@
             align-items: center;
             gap: 10px;
             font-size: 0.85rem;
+        }
+        .alert-warning i {
+            font-size: 1.2rem;
+            color: #ff9800;
         }
         .dashboard-row {
             display: flex;
@@ -528,21 +533,61 @@
                 </div>
                 <div style="margin-top: 12px;"><h4>🎯 Meta de economia do casal</h4><div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 6px;"><input type="number" id="meta-valor" step="100" value="500" style="flex:2;"><button class="btn btn-primary" id="set-meta-btn" style="flex:1;">Definir</button></div><div class="progress-bar"><div class="progress-fill" id="meta-fill"></div></div><div id="meta-progress" style="text-align: center; margin-top: 4px;">0%</div></div>
             </div>
-            <div class="card"><div class="card-title"><i class="fas fa-chart-line"></i> Evolução mensal (últimos 6 meses)</div><canvas id="evolutionChart" style="max-height: 220px;"></canvas></div>
+            <div class="card"><div class="card-title"><i class="fas fa-chart-line"></i> Evolução mensal (últimos 6 meses)</div><canvas id="evolutionChart" style="max-height: 200px;"></canvas></div>
             <div class="card"><div class="card-title"><i class="fas fa-chart-pie"></i> Gráficos</div><canvas id="categoryChart" style="max-height: 200px;"></canvas><canvas id="compareChart" style="max-height: 150px; margin-top: 16px;"></canvas></div>
             <div class="card"><div class="card-title"><i class="fas fa-calendar-alt"></i> Próximas parcelas</div><ul id="upcoming-installments" style="list-style: none; padding: 0; display: flex; flex-direction: column; gap: 6px;"></ul></div>
         </div>
-        <!-- Página 1: Gastos Parceiro 1 -->
+        <!-- Página 1: Gastos Parceiro 1 (com limite) -->
         <div class="swipe-page" data-page="1" id="page-partner1">
-            <div class="card"><div class="card-title"><i class="fas fa-user"></i> Gastos de <span id="partner1-name-label"></span></div><div id="partner1-expenses-list"></div></div>
-            <div class="card"><div class="card-title"><i class="fas fa-bullseye"></i> Meta individual de <span id="goal-individual-name1"></span></div><input type="number" id="goal1-target" placeholder="Alvo R$" style="margin-bottom:8px;"><input type="number" id="goal1-current" placeholder="Atual R$" style="margin-bottom:8px;"><button id="save-goal1-btn" class="btn btn-primary">Salvar meta</button><div class="progress-bar"><div class="progress-fill" id="goal1-progress-fill"></div></div><div id="goal1-progress-text" style="text-align:center; margin-top:4px;">0%</div></div>
-            <div class="card"><div class="card-title"><i class="fas fa-chart-line"></i> Limite de gasto mensal</div><div class="form-row"><div class="input-group"><label>Valor limite (R$)</label><input type="number" id="limit1" step="50" placeholder="Ex: 1000"></div><button id="save-limit1-btn" class="btn btn-primary">Definir limite</button></div><div id="limit-alert1" class="alert-warning" style="display: none;"><i class="fas fa-exclamation-triangle"></i><span><strong>Atenção!</strong> Você já atingiu ou ultrapassou o limite de gastos definido para este mês.</span></div></div>
+            <div class="card">
+                <div class="card-title"><i class="fas fa-user"></i> Gastos de <span id="partner1-name-label"></span></div>
+                <div id="partner1-expenses-list"></div>
+            </div>
+            <div class="card">
+                <div class="card-title"><i class="fas fa-bullseye"></i> Meta individual de <span id="goal-individual-name1"></span></div>
+                <input type="number" id="goal1-target" placeholder="Alvo R$" style="margin-bottom:8px;">
+                <input type="number" id="goal1-current" placeholder="Atual R$" style="margin-bottom:8px;">
+                <button id="save-goal1-btn" class="btn btn-primary">Salvar meta</button>
+                <div class="progress-bar"><div class="progress-fill" id="goal1-progress-fill"></div></div>
+                <div id="goal1-progress-text" style="text-align:center; margin-top:4px;">0%</div>
+            </div>
+            <div class="card">
+                <div class="card-title"><i class="fas fa-chart-line"></i> Limite de gasto mensal</div>
+                <div class="form-row">
+                    <div class="input-group"><label>Valor limite (R$)</label><input type="number" id="limit1" step="50" placeholder="Ex: 1000"></div>
+                    <button id="save-limit1-btn" class="btn btn-primary">Definir limite</button>
+                </div>
+                <div id="limit-alert1" class="alert-warning" style="display: none;">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <span><strong>Atenção!</strong> Você já atingiu ou ultrapassou o limite de gastos definido para este mês.</span>
+                </div>
+            </div>
         </div>
-        <!-- Página 2: Gastos Parceiro 2 -->
+        <!-- Página 2: Gastos Parceiro 2 (com limite) -->
         <div class="swipe-page" data-page="2" id="page-partner2">
-            <div class="card"><div class="card-title"><i class="fas fa-user"></i> Gastos de <span id="partner2-name-label"></span></div><div id="partner2-expenses-list"></div></div>
-            <div class="card"><div class="card-title"><i class="fas fa-bullseye"></i> Meta individual de <span id="goal-individual-name2"></span></div><input type="number" id="goal2-target" placeholder="Alvo R$" style="margin-bottom:8px;"><input type="number" id="goal2-current" placeholder="Atual R$" style="margin-bottom:8px;"><button id="save-goal2-btn" class="btn btn-primary">Salvar meta</button><div class="progress-bar"><div class="progress-fill" id="goal2-progress-fill"></div></div><div id="goal2-progress-text" style="text-align:center; margin-top:4px;">0%</div></div>
-            <div class="card"><div class="card-title"><i class="fas fa-chart-line"></i> Limite de gasto mensal</div><div class="form-row"><div class="input-group"><label>Valor limite (R$)</label><input type="number" id="limit2" step="50" placeholder="Ex: 1000"></div><button id="save-limit2-btn" class="btn btn-primary">Definir limite</button></div><div id="limit-alert2" class="alert-warning" style="display: none;"><i class="fas fa-exclamation-triangle"></i><span><strong>Atenção!</strong> Você já atingiu ou ultrapassou o limite de gastos definido para este mês.</span></div></div>
+            <div class="card">
+                <div class="card-title"><i class="fas fa-user"></i> Gastos de <span id="partner2-name-label"></span></div>
+                <div id="partner2-expenses-list"></div>
+            </div>
+            <div class="card">
+                <div class="card-title"><i class="fas fa-bullseye"></i> Meta individual de <span id="goal-individual-name2"></span></div>
+                <input type="number" id="goal2-target" placeholder="Alvo R$" style="margin-bottom:8px;">
+                <input type="number" id="goal2-current" placeholder="Atual R$" style="margin-bottom:8px;">
+                <button id="save-goal2-btn" class="btn btn-primary">Salvar meta</button>
+                <div class="progress-bar"><div class="progress-fill" id="goal2-progress-fill"></div></div>
+                <div id="goal2-progress-text" style="text-align:center; margin-top:4px;">0%</div>
+            </div>
+            <div class="card">
+                <div class="card-title"><i class="fas fa-chart-line"></i> Limite de gasto mensal</div>
+                <div class="form-row">
+                    <div class="input-group"><label>Valor limite (R$)</label><input type="number" id="limit2" step="50" placeholder="Ex: 1000"></div>
+                    <button id="save-limit2-btn" class="btn btn-primary">Definir limite</button>
+                </div>
+                <div id="limit-alert2" class="alert-warning" style="display: none;">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <span><strong>Atenção!</strong> Você já atingiu ou ultrapassou o limite de gastos definido para este mês.</span>
+                </div>
+            </div>
         </div>
         <!-- Página 3: Nova despesa -->
         <div class="swipe-page" data-page="3">
@@ -649,8 +694,6 @@
     let selectedExpenses = new Set();
     let categoryChart = null, compareChart = null, evolutionChart = null;
     let conciergeTimeout = null;
-    // Controle de notificação de parcelas próximas (uma vez por mês)
-    let ultimoMesNotificacao = { mes: -1, ano: -1 };
 
     const formatMoney = (val) => val.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
     const escapeHtml = (str) => str?.replace(/[&<>]/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[m])) || '';
@@ -729,47 +772,6 @@
         if (alert2) {
             if (limits.partner2 > 0 && totalP2 >= limits.partner2) alert2.style.display = 'flex';
             else alert2.style.display = 'none';
-        }
-    }
-
-    // NOTIFICAÇÃO DE PARCELAS PRÓXIMAS (Melhoria 1)
-    function verificarNotificacaoParcelasProximas() {
-        const targetMonth = `${selectedYear}-${String(selectedMonth+1).padStart(2,'0')}`;
-        const monthExpenses = allExpenses.filter(exp => exp.installmentMonths?.includes(targetMonth));
-        const hoje = new Date();
-        const tresDias = new Date();
-        tresDias.setDate(hoje.getDate() + 3);
-        const parcelasProximas = [];
-        
-        for (const exp of monthExpenses) {
-            for (let i = exp.parcelasPagas || 0; i < exp.parcelas; i++) {
-                const due = new Date(exp.startDate);
-                due.setMonth(due.getMonth() + i);
-                if (due >= hoje && due <= tresDias) {
-                    const { partner1, partner2 } = calculateMonthlyShare(exp);
-                    parcelasProximas.push({
-                        descricao: exp.descricao,
-                        valor: partner1 + partner2,
-                        data: due
-                    });
-                }
-            }
-        }
-        
-        if (parcelasProximas.length > 0 && (ultimoMesNotificacao.mes !== selectedMonth || ultimoMesNotificacao.ano !== selectedYear)) {
-            ultimoMesNotificacao = { mes: selectedMonth, ano: selectedYear };
-            let mensagem = `📅 Você tem ${parcelasProximas.length} parcela(s) vencendo nos próximos 3 dias:\n\n`;
-            parcelasProximas.slice(0, 3).forEach(p => {
-                mensagem += `• ${p.descricao}: ${formatMoney(p.valor)} (${p.data.toLocaleDateString('pt-BR')})\n`;
-            });
-            if (parcelasProximas.length > 3) mensagem += `\n...e mais ${parcelasProximas.length - 3} parcela(s).`;
-            Swal.fire({
-                title: '⚠️ Parcelas próximas do vencimento',
-                text: mensagem,
-                icon: 'warning',
-                confirmButtonColor: '#e91e63',
-                confirmButtonText: 'Ok, obrigado'
-            });
         }
     }
 
@@ -951,56 +953,27 @@
         // Atualizar alertas de limite
         checkLimitsAndAlert();
         
-        // Calcular evolução mensal para os últimos 6 meses (por parceiro)
+        // Evolução mensal
         const last6Months = [];
-        const last6MonthsP1 = [];
-        const last6MonthsP2 = [];
         for (let i = 5; i >= 0; i--) {
             let d = new Date(selectedYear, selectedMonth - i, 1);
             let ym = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
-            let total = 0, totalP1mes = 0, totalP2mes = 0;
+            let total = 0;
             for (const exp of allExpenses) {
                 if (exp.installmentMonths?.includes(ym)) {
                     const { partner1, partner2 } = calculateMonthlyShare(exp);
                     total += partner1 + partner2;
-                    totalP1mes += partner1;
-                    totalP2mes += partner2;
                 }
             }
             last6Months.push({ ym, total });
-            last6MonthsP1.push(totalP1mes);
-            last6MonthsP2.push(totalP2mes);
         }
-        
-        // Gráfico de evolução (Melhoria 2: linhas separadas por parceiro)
         if (evolutionChart) evolutionChart.destroy();
         const ctx = document.getElementById('evolutionChart').getContext('2d');
         evolutionChart = new Chart(ctx, {
             type: 'line',
-            data: {
-                labels: last6Months.map(m => m.ym),
-                datasets: [
-                    {
-                        label: partner1Name,
-                        data: last6MonthsP1,
-                        borderColor: '#e91e63',
-                        backgroundColor: 'rgba(233,30,99,0.1)',
-                        tension: 0.2,
-                        fill: false
-                    },
-                    {
-                        label: partner2Name,
-                        data: last6MonthsP2,
-                        borderColor: '#ffb74d',
-                        backgroundColor: 'rgba(255,183,77,0.1)',
-                        tension: 0.2,
-                        fill: false
-                    }
-                ]
-            }
+            data: { labels: last6Months.map(m => m.ym), datasets: [{ label: 'Gastos totais', data: last6Months.map(m => m.total), borderColor: '#e91e63', backgroundColor: 'rgba(233,30,99,0.1)', tension: 0.2, fill: true }] }
         });
-        
-        // Gráfico de categorias (mantido)
+        // Gráfico de categorias
         const catMap = new Map();
         monthExpenses.forEach(exp => {
             const { partner1, partner2 } = calculateMonthlyShare(exp);
@@ -1010,11 +983,8 @@
         });
         if (categoryChart) categoryChart.destroy();
         categoryChart = new Chart(document.getElementById('categoryChart'), { type: 'pie', data: { labels: [...catMap.keys()], datasets: [{ data: [...catMap.values()], backgroundColor: ['#e91e63','#ff6b9d','#c2185b','#f48fb1','#f06292','#ec407a'] }] } });
-        
-        // Gráfico de comparação (mantido)
         if (compareChart) compareChart.destroy();
         compareChart = new Chart(document.getElementById('compareChart'), { type: 'bar', data: { labels: [partner1Name, partner2Name], datasets: [{ data: [totalP1, totalP2], backgroundColor: ['#e91e63', '#ffb74d'] }] } });
-        
         // Orçamentos
         const budgetDiv = document.getElementById('budget-list');
         if (budgetDiv) {
@@ -1026,8 +996,7 @@
             }
             document.querySelectorAll('.delete-budget').forEach(btn => btn.addEventListener('click', async () => await budgetsRef.doc(btn.dataset.cat).delete()));
         }
-        
-        // Próximas parcelas (para a lista e também para notificação)
+        // Próximas parcelas
         const upcomingContainer = document.getElementById('upcoming-installments');
         if (upcomingContainer) {
             upcomingContainer.innerHTML = '';
@@ -1046,12 +1015,8 @@
             future.sort((a,b)=>a.date-b.date).slice(0,6).forEach(p => { const li = document.createElement('li'); li.style.background = 'rgba(233,30,99,0.1)'; li.style.padding = '6px 10px'; li.style.borderRadius = '30px'; li.style.fontSize = '0.75rem'; li.textContent = `📌 ${p.desc} - ${formatMoney(p.value)} (${p.date.toLocaleDateString()})`; upcomingContainer.appendChild(li); });
             if(future.length===0) upcomingContainer.innerHTML = '<li style="background:transparent">Nenhuma parcela futura</li>';
         }
-        
         renderHistory();
         updatePartnerPages();
-        
-        // Notificação de parcelas próximas (Melhoria 1)
-        verificarNotificacaoParcelasProximas();
     }
 
     function updatePartnerPages() {
@@ -1360,7 +1325,7 @@
     }
     function getConciergeMessage(page) {
         const msgs = {
-            0: `💡 Dica: arraste para os lados para ver todas as páginas. O gráfico de evolução agora mostra os gastos separados por parceiro.`,
+            0: `💡 Dica: arraste para os lados para ver todas as páginas.`,
             1: `📊 Gastos de ${partner1Name}. Defina um limite de gasto mensal para controlar melhor.`,
             2: `📊 Gastos de ${partner2Name}. Defina um limite de gasto mensal para controlar melhor.`,
             3: `➕ Preencha os campos da despesa. Use parcelamento e divisão personalizada.`,
