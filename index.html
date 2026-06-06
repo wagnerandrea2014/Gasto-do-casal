@@ -147,7 +147,6 @@
     <div class="swipe-container" id="swipeContainer">
         <!-- Página 0: Dashboard -->
         <div class="swipe-page" data-page="0">
-            <!-- Card: Resumo do Mês (apenas gastos NÃO recorrentes) -->
             <div class="card">
                 <div class="card-title"><i class="fas fa-chart-line"></i> Resumo do Mês <span style="font-size:0.7rem;">(gastos normais)</span></div>
                 <div class="dashboard-row">
@@ -157,41 +156,30 @@
                 </div>
                 <div style="margin-top: 12px;"><h4>🎯 Meta de economia do casal</h4><div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 6px;"><input type="number" id="meta-valor" step="100" value="500" style="flex:2;"><button class="btn btn-primary" id="set-meta-btn" style="flex:1;">Definir</button></div><div class="progress-bar"><div class="progress-fill" id="meta-fill"></div></div><div id="meta-progress" style="text-align: center; margin-top: 4px;">0%</div></div>
             </div>
-            <!-- NOVO CARD: Resumo de Gastos Recorrentes -->
-            <div class="card" id="recurring-summary-card">
+            <div class="card">
                 <div class="card-title"><i class="fas fa-sync-alt"></i> Gastos Recorrentes <span style="font-size:0.7rem;">(fixos do mês)</span></div>
                 <div class="dashboard-row">
                     <div class="dashboard-card"><h4 id="recurring-partner1-label">🧑 Gasto recorrente de </h4><div class="value" id="recurring-partner1">R$ 0,00</div></div>
                     <div class="dashboard-card"><h4 id="recurring-partner2-label">👩 Gasto recorrente de </h4><div class="value" id="recurring-partner2">R$ 0,00</div></div>
                     <div class="dashboard-card"><h4><i class="fas fa-chart-simple"></i> Total recorrente</h4><div class="value" id="total-recurring">R$ 0,00</div><small>comprometimento mensal</small></div>
                 </div>
-                <div class="info-message" style="margin-top:8px;">🔄 Despesas recorrentes ativas neste mês.</div>
             </div>
             <div class="card"><div class="card-title"><i class="fas fa-chart-line"></i> Evolução mensal (últimos 6 meses)</div><canvas id="evolutionChart" style="max-height: 220px;"></canvas></div>
             <div class="card"><div class="card-title"><i class="fas fa-chart-pie"></i> Gráficos</div><canvas id="categoryChart" style="max-height: 200px;"></canvas><canvas id="compareChart" style="max-height: 150px; margin-top: 16px;"></canvas></div>
-            <div class="card" id="recurringCard">
-                <div class="card-title"><i class="fas fa-chart-line"></i> Análise de Recorrentes</div>
-                <div id="recurring-summary"></div>
-                <div id="recurring-list"></div>
-                <div class="info-message" style="margin-top: 8px;">📊 Detalhamento das despesas recorrentes.</div>
-            </div>
-            <div class="card" id="budgetSummaryCard">
-                <div class="card-title"><i class="fas fa-chart-simple"></i> Resumo de Orçamentos</div>
-                <div id="budget-summary-list"></div>
-                <div class="info-message" style="margin-top: 8px;">💡 Defina orçamentos na página de configurações.</div>
-            </div>
+            <div class="card"><div class="card-title"><i class="fas fa-chart-line"></i> Análise de Recorrentes</div><div id="recurring-summary"></div><div id="recurring-list"></div></div>
+            <div class="card"><div class="card-title"><i class="fas fa-chart-simple"></i> Resumo de Orçamentos</div><div id="budget-summary-list"></div></div>
             <div class="card"><div class="card-title"><i class="fas fa-calendar-alt"></i> Próximas parcelas</div><ul id="upcoming-installments" style="list-style: none; padding: 0; display: flex; flex-direction: column; gap: 6px;"></ul></div>
         </div>
         <!-- Página 1: Gastos Parceiro 1 -->
         <div class="swipe-page" data-page="1" id="page-partner1">
             <div class="card"><div class="card-title"><i class="fas fa-user"></i> Gastos de <span id="partner1-name-label"></span></div><div id="partner1-expenses-list"></div></div>
-            <div class="card"><div class="card-title"><i class="fas fa-bullseye"></i> Meta individual de <span id="goal-individual-name1"></span></div><input type="number" id="goal1-target" placeholder="Alvo R$" style="margin-bottom:8px;"><input type="number" id="goal1-current" placeholder="Atual R$" style="margin-bottom:8px;"><button id="save-goal1-btn" class="btn btn-primary">Salvar meta</button><div class="progress-bar"><div class="progress-fill" id="goal1-progress-fill"></div></div><div id="goal1-progress-text" style="text-align:center; margin-top:4px;">0%</div></div>
+            <div class="card"><div class="card-title"><i class="fas fa-bullseye"></i> Meta individual de <span id="goal-individual-name1"></span></div><input type="number" id="goal1-target" placeholder="Alvo R$"><input type="number" id="goal1-current" placeholder="Atual R$"><button id="save-goal1-btn" class="btn btn-primary">Salvar meta</button><div class="progress-bar"><div class="progress-fill" id="goal1-progress-fill"></div></div><div id="goal1-progress-text" style="text-align:center;">0%</div></div>
             <div class="card"><div class="card-title"><i class="fas fa-chart-line"></i> Limite de gasto mensal</div><div class="form-row"><div class="input-group"><label>Valor limite (R$)</label><input type="number" id="limit1" step="50" placeholder="Ex: 1000"></div><button id="save-limit1-btn" class="btn btn-primary">Definir limite</button></div><div id="limit-alert1" class="alert-warning" style="display: none;"><i class="fas fa-exclamation-triangle"></i><span><strong>Atenção!</strong> Você já atingiu ou ultrapassou o limite de gastos definido para este mês.</span></div></div>
         </div>
         <!-- Página 2: Gastos Parceiro 2 -->
         <div class="swipe-page" data-page="2" id="page-partner2">
             <div class="card"><div class="card-title"><i class="fas fa-user"></i> Gastos de <span id="partner2-name-label"></span></div><div id="partner2-expenses-list"></div></div>
-            <div class="card"><div class="card-title"><i class="fas fa-bullseye"></i> Meta individual de <span id="goal-individual-name2"></span></div><input type="number" id="goal2-target" placeholder="Alvo R$" style="margin-bottom:8px;"><input type="number" id="goal2-current" placeholder="Atual R$" style="margin-bottom:8px;"><button id="save-goal2-btn" class="btn btn-primary">Salvar meta</button><div class="progress-bar"><div class="progress-fill" id="goal2-progress-fill"></div></div><div id="goal2-progress-text" style="text-align:center; margin-top:4px;">0%</div></div>
+            <div class="card"><div class="card-title"><i class="fas fa-bullseye"></i> Meta individual de <span id="goal-individual-name2"></span></div><input type="number" id="goal2-target" placeholder="Alvo R$"><input type="number" id="goal2-current" placeholder="Atual R$"><button id="save-goal2-btn" class="btn btn-primary">Salvar meta</button><div class="progress-bar"><div class="progress-fill" id="goal2-progress-fill"></div></div><div id="goal2-progress-text" style="text-align:center;">0%</div></div>
             <div class="card"><div class="card-title"><i class="fas fa-chart-line"></i> Limite de gasto mensal</div><div class="form-row"><div class="input-group"><label>Valor limite (R$)</label><input type="number" id="limit2" step="50" placeholder="Ex: 1000"></div><button id="save-limit2-btn" class="btn btn-primary">Definir limite</button></div><div id="limit-alert2" class="alert-warning" style="display: none;"><i class="fas fa-exclamation-triangle"></i><span><strong>Atenção!</strong> Você já atingiu ou ultrapassou o limite de gastos definido para este mês.</span></div></div>
         </div>
         <!-- Página 3: Nova despesa -->
@@ -228,12 +216,7 @@
                     <div class="filter-group"><label>&nbsp;</label><button id="clear-filters" class="btn btn-secondary" style="width:100%;"><i class="fas fa-eraser"></i> Limpar</button></div>
                 </div>
                 <div id="selectionBar" class="selection-bar" style="display:none;"><span><i class="fas fa-check-circle"></i> <span id="selectedCount">0</span> selecionada(s)</span><div style="display: flex; gap: 8px;"><button id="selectAllBtn" class="btn btn-secondary"><i class="fas fa-check-double"></i> Todos</button><button id="deleteSelectedBtn" class="btn btn-danger"><i class="fas fa-trash-alt"></i> Excluir</button></div></div>
-                <div style="overflow-x: auto;">
-                    <table class="history-table" id="historyTable">
-                        <thead><tr><th style="width:30px"><input type="checkbox" id="headerCheckbox" style="width:16px;height:16px;"></th><th>Descrição / Detalhes</th><th>Valor parcela atual</th><th>Data parcela</th><th>Pagador</th><th>Ações</th></tr></thead>
-                        <tbody id="tabela-historico"></tbody>
-                    </table>
-                </div>
+                <div style="overflow-x: auto;"><table class="history-table" id="historyTable"><thead><tr><th style="width:30px"><input type="checkbox" id="headerCheckbox" style="width:16px;height:16px;"></th><th>Descrição / Detalhes</th><th>Valor parcela atual</th><th>Data parcela</th><th>Pagador</th><th>Ações</th></tr></thead><tbody id="tabela-historico"></tbody></table></div>
             </div>
         </div>
         <!-- Página 5: Configurações -->
@@ -243,8 +226,8 @@
             <div class="card"><div class="card-title"><i class="fas fa-tags"></i> Gerenciar categorias</div><div id="categories-list"></div><div style="display: flex; gap: 8px; margin-top: 12px;"><input type="text" id="new-category-name" placeholder="Nova categoria" style="flex:2;"><button id="add-category-btn" class="btn btn-primary">Adicionar</button></div></div>
             <div class="card"><div class="card-title"><i class="fas fa-database"></i> Backup / Restauração</div><button id="export-all-btn" class="btn btn-secondary" style="width:100%; margin-bottom:8px;">📥 Exportar dados (JSON)</button><button id="import-all-btn" class="btn btn-secondary" style="width:100%;">📤 Importar dados (JSON)</button><input type="file" id="import-file" accept=".json" style="display:none;"></div>
             <div class="card"><div class="card-title"><i class="fas fa-file-pdf"></i> Relatório mensal</div><button id="export-pdf-btn" class="btn btn-primary" style="width:100%;">📄 Exportar relatório em PDF</button></div>
-            <div class="card"><div class="card-title"><i class="fas fa-palette"></i> Personalizar tema</div><div class="form-row"><div class="input-group"><label>Cor principal</label><input type="color" id="primary-color-picker" value="#e91e63"></div><div class="input-group"><label>Visualização</label><div class="color-preview" id="color-preview" style="background-color:#e91e63;"></div></div></div><button id="reset-color-btn" class="btn btn-secondary" style="width:100%; margin-top:8px;">🔄 Restaurar cor padrão (rosa)</button><div class="info-message" style="margin-top:8px;">A cor é salva no dispositivo e sincronizada entre seus dispositivos via Firebase.</div></div>
-            <div class="card"><div class="card-title"><i class="fas fa-trash-alt"></i> Limpar dados recorrentes</div><button id="clear-recurring-btn" class="btn btn-danger" style="width:100%;"><i class="fas fa-sync-alt"></i> Remover todas as despesas recorrentes</button><div class="info-message" style="margin-top:8px;">⚠️ Esta ação irá excluir PERMANENTEMENTE todas as despesas marcadas como "Recorrente" e seus templates.</div></div>
+            <div class="card"><div class="card-title"><i class="fas fa-palette"></i> Personalizar tema</div><div class="form-row"><div class="input-group"><label>Cor principal</label><input type="color" id="primary-color-picker" value="#e91e63"></div><div class="input-group"><label>Visualização</label><div class="color-preview" id="color-preview" style="background-color:#e91e63;"></div></div></div><button id="reset-color-btn" class="btn btn-secondary" style="width:100%; margin-top:8px;">🔄 Restaurar cor padrão (rosa)</button></div>
+            <div class="card"><div class="card-title"><i class="fas fa-trash-alt"></i> Limpar dados recorrentes</div><button id="clear-recurring-btn" class="btn btn-danger" style="width:100%;"><i class="fas fa-sync-alt"></i> Remover todas as despesas recorrentes</button></div>
         </div>
         <!-- Página 6: Devedores -->
         <div class="swipe-page" data-page="6">
@@ -260,7 +243,7 @@
         </div>
         <!-- Página 9: Parcelas Finais -->
         <div class="swipe-page" data-page="9">
-            <div class="card"><div class="card-title"><i class="fas fa-calendar-check"></i> Parcelas Finais</div><div class="info-message" style="margin-bottom: 12px;">📌 Última parcela de cada compra parcelada</div><div id="final-installments-list"></div></div>
+            <div class="card"><div class="card-title"><i class="fas fa-calendar-check"></i> Parcelas Finais</div><div id="final-installments-list"></div></div>
         </div>
     </div>
     <div class="page-indicators" id="pageIndicators"></div>
@@ -269,7 +252,7 @@
 <div class="concierge-container"><div class="concierge-bubble" id="conciergeBubble" style="display: none;"><span id="conciergeMessage"></span></div><div class="concierge-avatar" id="conciergeAvatar"><i class="fas fa-robot"></i></div></div>
 
 <script>
-    // Firebase config
+    // ==================== CONFIGURAÇÃO FIREBASE ====================
     const firebaseConfig = {
         apiKey: "AIzaSyD0P8GciuV_TvZXtkIQbZLOWtcq_EMKbXo",
         authDomain: "gestao-casal.firebaseapp.com",
@@ -314,81 +297,55 @@
 
     function getLocalDateString() {
         const now = new Date();
-        const year = now.getFullYear();
-        const month = String(now.getMonth() + 1).padStart(2, '0');
-        const day = String(now.getDate()).padStart(2, '0');
-        return `${year}-${month}-${day}`;
+        return `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
     }
 
-    // ==================== CORREÇÃO DEFINITIVA DE RECORRENTES ====================
-    async function generateRecurringForMonth(targetMonth) {
-        if (!recurringTemplates.length) return;
-        for (const template of recurringTemplates) {
-            const controlId = `${template.id}_${targetMonth}`;
-            const controlDoc = recurringControlRef.doc(controlId);
-            const doc = await controlDoc.get();
-            if (doc.exists) continue;
-            await db.runTransaction(async (transaction) => {
-                const currentDoc = await transaction.get(controlDoc);
-                if (currentDoc.exists) return;
-                const q = await expensesRef.where('recurringTemplateId', '==', template.id)
-                                            .where('installmentMonths', 'array-contains', targetMonth)
-                                            .get();
-                if (!q.empty) {
-                    transaction.set(controlDoc, { processedAt: firebase.firestore.FieldValue.serverTimestamp(), templateId: template.id, month: targetMonth });
-                    return;
-                }
-                const firstDay = new Date(selectedYear, selectedMonth, 1);
-                const newInstallments = generateInstallmentMonths(firstDay.toISOString().slice(0,10), template.parcelas, 0);
-                const expenseRef = expensesRef.doc();
-                const expenseData = {
-                    ...template,
-                    startDate: firstDay.toISOString().slice(0,10),
-                    installmentMonths: newInstallments,
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                    updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
-                    recurringTemplateId: template.id,
-                    recorrente: 'monthly'
-                };
-                transaction.set(expenseRef, expenseData);
-                transaction.set(controlDoc, { processedAt: firebase.firestore.FieldValue.serverTimestamp(), templateId: template.id, month: targetMonth });
-            }).catch(err => console.warn("Erro na transação de recorrente:", err));
+    function getFaturaMonthYear(date) {
+        const day = date.getDate();
+        let month = date.getMonth(), year = date.getFullYear();
+        if (day <= 1) { if (month === 0) { month = 11; year--; } else month--; }
+        return `${year}-${String(month+1).padStart(2,'0')}`;
+    }
+    function generateInstallmentMonths(startDateISO, totalParcelas, parcelasPagas = 0) {
+        const start = new Date(startDateISO);
+        const months = [];
+        for (let i = parcelasPagas; i < totalParcelas; i++) {
+            const due = new Date(start);
+            due.setMonth(start.getMonth() + i);
+            months.push(getFaturaMonthYear(due));
         }
+        return months;
     }
-    // =============================================================================
-
-    async function deleteAllRecurringExpenses() {
-        const result = await Swal.fire({
-            title: '⚠️ Atenção!',
-            text: 'Tem certeza que deseja remover TODAS as despesas recorrentes (incluindo templates e controles)? Esta ação é irreversível.',
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#e91e63',
-            confirmButtonText: 'Sim, remover tudo',
-            cancelButtonText: 'Cancelar'
-        });
-        if (!result.isConfirmed) return;
-        Swal.fire({ title: 'Removendo...', text: 'Aguarde.', allowOutsideClick: false, didOpen: () => { Swal.showLoading(); } });
-        try {
-            const expensesSnapshot = await expensesRef.where('recorrente', '==', 'monthly').get();
-            const expensesWithTemplate = await expensesRef.where('recurringTemplateId', '!=', null).get();
-            const templatesSnapshot = await recurringRef.get();
-            const controlSnapshot = await recurringControlRef.get();
-            const batch = db.batch();
-            expensesSnapshot.forEach(doc => batch.delete(doc.ref));
-            expensesWithTemplate.forEach(doc => batch.delete(doc.ref));
-            templatesSnapshot.forEach(doc => batch.delete(doc.ref));
-            controlSnapshot.forEach(doc => batch.delete(doc.ref));
-            await batch.commit();
-            Swal.fire('Removido!', 'Todas as despesas recorrentes, templates e controles foram excluídos.', 'success');
-            await updateDashboard();
-        } catch (error) {
-            console.error(error);
-            Swal.fire('Erro', 'Não foi possível remover. Tente novamente.', 'error');
+    function getInstallmentDateForMonth(exp, targetMonthYear) {
+        const start = new Date(exp.startDate);
+        for (let i = exp.parcelasPagas || 0; i < exp.parcelas; i++) {
+            const due = new Date(start);
+            due.setMonth(start.getMonth() + i);
+            if (`${due.getFullYear()}-${String(due.getMonth()+1).padStart(2,'0')}` === targetMonthYear) return due;
         }
+        return null;
+    }
+    function getFirstInstallmentDate(exp) {
+        const start = new Date(exp.startDate);
+        const due = new Date(start);
+        due.setMonth(start.getMonth() + (exp.parcelasPagas || 0));
+        return due;
+    }
+    function calculateMonthlyShare(exp) {
+        const parcelaValor = exp.valorTotal / exp.parcelas;
+        let valorAposTerceiros = parcelaValor;
+        if (exp.thirdParties?.length) valorAposTerceiros = Math.max(0, parcelaValor - exp.thirdParties.reduce((s,t)=>s+(t.valor||0),0));
+        const split = exp.splitType;
+        let p1=0, p2=0;
+        if (split === '50-50') { p1 = valorAposTerceiros/2; p2 = valorAposTerceiros/2; }
+        else if (split === 'custom-percent') { const perc = exp.customPercent||50; p1 = valorAposTerceiros*perc/100; p2 = valorAposTerceiros*(100-perc)/100; }
+        else if (split === 'proportional-income') { const total = incomes.partner1+incomes.partner2; if(total>0){ p1 = valorAposTerceiros*incomes.partner1/total; p2 = valorAposTerceiros*incomes.partner2/total; } else { p1=p2=valorAposTerceiros/2; } }
+        else if (split === '100-payer') { if(exp.paidBy==='partner1'){ p1=valorAposTerceiros; p2=0; } else if(exp.paidBy==='partner2'){ p1=0; p2=valorAposTerceiros; } else { p1=p2=valorAposTerceiros/2; } }
+        else { p1=p2=valorAposTerceiros/2; }
+        return { partner1: p1, partner2: p2 };
     }
 
-    // Funções de tema e cor
+    // ==================== FUNÇÕES DE TEMA ====================
     function applyPrimaryColor(color) {
         document.documentElement.style.setProperty('--primary-color', color);
         document.documentElement.style.setProperty('--primary-gradient', `linear-gradient(95deg, ${color}, #c2185b)`);
@@ -438,51 +395,196 @@
         });
     }
 
-    function getFaturaMonthYear(date) {
-        const day = date.getDate();
-        let month = date.getMonth(), year = date.getFullYear();
-        if (day <= 1) { if (month === 0) { month = 11; year--; } else month--; }
-        return `${year}-${String(month+1).padStart(2,'0')}`;
-    }
-    function generateInstallmentMonths(startDateISO, totalParcelas, parcelasPagas = 0) {
-        const start = new Date(startDateISO);
-        const months = [];
-        for (let i = parcelasPagas; i < totalParcelas; i++) {
-            const due = new Date(start);
-            due.setMonth(start.getMonth() + i);
-            months.push(getFaturaMonthYear(due));
+    // ==================== EXCLUSÃO CORRIGIDA ====================
+    async function deleteExpenseById(id) {
+        try {
+            const docSnap = await expensesRef.doc(id).get();
+            if (!docSnap.exists) {
+                Swal.fire('Aviso', 'Esta despesa já não existe.', 'info');
+                return;
+            }
+            const expenseData = docSnap.data();
+            const isRecurring = expenseData.recorrente === 'monthly' || !!expenseData.recurringTemplateId;
+            let deleteTemplate = false;
+            let confirm = true;
+
+            if (isRecurring) {
+                const result = await Swal.fire({
+                    title: 'Despesa recorrente detectada',
+                    text: 'Deseja também excluir o template (impedindo novas recorrências)?',
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonText: 'Sim, excluir template',
+                    cancelButtonText: 'Apenas esta despesa'
+                });
+                if (result.isConfirmed) deleteTemplate = true;
+                else if (result.dismiss === Swal.DismissReason.cancel) { /* ok */ }
+                else confirm = false;
+            } else {
+                const result = await Swal.fire({
+                    title: 'Confirmar exclusão',
+                    text: 'Remover esta despesa permanentemente?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#e91e63',
+                    confirmButtonText: 'Sim, excluir'
+                });
+                if (!result.isConfirmed) confirm = false;
+            }
+            if (!confirm) return;
+
+            await expensesRef.doc(id).delete();
+            if (deleteTemplate && expenseData.recurringTemplateId) {
+                const templateId = expenseData.recurringTemplateId;
+                await recurringRef.doc(templateId).delete();
+                const controlSnap = await recurringControlRef.where('templateId', '==', templateId).get();
+                const batch = db.batch();
+                controlSnap.forEach(doc => batch.delete(doc.ref));
+                await batch.commit();
+                recurringTemplates = recurringTemplates.filter(t => t.id !== templateId);
+            }
+            Swal.fire('Excluído!', 'Despesa removida com sucesso.', 'success');
+            await updateDashboard();
+        } catch (error) {
+            console.error(error);
+            Swal.fire('Erro', 'Não foi possível excluir a despesa.', 'error');
         }
-        return months;
-    }
-    function getInstallmentDateForMonth(exp, targetMonthYear) {
-        const start = new Date(exp.startDate);
-        for (let i = exp.parcelasPagas || 0; i < exp.parcelas; i++) {
-            const due = new Date(start);
-            due.setMonth(start.getMonth() + i);
-            if (`${due.getFullYear()}-${String(due.getMonth()+1).padStart(2,'0')}` === targetMonthYear) return due;
-        }
-        return null;
-    }
-    function getFirstInstallmentDate(exp) {
-        const start = new Date(exp.startDate);
-        const due = new Date(start);
-        due.setMonth(start.getMonth() + (exp.parcelasPagas || 0));
-        return due;
-    }
-    function calculateMonthlyShare(exp) {
-        const parcelaValor = exp.valorTotal / exp.parcelas;
-        let valorAposTerceiros = parcelaValor;
-        if (exp.thirdParties?.length) valorAposTerceiros = Math.max(0, parcelaValor - exp.thirdParties.reduce((s,t)=>s+(t.valor||0),0));
-        const split = exp.splitType;
-        let p1=0, p2=0;
-        if (split === '50-50') { p1 = valorAposTerceiros/2; p2 = valorAposTerceiros/2; }
-        else if (split === 'custom-percent') { const perc = exp.customPercent||50; p1 = valorAposTerceiros*perc/100; p2 = valorAposTerceiros*(100-perc)/100; }
-        else if (split === 'proportional-income') { const total = incomes.partner1+incomes.partner2; if(total>0){ p1 = valorAposTerceiros*incomes.partner1/total; p2 = valorAposTerceiros*incomes.partner2/total; } else { p1=p2=valorAposTerceiros/2; } }
-        else if (split === '100-payer') { if(exp.paidBy==='partner1'){ p1=valorAposTerceiros; p2=0; } else if(exp.paidBy==='partner2'){ p1=0; p2=valorAposTerceiros; } else { p1=p2=valorAposTerceiros/2; } }
-        else { p1=p2=valorAposTerceiros/2; }
-        return { partner1: p1, partner2: p2 };
     }
 
+    // ==================== CRIAÇÃO DE DESPESA ====================
+    async function saveExpense() {
+        const descricao = document.getElementById('descricao').value.trim();
+        const valorTotal = parseFloat(document.getElementById('valor-total').value);
+        const parcelas = parseInt(document.getElementById('parcelas').value);
+        const parcelasPagas = parseInt(document.getElementById('parcelasPagas').value) || 0;
+        const startDateStr = document.getElementById('start-date').value;
+        if (!descricao || isNaN(valorTotal) || valorTotal <= 0 || parcelas < 1 || !startDateStr) {
+            Swal.fire('Preencha todos os campos obrigatórios.');
+            return;
+        }
+        if (parcelasPagas >= parcelas) {
+            Swal.fire('Atenção', 'Parcelas pagas não pode ser maior ou igual ao total.', 'warning');
+            return;
+        }
+        const paidBy = document.getElementById('paid-by').value;
+        const splitType = document.getElementById('split-type').value;
+        let customPercent = null;
+        if (splitType === 'custom-percent') {
+            customPercent = parseFloat(document.getElementById('custom-split').value);
+            if (isNaN(customPercent) || customPercent < 0 || customPercent > 100) {
+                Swal.fire('Percentual entre 0 e 100');
+                return;
+            }
+        }
+        const categoria = document.getElementById('categoria').value.trim() || 'Geral';
+        const observacao = document.getElementById('observacao').value;
+        const isRecurring = document.getElementById('recorrente').value === 'monthly';
+        const hasThirdParties = document.getElementById('has-third-parties').value === 'yes';
+        const thirdPartiesToSave = hasThirdParties ? thirdParties.filter(tp => tp.valor > 0) : [];
+        const installmentMonths = generateInstallmentMonths(startDateStr, parcelas, parcelasPagas);
+        const expenseData = {
+            descricao, valorTotal, parcelas, parcelasPagas,
+            startDate: startDateStr, paidBy, splitType, customPercent,
+            categoria, observacao, installmentMonths,
+            thirdParties: thirdPartiesToSave,
+            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        };
+        if (!editingDocId) expenseData.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+
+        if (editingDocId) {
+            await expensesRef.doc(editingDocId).update(expenseData);
+        } else {
+            const newRef = await expensesRef.add(expenseData);
+            if (isRecurring && parcelasPagas === 0) {
+                const templateData = { ...expenseData, templateFor: newRef.id };
+                const templateRef = await recurringRef.add(templateData);
+                await expensesRef.doc(newRef.id).update({ recurringTemplateId: templateRef.id, recorrente: 'monthly' });
+            }
+        }
+        document.getElementById('expense-form').reset();
+        document.getElementById('parcelas').value = 1;
+        document.getElementById('parcelasPagas').value = 0;
+        document.getElementById('start-date').value = getLocalDateString();
+        document.getElementById('add-expense-btn').textContent = '💾 Salvar';
+        document.getElementById('cancel-edit-btn').style.display = 'none';
+        thirdParties = [];
+        document.getElementById('third-parties-container').style.display = 'none';
+        document.getElementById('has-third-parties').value = 'no';
+        editingDocId = null;
+        formDirty = false;
+        Swal.fire('Despesa salva!', '', 'success');
+        await updateDashboard();
+    }
+
+    // ==================== GERAÇÃO DE RECORRENTES ====================
+    async function generateRecurringForMonth(targetMonth) {
+        if (!recurringTemplates.length) return;
+        for (const template of recurringTemplates) {
+            const controlId = `${template.id}_${targetMonth}`;
+            const controlDoc = recurringControlRef.doc(controlId);
+            const doc = await controlDoc.get();
+            if (doc.exists) continue;
+            await db.runTransaction(async (transaction) => {
+                const currentDoc = await transaction.get(controlDoc);
+                if (currentDoc.exists) return;
+                const q = await expensesRef.where('recurringTemplateId', '==', template.id)
+                                            .where('installmentMonths', 'array-contains', targetMonth)
+                                            .get();
+                if (!q.empty) {
+                    transaction.set(controlDoc, { processedAt: firebase.firestore.FieldValue.serverTimestamp(), templateId: template.id, month: targetMonth });
+                    return;
+                }
+                const firstDay = new Date(selectedYear, selectedMonth, 1);
+                const newInstallments = generateInstallmentMonths(firstDay.toISOString().slice(0,10), template.parcelas, 0);
+                const expenseData = {
+                    ...template,
+                    startDate: firstDay.toISOString().slice(0,10),
+                    installmentMonths: newInstallments,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    recurringTemplateId: template.id,
+                    recorrente: 'monthly'
+                };
+                delete expenseData.id;
+                const expenseRef = expensesRef.doc();
+                transaction.set(expenseRef, expenseData);
+                transaction.set(controlDoc, { processedAt: firebase.firestore.FieldValue.serverTimestamp(), templateId: template.id, month: targetMonth });
+            }).catch(err => console.warn("Erro na transação de recorrente:", err));
+        }
+    }
+
+    async function deleteAllRecurringExpenses() {
+        const result = await Swal.fire({
+            title: '⚠️ Atenção!',
+            text: 'Tem certeza que deseja remover TODAS as despesas recorrentes (incluindo templates e controles)? Esta ação é irreversível.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#e91e63',
+            confirmButtonText: 'Sim, remover tudo',
+            cancelButtonText: 'Cancelar'
+        });
+        if (!result.isConfirmed) return;
+        Swal.fire({ title: 'Removendo...', text: 'Aguarde.', allowOutsideClick: false, didOpen: () => { Swal.showLoading(); } });
+        try {
+            const expensesSnapshot = await expensesRef.where('recorrente', '==', 'monthly').get();
+            const expensesWithTemplate = await expensesRef.where('recurringTemplateId', '!=', null).get();
+            const templatesSnapshot = await recurringRef.get();
+            const controlSnapshot = await recurringControlRef.get();
+            const batch = db.batch();
+            expensesSnapshot.forEach(doc => batch.delete(doc.ref));
+            expensesWithTemplate.forEach(doc => batch.delete(doc.ref));
+            templatesSnapshot.forEach(doc => batch.delete(doc.ref));
+            controlSnapshot.forEach(doc => batch.delete(doc.ref));
+            await batch.commit();
+            Swal.fire('Removido!', 'Todas as despesas recorrentes, templates e controles foram excluídos.', 'success');
+            await updateDashboard();
+        } catch (error) {
+            console.error(error);
+            Swal.fire('Erro', 'Não foi possível remover. Tente novamente.', 'error');
+        }
+    }
+
+    // ==================== LIMITES ====================
     async function loadLimits() {
         const doc = await limitsRef.get();
         if (doc.exists) limits = doc.data();
@@ -535,6 +637,7 @@
         }
     }
 
+    // ==================== CATEGORIAS ====================
     async function loadCategories() {
         const snapshot = await categoriesRef.get();
         if (snapshot.empty) {
@@ -605,7 +708,10 @@
         items.sort((a,b) => (a.data || 0) - (b.data || 0));
         if (items.length === 0) { container.innerHTML = '<div style="text-align:center; padding:16px;">Nenhum gasto neste mês.</div>'; return; }
         container.innerHTML = items.map(exp => `<div class="expense-item"><div><strong>${escapeHtml(exp.descricao)}</strong><br><span class="expense-date">${exp.data ? exp.data.toLocaleDateString('pt-BR') : 'Data?'} - ${exp.categoria || ''}</span></div><div>${formatMoney(exp.valor)}<button class="btn-small delete-partner-expense" data-id="${exp.id}">🗑️</button></div></div>`).join('');
-        document.querySelectorAll('.delete-partner-expense').forEach(btn => btn.addEventListener('click', async () => { if(await Swal.fire({title:'Confirmar',text:'Remover?',icon:'warning',showCancelButton:true}).then(r=>r.isConfirmed)) await expensesRef.doc(btn.dataset.id).delete(); }));
+        document.querySelectorAll('.delete-partner-expense').forEach(btn => btn.addEventListener('click', async (e) => {
+            e.stopPropagation();
+            await deleteExpenseById(btn.dataset.id);
+        }));
     }
 
     function renderDebtors() {
@@ -795,34 +901,30 @@
         }).join('');
     }
 
+    // ==================== UPDATE DASHBOARD ====================
     async function updateDashboard() {
         if (!currentPartnerId) return;
         const targetMonth = `${selectedYear}-${String(selectedMonth+1).padStart(2,'0')}`;
         await generateRecurringForMonth(targetMonth);
         const monthExpenses = allExpenses.filter(exp => exp.installmentMonths?.includes(targetMonth));
         currentDisplayExpenses = monthExpenses;
-        
-        // Separar despesas em normais (não recorrentes) e recorrentes
         const normalExpenses = monthExpenses.filter(exp => !exp.recurringTemplateId && exp.recorrente !== 'monthly');
         const recurringExpenses = monthExpenses.filter(exp => exp.recurringTemplateId || exp.recorrente === 'monthly');
-        
         let totalP1Normal = 0, totalP2Normal = 0;
-        for(const exp of normalExpenses) {
+        normalExpenses.forEach(exp => {
             const { partner1, partner2 } = calculateMonthlyShare(exp);
             totalP1Normal += partner1; totalP2Normal += partner2;
-        }
+        });
         let totalP1Rec = 0, totalP2Rec = 0;
-        for(const exp of recurringExpenses) {
+        recurringExpenses.forEach(exp => {
             const { partner1, partner2 } = calculateMonthlyShare(exp);
             totalP1Rec += partner1; totalP2Rec += partner2;
-        }
-        
+        });
         document.getElementById('gasto-partner1').innerText = formatMoney(totalP1Normal);
         document.getElementById('gasto-partner2').innerText = formatMoney(totalP2Normal);
         document.getElementById('recurring-partner1').innerText = formatMoney(totalP1Rec);
         document.getElementById('recurring-partner2').innerText = formatMoney(totalP2Rec);
         document.getElementById('total-recurring').innerText = formatMoney(totalP1Rec + totalP2Rec);
-        
         const totalGastoNormal = totalP1Normal+totalP2Normal;
         let progresso = Math.max(0, (savingsGoal - totalGastoNormal)/savingsGoal*100);
         progresso = Math.min(100,progresso);
@@ -941,7 +1043,7 @@
         }
         const sortSelect = document.getElementById('sort-order');
         items = sortHistoryItems(items, sortSelect ? sortSelect.value : 'date_asc');
-        if (items.length === 0) { tbody.innerHTML = '<td><td colspan="6" style="text-align:center">Nenhuma despesa</td></tr>'; return; }
+        if (items.length === 0) { tbody.innerHTML = '<tr><td colspan="6" style="text-align:center">Nenhuma despesa</td></tr>'; return; }
         tbody.innerHTML = items.map(exp => {
             const parcelaValor = exp.valorTotal / exp.parcelas;
             const primeiraParcela = getFirstInstallmentDate(exp);
@@ -991,13 +1093,6 @@
             await updateDashboard();
         }
     }
-    async function deleteExpenseById(id) {
-        if (await Swal.fire({ title: 'Confirmar', text: 'Remover esta despesa?', icon: 'warning', showCancelButton: true }).then(r=>r.isConfirmed)) {
-            await expensesRef.doc(id).delete();
-            selectedExpenses.delete(id);
-            await updateDashboard();
-        }
-    }
     function applyFilters() {
         const targetMonth = `${selectedYear}-${String(selectedMonth+1).padStart(2,'0')}`;
         let filtered = allExpenses.filter(exp => exp.installmentMonths?.includes(targetMonth));
@@ -1042,69 +1137,6 @@
         document.getElementById('swipeContainer').scrollTo({ left: window.innerWidth * 3, behavior: 'smooth' });
         updatePreviewDivision();
     }
-    async function saveExpense() {
-        const descricao = document.getElementById('descricao').value.trim();
-        const valorTotal = parseFloat(document.getElementById('valor-total').value);
-        const parcelas = parseInt(document.getElementById('parcelas').value);
-        const parcelasPagas = parseInt(document.getElementById('parcelasPagas').value) || 0;
-        const startDateStr = document.getElementById('start-date').value;
-        if (!descricao || isNaN(valorTotal) || valorTotal <= 0 || parcelas < 1 || !startDateStr) {
-            Swal.fire('Preencha todos os campos obrigatórios.');
-            return;
-        }
-        if (parcelasPagas >= parcelas) {
-            Swal.fire('Atenção', 'Parcelas pagas não pode ser maior ou igual ao total.', 'warning');
-            return;
-        }
-        const paidBy = document.getElementById('paid-by').value;
-        const splitType = document.getElementById('split-type').value;
-        let customPercent = null;
-        if (splitType === 'custom-percent') {
-            customPercent = parseFloat(document.getElementById('custom-split').value);
-            if (isNaN(customPercent) || customPercent < 0 || customPercent > 100) {
-                Swal.fire('Percentual entre 0 e 100');
-                return;
-            }
-        }
-        const categoria = document.getElementById('categoria').value.trim() || 'Geral';
-        const observacao = document.getElementById('observacao').value;
-        const isRecurring = document.getElementById('recorrente').value === 'monthly';
-        const hasThirdParties = document.getElementById('has-third-parties').value === 'yes';
-        const thirdPartiesToSave = hasThirdParties ? thirdParties.filter(tp => tp.valor > 0) : [];
-        const installmentMonths = generateInstallmentMonths(startDateStr, parcelas, parcelasPagas);
-        const expenseData = {
-            descricao, valorTotal, parcelas, parcelasPagas,
-            startDate: startDateStr, paidBy, splitType, customPercent,
-            categoria, observacao, installmentMonths,
-            thirdParties: thirdPartiesToSave,
-            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-        };
-        if (!editingDocId) expenseData.createdAt = firebase.firestore.FieldValue.serverTimestamp();
-        if (isRecurring && !editingDocId && parcelasPagas === 0) {
-            expenseData.recorrente = 'monthly';
-        }
-        if (editingDocId) {
-            await expensesRef.doc(editingDocId).update(expenseData);
-        } else {
-            const newRef = await expensesRef.add(expenseData);
-            if (isRecurring && parcelasPagas === 0) {
-                await recurringRef.add({ ...expenseData, templateFor: newRef.id });
-            }
-        }
-        document.getElementById('expense-form').reset();
-        document.getElementById('parcelas').value = 1;
-        document.getElementById('parcelasPagas').value = 0;
-        document.getElementById('start-date').value = getLocalDateString();
-        document.getElementById('add-expense-btn').textContent = '💾 Salvar';
-        document.getElementById('cancel-edit-btn').style.display = 'none';
-        thirdParties = [];
-        document.getElementById('third-parties-container').style.display = 'none';
-        document.getElementById('has-third-parties').value = 'no';
-        editingDocId = null;
-        formDirty = false;
-        Swal.fire('Despesa salva!', '', 'success');
-        await updateDashboard();
-    }
     async function changeMonth(delta) {
         let nm = selectedMonth + delta, ny = selectedYear;
         if (nm < 0) { nm = 11; ny--; } else if (nm > 11) { nm = 0; ny++; }
@@ -1139,7 +1171,6 @@
         }
     }
     async function setSavingsGoal(v) { await metaRef.set({ value: v }); updateDashboard(); }
-    
     async function renderGoals() {
         const container = document.getElementById('goals-list');
         if (!container) return;
