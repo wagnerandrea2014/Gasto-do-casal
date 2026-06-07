@@ -21,6 +21,7 @@
         button, .btn, .btn-small, input, select, textarea, .profile-btn, .month-nav button, .concierge-avatar, .theme-icon { touch-action: manipulation; }
         button, .btn, .btn-small { min-height: 40px; padding: 8px 14px; font-size: 0.9rem; font-weight: 600; border-radius: 40px; cursor: pointer; border: none; }
         .btn-small { padding: 6px 12px; font-size: 0.8rem; min-height: 34px; }
+        .btn-quitar { background: #4caf50; color: white; }
         input, select, textarea { font-size: 0.9rem; padding: 10px 14px; border-radius: 40px; min-height: 42px; background: #1a1a1a; border: 1px solid var(--primary-color); color: #ffffff; width: 100%; }
         body.light-theme input, body.light-theme select, body.light-theme textarea { background: #ffffff; color: #1a1a1a; }
         .login-container { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: #000000; position: fixed; top: 0; left: 0; width: 100%; z-index: 1000; padding: 20px; }
@@ -39,13 +40,13 @@
         .theme-icon { background: none; border: none; font-size: 1.3rem; color: var(--primary-color); cursor: pointer; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 50%; transition: 0.2s; }
         .header-actions { display: flex; align-items: center; gap: 8px; }
         .calendar-btn { background: none; border: none; font-size: 1.2rem; color: var(--primary-color); cursor: pointer; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 50%; }
-        .swipe-container { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth; width: 100%; flex: 1; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+        .swipe-container { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth; width: 100%; flex: 1; -webkit-overflow-scrolling: touch; scrollbar-width: none; will-change: transform; transform: translateZ(0); }
         .swipe-container::-webkit-scrollbar { display: none; }
         .swipe-page { flex: 0 0 100%; width: 100%; scroll-snap-align: start; scroll-snap-stop: always; overflow-y: auto; padding: 16px; height: auto; min-height: 100%; }
         .page-indicators { position: fixed; bottom: 16px; left: 0; right: 0; display: flex; justify-content: center; gap: 12px; z-index: 50; }
         .indicator { width: 8px; height: 8px; border-radius: 50%; background: rgba(255, 255, 255, 0.4); transition: 0.2s; }
         .indicator.active { width: 24px; border-radius: 10px; background: var(--primary-color); }
-        .card { background: #111111; border-radius: 28px; padding: 1rem; margin-bottom: 1rem; border: 1px solid var(--primary-color); box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+        .card { background: #111111; border-radius: 28px; padding: 1rem; margin-bottom: 1rem; border: 1px solid var(--primary-color); box-shadow: 0 4px 10px rgba(0,0,0,0.2); transform: translateZ(0); }
         body.light-theme .card, body.light-theme .login-card { background: #ffffff; color: #1a1a1a; }
         .card-title { font-size: 1.2rem; font-weight: 700; margin-bottom: 0.8rem; display: flex; align-items: center; gap: 8px; color: var(--primary-color); }
         .alert-warning { background: rgba(255, 152, 0, 0.2); border-left: 4px solid #ff9800; padding: 12px; border-radius: 16px; margin-bottom: 12px; display: flex; align-items: center; gap: 10px; font-size: 0.85rem; }
@@ -59,6 +60,7 @@
         .input-group { flex: 1; min-width: 130px; }
         .input-group label { display: block; margin-bottom: 4px; font-size: 0.75rem; font-weight: 500; opacity: 0.8; }
         .goal-item, .expense-item, .debtor-item, .message-item, .budget-item, .category-item, .final-installment-item { background: rgba(233,30,99,0.1); border-radius: 20px; padding: 12px; margin-bottom: 10px; }
+        .expense-item { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
         .final-installment-item { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
         .final-installment-info { flex: 2; }
         .final-installment-value { font-weight: 700; color: var(--primary-color); }
@@ -80,6 +82,7 @@
             .filters-row { flex-direction: column; }
             .filter-group { width: 100%; }
             .final-installment-item { flex-direction: column; align-items: flex-start; }
+            .expense-item { flex-direction: column; align-items: stretch; }
         }
         .selection-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; padding: 10px 12px; background: rgba(233,30,99,0.15); border-radius: 28px; flex-wrap: wrap; gap: 10px; }
         .income-row { display: flex; gap: 12px; align-items: center; margin-bottom: 12px; flex-wrap: wrap; }
@@ -110,6 +113,9 @@
         body.light-theme .detail-value { color: #1a1a1a; }
         .detail-highlight { color: var(--primary-color); font-weight: 700; }
         .installment-info { font-size: 0.75rem; opacity: 0.9; }
+        .loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: center; z-index: 9999; flex-direction: column; gap: 16px; }
+        .spinner { width: 50px; height: 50px; border: 5px solid rgba(233,30,99,0.3); border-top: 5px solid var(--primary-color); border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
@@ -126,6 +132,11 @@
         <button id="enter-app-btn">Entrar no app</button>
         <div style="margin-top: 16px; font-size: 0.7rem; text-align: center;">Fatura fecha dia 2 de cada mês</div>
     </div>
+</div>
+
+<div id="loading-overlay" class="loading-overlay" style="display: none;">
+    <div class="spinner"></div>
+    <div>Carregando dados...</div>
 </div>
 
 <div id="app-container" class="app-container">
@@ -148,7 +159,7 @@
         <!-- Página 0: Dashboard -->
         <div class="swipe-page" data-page="0">
             <div class="card">
-                <div class="card-title"><i class="fas fa-chart-line"></i> Resumo do Mês <span style="font-size:0.7rem;">(gastos normais)</span></div>
+                <div class="card-title"><i class="fas fa-chart-line"></i> Resumo do Mês <span style="font-size:0.7rem;">(gastos normais pendentes)</span></div>
                 <div class="dashboard-row">
                     <div class="dashboard-card"><h4 id="gasto-partner1-label">🧑 Gasto de </h4><div class="value" id="gasto-partner1">R$ 0,00</div></div>
                     <div class="dashboard-card"><h4 id="gasto-partner2-label">👩 Gasto de </h4><div class="value" id="gasto-partner2">R$ 0,00</div></div>
@@ -157,7 +168,7 @@
                 <div style="margin-top: 12px;"><h4>🎯 Meta de economia do casal</h4><div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 6px;"><input type="number" id="meta-valor" step="100" value="500" style="flex:2;"><button class="btn btn-primary" id="set-meta-btn" style="flex:1;">Definir</button></div><div class="progress-bar"><div class="progress-fill" id="meta-fill"></div></div><div id="meta-progress" style="text-align: center; margin-top: 4px;">0%</div></div>
             </div>
             <div class="card">
-                <div class="card-title"><i class="fas fa-sync-alt"></i> Gastos Recorrentes <span style="font-size:0.7rem;">(fixos do mês)</span></div>
+                <div class="card-title"><i class="fas fa-sync-alt"></i> Gastos Recorrentes Pendentes</div>
                 <div class="dashboard-row">
                     <div class="dashboard-card"><h4 id="recurring-partner1-label">🧑 Gasto recorrente de </h4><div class="value" id="recurring-partner1">R$ 0,00</div></div>
                     <div class="dashboard-card"><h4 id="recurring-partner2-label">👩 Gasto recorrente de </h4><div class="value" id="recurring-partner2">R$ 0,00</div></div>
@@ -172,13 +183,13 @@
         </div>
         <!-- Página 1: Gastos Parceiro 1 -->
         <div class="swipe-page" data-page="1" id="page-partner1">
-            <div class="card"><div class="card-title"><i class="fas fa-user"></i> Gastos de <span id="partner1-name-label"></span></div><div id="partner1-expenses-list"></div></div>
+            <div class="card"><div class="card-title"><i class="fas fa-user"></i> Gastos pendentes de <span id="partner1-name-label"></span></div><div id="partner1-expenses-list"></div></div>
             <div class="card"><div class="card-title"><i class="fas fa-bullseye"></i> Meta individual de <span id="goal-individual-name1"></span></div><input type="number" id="goal1-target" placeholder="Alvo R$"><input type="number" id="goal1-current" placeholder="Atual R$"><button id="save-goal1-btn" class="btn btn-primary">Salvar meta</button><div class="progress-bar"><div class="progress-fill" id="goal1-progress-fill"></div></div><div id="goal1-progress-text" style="text-align:center;">0%</div></div>
             <div class="card"><div class="card-title"><i class="fas fa-chart-line"></i> Limite de gasto mensal</div><div class="form-row"><div class="input-group"><label>Valor limite (R$)</label><input type="number" id="limit1" step="50" placeholder="Ex: 1000"></div><button id="save-limit1-btn" class="btn btn-primary">Definir limite</button></div><div id="limit-alert1" class="alert-warning" style="display: none;"><i class="fas fa-exclamation-triangle"></i><span><strong>Atenção!</strong> Você já atingiu ou ultrapassou o limite de gastos definido para este mês.</span></div></div>
         </div>
         <!-- Página 2: Gastos Parceiro 2 -->
         <div class="swipe-page" data-page="2" id="page-partner2">
-            <div class="card"><div class="card-title"><i class="fas fa-user"></i> Gastos de <span id="partner2-name-label"></span></div><div id="partner2-expenses-list"></div></div>
+            <div class="card"><div class="card-title"><i class="fas fa-user"></i> Gastos pendentes de <span id="partner2-name-label"></span></div><div id="partner2-expenses-list"></div></div>
             <div class="card"><div class="card-title"><i class="fas fa-bullseye"></i> Meta individual de <span id="goal-individual-name2"></span></div><input type="number" id="goal2-target" placeholder="Alvo R$"><input type="number" id="goal2-current" placeholder="Atual R$"><button id="save-goal2-btn" class="btn btn-primary">Salvar meta</button><div class="progress-bar"><div class="progress-fill" id="goal2-progress-fill"></div></div><div id="goal2-progress-text" style="text-align:center;">0%</div></div>
             <div class="card"><div class="card-title"><i class="fas fa-chart-line"></i> Limite de gasto mensal</div><div class="form-row"><div class="input-group"><label>Valor limite (R$)</label><input type="number" id="limit2" step="50" placeholder="Ex: 1000"></div><button id="save-limit2-btn" class="btn btn-primary">Definir limite</button></div><div id="limit-alert2" class="alert-warning" style="display: none;"><i class="fas fa-exclamation-triangle"></i><span><strong>Atenção!</strong> Você já atingiu ou ultrapassou o limite de gastos definido para este mês.</span></div></div>
         </div>
@@ -207,7 +218,7 @@
         <!-- Página 4: Histórico -->
         <div class="swipe-page" data-page="4">
             <div class="card">
-                <div class="card-title"><i class="fas fa-history"></i> Histórico</div>
+                <div class="card-title"><i class="fas fa-history"></i> Histórico (todas as despesas)</div>
                 <div class="filters-row">
                     <div class="filter-group"><label><i class="fas fa-search"></i> Descrição</label><input type="text" id="filter-desc" placeholder="Ex: mercado"></div>
                     <div class="filter-group"><label><i class="fas fa-tag"></i> Categoria</label><select id="filter-category"><option value="">Todas</option></select></div>
@@ -216,7 +227,7 @@
                     <div class="filter-group"><label>&nbsp;</label><button id="clear-filters" class="btn btn-secondary" style="width:100%;"><i class="fas fa-eraser"></i> Limpar</button></div>
                 </div>
                 <div id="selectionBar" class="selection-bar" style="display:none;"><span><i class="fas fa-check-circle"></i> <span id="selectedCount">0</span> selecionada(s)</span><div style="display: flex; gap: 8px;"><button id="selectAllBtn" class="btn btn-secondary"><i class="fas fa-check-double"></i> Todos</button><button id="deleteSelectedBtn" class="btn btn-danger"><i class="fas fa-trash-alt"></i> Excluir</button></div></div>
-                <div style="overflow-x: auto;"><table class="history-table" id="historyTable"><thead><tr><th style="width:30px"><input type="checkbox" id="headerCheckbox" style="width:16px;height:16px;"></th><th>Descrição / Detalhes</th><th>Valor parcela atual</th><th>Data parcela</th><th>Pagador</th><th>Ações</th></tr></thead><tbody id="tabela-historico"></tbody></table></div>
+                <div style="overflow-x: auto;"><table class="history-table" id="historyTable"><thead><tr><th style="width:30px"><input type="checkbox" id="headerCheckbox" style="width:16px;height:16px;"></th><th>Descrição / Detalhes</th><th>Valor parcela atual</th><th>Data parcela</th><th>Pagador</th><th>Status</th><th>Ações</th></tr></thead><tbody id="tabela-historico"></tbody></table></div>
             </div>
         </div>
         <!-- Página 5: Configurações -->
@@ -245,6 +256,24 @@
         <div class="swipe-page" data-page="9">
             <div class="card"><div class="card-title"><i class="fas fa-calendar-check"></i> Parcelas Finais</div><div id="final-installments-list"></div></div>
         </div>
+        <!-- Página 10: Fechamento Mensal (NOVA) -->
+        <div class="swipe-page" data-page="10">
+            <div class="card">
+                <div class="card-title"><i class="fas fa-file-invoice-dollar"></i> Fechamento Mensal</div>
+                <div class="info-message" style="margin-bottom: 12px;">📆 Período de fatura: do dia 2 ao dia 1 do mês seguinte</div>
+                <div class="filters-row" style="margin-bottom: 16px;">
+                    <div class="filter-group"><label>Mês de referência</label><select id="closing-month"></select></div>
+                    <div class="filter-group"><label>Ano</label><select id="closing-year"></select></div>
+                    <div class="filter-group"><label>&nbsp;</label><button id="update-closing-btn" class="btn btn-primary">Atualizar</button></div>
+                </div>
+                <div id="closing-summary" class="dashboard-row" style="margin-top: 16px;">
+                    <div class="dashboard-card"><h4>Gasto total de <span id="closing-name1"></span></h4><div class="value" id="closing-total1">R$ 0,00</div></div>
+                    <div class="dashboard-card"><h4>Gasto total de <span id="closing-name2"></span></h4><div class="value" id="closing-total2">R$ 0,00</div></div>
+                    <div class="dashboard-card"><h4>Total do casal</h4><div class="value" id="closing-total-casal">R$ 0,00</div></div>
+                </div>
+                <div class="info-message">📊 Valores consideram todas as despesas (pendentes e quitadas) do período de fatura selecionado.</div>
+            </div>
+        </div>
     </div>
     <div class="page-indicators" id="pageIndicators"></div>
 </div>
@@ -252,7 +281,7 @@
 <div class="concierge-container"><div class="concierge-bubble" id="conciergeBubble" style="display: none;"><span id="conciergeMessage"></span></div><div class="concierge-avatar" id="conciergeAvatar"><i class="fas fa-robot"></i></div></div>
 
 <script>
-    // ==================== CONFIGURAÇÃO FIREBASE ====================
+    // ==================== FIREBASE CONFIG ====================
     const firebaseConfig = {
         apiKey: "AIzaSyD0P8GciuV_TvZXtkIQbZLOWtcq_EMKbXo",
         authDomain: "gestao-casal.firebaseapp.com",
@@ -263,6 +292,7 @@
     };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
+    db.enablePersistence({ synchronizeTabs: true }).catch(err => console.warn("Persistência offline:", err));
     const COUPLE_ID = "coupleData";
     const expensesRef = db.collection(`shared/${COUPLE_ID}/expenses`);
     const budgetsRef = db.collection(`shared/${COUPLE_ID}/budgets`);
@@ -291,6 +321,9 @@
     let conciergeTimeout = null;
     let ultimoMesNotificacao = { mes: -1, ano: -1 };
     let formDirty = false;
+    let updateTimeout = null;
+    let firstLoad = true;
+    let lastChartData = { evolutionHash: "", categoryHash: "", compareHash: "" };
 
     const formatMoney = (val) => val.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
     const escapeHtml = (str) => str?.replace(/[&<>]/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[m])) || '';
@@ -300,6 +333,7 @@
         return `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
     }
 
+    // ==================== FUNÇÕES AUXILIARES ====================
     function getFaturaMonthYear(date) {
         const day = date.getDate();
         let month = date.getMonth(), year = date.getFullYear();
@@ -345,58 +379,8 @@
         return { partner1: p1, partner2: p2 };
     }
 
-    // ==================== FUNÇÕES DE TEMA ====================
-    function applyPrimaryColor(color) {
-        document.documentElement.style.setProperty('--primary-color', color);
-        document.documentElement.style.setProperty('--primary-gradient', `linear-gradient(95deg, ${color}, #c2185b)`);
-        const preview = document.getElementById('color-preview');
-        if (preview) preview.style.backgroundColor = color;
-        const picker = document.getElementById('primary-color-picker');
-        if (picker) picker.value = color;
-    }
-    async function loadTheme() {
-        const doc = await themeRef.get();
-        if (doc.exists && doc.data().primaryColor) applyPrimaryColor(doc.data().primaryColor);
-        else applyPrimaryColor('#e91e63');
-        if (localStorage.getItem('lightTheme') === 'enabled') {
-            document.body.classList.add('light-theme');
-            document.getElementById('theme-icon-header').innerHTML = '<i class="fas fa-sun"></i>';
-        } else {
-            document.getElementById('theme-icon-header').innerHTML = '<i class="fas fa-moon"></i>';
-        }
-    }
-    async function savePrimaryColor(color) {
-        await themeRef.set({ primaryColor: color }, { merge: true });
-        applyPrimaryColor(color);
-        Swal.fire('Cor atualizada!', 'A nova cor foi salva e sincronizada.', 'success');
-    }
-    async function resetPrimaryColor() {
-        await themeRef.set({ primaryColor: '#e91e63' }, { merge: true });
-        applyPrimaryColor('#e91e63');
-        Swal.fire('Cor restaurada!', 'A cor padrão (rosa) foi restaurada.', 'success');
-    }
-
-    function setupFormDirtyTracking() {
-        const form = document.getElementById('expense-form');
-        if (!form) return;
-        const inputs = form.querySelectorAll('input, select, textarea');
-        inputs.forEach(input => {
-            input.addEventListener('change', () => { formDirty = true; });
-            input.addEventListener('input', () => { formDirty = true; });
-        });
-        document.getElementById('add-expense-btn')?.addEventListener('click', () => { setTimeout(() => { formDirty = false; }, 500); });
-        document.getElementById('cancel-edit-btn')?.addEventListener('click', () => { formDirty = false; });
-        window.addEventListener('beforeunload', (e) => {
-            if (formDirty && !editingDocId && document.getElementById('descricao')?.value.trim() !== '') {
-                e.preventDefault();
-                e.returnValue = 'Você tem alterações não salvas no formulário de despesa. Tem certeza que deseja sair?';
-                return e.returnValue;
-            }
-        });
-    }
-
-    // ==================== EXCLUSÃO CORRIGIDA ====================
-    async function deleteExpenseById(id) {
+    // ==================== FUNÇÃO PARA QUITAR DESPESA ====================
+    async function quitarDespesa(id) {
         try {
             const docSnap = await expensesRef.doc(id).get();
             if (!docSnap.exists) {
@@ -404,10 +388,79 @@
                 return;
             }
             const expenseData = docSnap.data();
-            const isRecurring = expenseData.recorrente === 'monthly' || !!expenseData.recurringTemplateId;
-            let deleteTemplate = false;
-            let confirm = true;
+            if (expenseData.quitado) {
+                Swal.fire('Informação', 'Esta despesa já está quitada.', 'info');
+                return;
+            }
+            const result = await Swal.fire({
+                title: 'Quitar despesa',
+                text: `Deseja marcar "${expenseData.descricao}" como paga?`,
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'Sim, quitar',
+                cancelButtonText: 'Cancelar'
+            });
+            if (result.isConfirmed) {
+                await expensesRef.doc(id).update({ quitado: true });
+                Swal.fire('Quitada!', 'Despesa marcada como paga e removida dos gastos pendentes.', 'success');
+                debouncedUpdateDashboard();
+            }
+        } catch (error) {
+            console.error(error);
+            Swal.fire('Erro', 'Não foi possível quitar a despesa.', 'error');
+        }
+    }
 
+    // ==================== GRÁFICOS OTIMIZADOS ====================
+    function updateEvolutionChart(labels, dataP1, dataP2) {
+        const hash = JSON.stringify({ labels, dataP1, dataP2 });
+        if (hash === lastChartData.evolutionHash) return;
+        lastChartData.evolutionHash = hash;
+        if (evolutionChart) evolutionChart.destroy();
+        const ctx = document.getElementById('evolutionChart').getContext('2d');
+        evolutionChart = new Chart(ctx, {
+            type: 'line',
+            data: { labels, datasets: [
+                { label: partner1Name, data: dataP1, borderColor: 'var(--primary-color)', backgroundColor: 'rgba(233,30,99,0.1)', tension: 0.2, fill: false },
+                { label: partner2Name, data: dataP2, borderColor: '#ffb74d', backgroundColor: 'rgba(255,183,77,0.1)', tension: 0.2, fill: false }
+            ] }
+        });
+    }
+    function updateCategoryChart(labels, data) {
+        const hash = JSON.stringify({ labels, data });
+        if (hash === lastChartData.categoryHash) return;
+        lastChartData.categoryHash = hash;
+        if (categoryChart) categoryChart.destroy();
+        const ctx = document.getElementById('categoryChart').getContext('2d');
+        categoryChart = new Chart(ctx, { type: 'pie', data: { labels, datasets: [{ data, backgroundColor: ['var(--primary-color)','#ff6b9d','#c2185b','#f48fb1','#f06292','#ec407a'] }] } });
+    }
+    function updateCompareChart(partner1Value, partner2Value) {
+        const hash = JSON.stringify({ partner1Value, partner2Value });
+        if (hash === lastChartData.compareHash) return;
+        lastChartData.compareHash = hash;
+        if (compareChart) compareChart.destroy();
+        const ctx = document.getElementById('compareChart').getContext('2d');
+        compareChart = new Chart(ctx, { type: 'bar', data: { labels: [partner1Name, partner2Name], datasets: [{ data: [partner1Value, partner2Value], backgroundColor: ['var(--primary-color)', '#ffb74d'] }] } });
+    }
+
+    // ==================== DEBOUNCE E LOADING ====================
+    function showLoading(show) {
+        const overlay = document.getElementById('loading-overlay');
+        if (overlay) overlay.style.display = show ? 'flex' : 'none';
+    }
+    function debouncedUpdateDashboard() {
+        if (updateTimeout) clearTimeout(updateTimeout);
+        updateTimeout = setTimeout(() => updateDashboard(), 100);
+    }
+
+    // ==================== EXCLUSÃO E CRIAÇÃO ====================
+    async function deleteExpenseById(id) {
+        try {
+            const docSnap = await expensesRef.doc(id).get();
+            if (!docSnap.exists) { Swal.fire('Aviso', 'Esta despesa já não existe.', 'info'); return; }
+            const expenseData = docSnap.data();
+            const isRecurring = expenseData.recorrente === 'monthly' || !!expenseData.recurringTemplateId;
+            let deleteTemplate = false, confirm = true;
             if (isRecurring) {
                 const result = await Swal.fire({
                     title: 'Despesa recorrente detectada',
@@ -432,7 +485,6 @@
                 if (!result.isConfirmed) confirm = false;
             }
             if (!confirm) return;
-
             await expensesRef.doc(id).delete();
             if (deleteTemplate && expenseData.recurringTemplateId) {
                 const templateId = expenseData.recurringTemplateId;
@@ -444,14 +496,13 @@
                 recurringTemplates = recurringTemplates.filter(t => t.id !== templateId);
             }
             Swal.fire('Excluído!', 'Despesa removida com sucesso.', 'success');
-            await updateDashboard();
+            debouncedUpdateDashboard();
         } catch (error) {
             console.error(error);
             Swal.fire('Erro', 'Não foi possível excluir a despesa.', 'error');
         }
     }
 
-    // ==================== CRIAÇÃO DE DESPESA ====================
     async function saveExpense() {
         const descricao = document.getElementById('descricao').value.trim();
         const valorTotal = parseFloat(document.getElementById('valor-total').value);
@@ -487,10 +538,10 @@
             startDate: startDateStr, paidBy, splitType, customPercent,
             categoria, observacao, installmentMonths,
             thirdParties: thirdPartiesToSave,
+            quitado: false,  // nova despesa começa como não quitada
             updatedAt: firebase.firestore.FieldValue.serverTimestamp()
         };
         if (!editingDocId) expenseData.createdAt = firebase.firestore.FieldValue.serverTimestamp();
-
         if (editingDocId) {
             await expensesRef.doc(editingDocId).update(expenseData);
         } else {
@@ -513,10 +564,9 @@
         editingDocId = null;
         formDirty = false;
         Swal.fire('Despesa salva!', '', 'success');
-        await updateDashboard();
+        debouncedUpdateDashboard();
     }
 
-    // ==================== GERAÇÃO DE RECORRENTES ====================
     async function generateRecurringForMonth(targetMonth) {
         if (!recurringTemplates.length) return;
         for (const template of recurringTemplates) {
@@ -543,7 +593,8 @@
                     createdAt: firebase.firestore.FieldValue.serverTimestamp(),
                     updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
                     recurringTemplateId: template.id,
-                    recorrente: 'monthly'
+                    recorrente: 'monthly',
+                    quitado: false
                 };
                 delete expenseData.id;
                 const expenseRef = expensesRef.doc();
@@ -564,7 +615,7 @@
             cancelButtonText: 'Cancelar'
         });
         if (!result.isConfirmed) return;
-        Swal.fire({ title: 'Removendo...', text: 'Aguarde.', allowOutsideClick: false, didOpen: () => { Swal.showLoading(); } });
+        showLoading(true);
         try {
             const expensesSnapshot = await expensesRef.where('recorrente', '==', 'monthly').get();
             const expensesWithTemplate = await expensesRef.where('recurringTemplateId', '!=', null).get();
@@ -577,10 +628,12 @@
             controlSnapshot.forEach(doc => batch.delete(doc.ref));
             await batch.commit();
             Swal.fire('Removido!', 'Todas as despesas recorrentes, templates e controles foram excluídos.', 'success');
-            await updateDashboard();
+            debouncedUpdateDashboard();
         } catch (error) {
             console.error(error);
             Swal.fire('Erro', 'Não foi possível remover. Tente novamente.', 'error');
+        } finally {
+            showLoading(false);
         }
     }
 
@@ -603,7 +656,7 @@
     function checkLimitsAndAlert() {
         const targetMonth = `${selectedYear}-${String(selectedMonth+1).padStart(2,'0')}`;
         let totalP1=0, totalP2=0;
-        allExpenses.filter(exp => exp.installmentMonths?.includes(targetMonth)).forEach(exp => {
+        allExpenses.filter(exp => exp.installmentMonths?.includes(targetMonth) && !exp.quitado).forEach(exp => {
             const { partner1, partner2 } = calculateMonthlyShare(exp);
             totalP1 += partner1; totalP2 += partner2;
         });
@@ -615,7 +668,7 @@
 
     function verificarNotificacaoParcelasProximas() {
         const targetMonth = `${selectedYear}-${String(selectedMonth+1).padStart(2,'0')}`;
-        const monthExpenses = allExpenses.filter(exp => exp.installmentMonths?.includes(targetMonth));
+        const monthExpenses = allExpenses.filter(exp => exp.installmentMonths?.includes(targetMonth) && !exp.quitado);
         const hoje = new Date(), tresDias = new Date(); tresDias.setDate(hoje.getDate() + 3);
         const proximas = [];
         monthExpenses.forEach(exp => {
@@ -674,6 +727,56 @@
         }));
     }
 
+    // ==================== TEMAS E UI ====================
+    function applyPrimaryColor(color) {
+        document.documentElement.style.setProperty('--primary-color', color);
+        document.documentElement.style.setProperty('--primary-gradient', `linear-gradient(95deg, ${color}, #c2185b)`);
+        const preview = document.getElementById('color-preview');
+        if (preview) preview.style.backgroundColor = color;
+        const picker = document.getElementById('primary-color-picker');
+        if (picker) picker.value = color;
+    }
+    async function loadTheme() {
+        const doc = await themeRef.get();
+        if (doc.exists && doc.data().primaryColor) applyPrimaryColor(doc.data().primaryColor);
+        else applyPrimaryColor('#e91e63');
+        if (localStorage.getItem('lightTheme') === 'enabled') {
+            document.body.classList.add('light-theme');
+            document.getElementById('theme-icon-header').innerHTML = '<i class="fas fa-sun"></i>';
+        } else {
+            document.getElementById('theme-icon-header').innerHTML = '<i class="fas fa-moon"></i>';
+        }
+    }
+    async function savePrimaryColor(color) {
+        await themeRef.set({ primaryColor: color }, { merge: true });
+        applyPrimaryColor(color);
+        Swal.fire('Cor atualizada!', 'A nova cor foi salva e sincronizada.', 'success');
+    }
+    async function resetPrimaryColor() {
+        await themeRef.set({ primaryColor: '#e91e63' }, { merge: true });
+        applyPrimaryColor('#e91e63');
+        Swal.fire('Cor restaurada!', 'A cor padrão (rosa) foi restaurada.', 'success');
+    }
+
+    function setupFormDirtyTracking() {
+        const form = document.getElementById('expense-form');
+        if (!form) return;
+        const inputs = form.querySelectorAll('input, select, textarea');
+        inputs.forEach(input => {
+            input.addEventListener('change', () => { formDirty = true; });
+            input.addEventListener('input', () => { formDirty = true; });
+        });
+        document.getElementById('add-expense-btn')?.addEventListener('click', () => { setTimeout(() => { formDirty = false; }, 500); });
+        document.getElementById('cancel-edit-btn')?.addEventListener('click', () => { formDirty = false; });
+        window.addEventListener('beforeunload', (e) => {
+            if (formDirty && !editingDocId && document.getElementById('descricao')?.value.trim() !== '') {
+                e.preventDefault();
+                e.returnValue = 'Você tem alterações não salvas no formulário de despesa. Tem certeza que deseja sair?';
+                return e.returnValue;
+            }
+        });
+    }
+
     function updateUIWithNames() {
         document.getElementById('gasto-partner1-label').innerHTML = `🧑 Gasto de ${partner1Name}`;
         document.getElementById('gasto-partner2-label').innerHTML = `👩 Gasto de ${partner2Name}`;
@@ -686,16 +789,19 @@
         document.getElementById('income-name2').innerText = partner2Name;
         document.getElementById('goal-individual-name1').innerText = partner1Name;
         document.getElementById('goal-individual-name2').innerText = partner2Name;
+        document.getElementById('closing-name1').innerText = partner1Name;
+        document.getElementById('closing-name2').innerText = partner2Name;
         const paidBy = document.getElementById('paid-by');
         if(paidBy) { paidBy.options[0].text = partner1Name; paidBy.options[1].text = partner2Name; }
         const filterPayer = document.getElementById('filter-payer');
         if(filterPayer && filterPayer.options.length>=2) { filterPayer.options[1].text = partner1Name; filterPayer.options[2].text = partner2Name; }
     }
 
+    // ==================== RENDERIZAÇÕES ====================
     async function renderPartnerExpenses(partnerKey, containerId, monthYear) {
         const container = document.getElementById(containerId);
         if (!container) return;
-        let filtered = allExpenses.filter(exp => exp.installmentMonths?.includes(monthYear));
+        let filtered = allExpenses.filter(exp => exp.installmentMonths?.includes(monthYear) && !exp.quitado);
         const targetPartner = partnerKey === 'partner1' ? 'partner1' : 'partner2';
         let items = [];
         for (const exp of filtered) {
@@ -706,8 +812,12 @@
             items.push({ id: exp.id, descricao: exp.descricao, valor, data: dueDate, categoria: exp.categoria });
         }
         items.sort((a,b) => (a.data || 0) - (b.data || 0));
-        if (items.length === 0) { container.innerHTML = '<div style="text-align:center; padding:16px;">Nenhum gasto neste mês.</div>'; return; }
-        container.innerHTML = items.map(exp => `<div class="expense-item"><div><strong>${escapeHtml(exp.descricao)}</strong><br><span class="expense-date">${exp.data ? exp.data.toLocaleDateString('pt-BR') : 'Data?'} - ${exp.categoria || ''}</span></div><div>${formatMoney(exp.valor)}<button class="btn-small delete-partner-expense" data-id="${exp.id}">🗑️</button></div></div>`).join('');
+        if (items.length === 0) { container.innerHTML = '<div style="text-align:center; padding:16px;">Nenhum gasto pendente neste mês.</div>'; return; }
+        container.innerHTML = items.map(exp => `<div class="expense-item"><div><strong>${escapeHtml(exp.descricao)}</strong><br><span class="expense-date">${exp.data ? exp.data.toLocaleDateString('pt-BR') : 'Data?'} - ${exp.categoria || ''}</span></div><div><span class="detail-highlight">${formatMoney(exp.valor)}</span><div style="display: flex; gap: 6px;"><button class="btn-small btn-quitar" data-id="${exp.id}" title="Quitar"><i class="fas fa-check-circle"></i> Quitar</button><button class="btn-small delete-partner-expense" data-id="${exp.id}" title="Excluir"><i class="fas fa-trash"></i></button></div></div></div>`).join('');
+        document.querySelectorAll('.btn-quitar').forEach(btn => btn.addEventListener('click', async (e) => {
+            e.stopPropagation();
+            await quitarDespesa(btn.dataset.id);
+        }));
         document.querySelectorAll('.delete-partner-expense').forEach(btn => btn.addEventListener('click', async (e) => {
             e.stopPropagation();
             await deleteExpenseById(btn.dataset.id);
@@ -746,7 +856,7 @@
         const total = i1+i2, p1 = total>0?(i1/total*100).toFixed(1):50, p2 = total>0?(i2/total*100).toFixed(1):50;
         document.getElementById('income-summary').innerHTML = `${partner1Name}: ${formatMoney(i1)} (${p1}%)<br>${partner2Name}: ${formatMoney(i2)} (${p2}%)`;
         Swal.fire('Rendas salvas!','','success');
-        updateDashboard();
+        debouncedUpdateDashboard();
     }
 
     function renderThirdParties() {
@@ -783,7 +893,7 @@
         const listDiv = document.getElementById('recurring-list');
         if (!summaryDiv || !listDiv) return;
         const targetMonth = `${selectedYear}-${String(selectedMonth+1).padStart(2,'0')}`;
-        const monthExpenses = allExpenses.filter(exp => exp.installmentMonths?.includes(targetMonth));
+        const monthExpenses = allExpenses.filter(exp => exp.installmentMonths?.includes(targetMonth) && !exp.quitado);
         const recorrentes = monthExpenses.filter(exp => exp.recurringTemplateId || exp.recorrente === 'monthly');
         const totalRecorrente = recorrentes.reduce((sum, exp) => {
             const { partner1, partner2 } = calculateMonthlyShare(exp);
@@ -827,7 +937,7 @@
         const container = document.getElementById('budget-summary-list');
         if (!container) return;
         const targetMonth = `${selectedYear}-${String(selectedMonth+1).padStart(2,'0')}`;
-        const monthExpenses = allExpenses.filter(exp => exp.installmentMonths?.includes(targetMonth));
+        const monthExpenses = allExpenses.filter(exp => exp.installmentMonths?.includes(targetMonth) && !exp.quitado);
         const items = [];
         for (const [cat, limit] of Object.entries(categoriesBudget)) {
             const gasto = monthExpenses.filter(e=>e.categoria===cat).reduce((acc,e)=>{ const {partner1,partner2}=calculateMonthlyShare(e); return acc+partner1+partner2; },0);
@@ -872,7 +982,7 @@
             lastDue.setMonth(startDate.getMonth() + (exp.parcelas - 1));
             const lastMonthStr = `${lastDue.getFullYear()}-${String(lastDue.getMonth()+1).padStart(2,'0')}`;
             let lastValue = 0;
-            const isPaid = (exp.parcelasPagas || 0) >= exp.parcelas;
+            const isPaid = (exp.parcelasPagas || 0) >= exp.parcelas || exp.quitado === true;
             if (!isPaid) {
                 const expClone = { ...exp, installmentMonths: [lastMonthStr] };
                 const { partner1, partner2 } = calculateMonthlyShare(expClone);
@@ -901,122 +1011,6 @@
         }).join('');
     }
 
-    // ==================== UPDATE DASHBOARD ====================
-    async function updateDashboard() {
-        if (!currentPartnerId) return;
-        const targetMonth = `${selectedYear}-${String(selectedMonth+1).padStart(2,'0')}`;
-        await generateRecurringForMonth(targetMonth);
-        const monthExpenses = allExpenses.filter(exp => exp.installmentMonths?.includes(targetMonth));
-        currentDisplayExpenses = monthExpenses;
-        const normalExpenses = monthExpenses.filter(exp => !exp.recurringTemplateId && exp.recorrente !== 'monthly');
-        const recurringExpenses = monthExpenses.filter(exp => exp.recurringTemplateId || exp.recorrente === 'monthly');
-        let totalP1Normal = 0, totalP2Normal = 0;
-        normalExpenses.forEach(exp => {
-            const { partner1, partner2 } = calculateMonthlyShare(exp);
-            totalP1Normal += partner1; totalP2Normal += partner2;
-        });
-        let totalP1Rec = 0, totalP2Rec = 0;
-        recurringExpenses.forEach(exp => {
-            const { partner1, partner2 } = calculateMonthlyShare(exp);
-            totalP1Rec += partner1; totalP2Rec += partner2;
-        });
-        document.getElementById('gasto-partner1').innerText = formatMoney(totalP1Normal);
-        document.getElementById('gasto-partner2').innerText = formatMoney(totalP2Normal);
-        document.getElementById('recurring-partner1').innerText = formatMoney(totalP1Rec);
-        document.getElementById('recurring-partner2').innerText = formatMoney(totalP2Rec);
-        document.getElementById('total-recurring').innerText = formatMoney(totalP1Rec + totalP2Rec);
-        const totalGastoNormal = totalP1Normal+totalP2Normal;
-        let progresso = Math.max(0, (savingsGoal - totalGastoNormal)/savingsGoal*100);
-        progresso = Math.min(100,progresso);
-        document.getElementById('meta-progress').innerText = `${Math.round(progresso)}%`;
-        document.getElementById('meta-fill').style.width = `${progresso}%`;
-        checkLimitsAndAlert();
-
-        const last6Months = [], last6P1 = [], last6P2 = [];
-        for (let i = 5; i >= 0; i--) {
-            let d = new Date(selectedYear, selectedMonth - i, 1);
-            let ym = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
-            let p1=0, p2=0;
-            allExpenses.forEach(exp => {
-                if (exp.installmentMonths?.includes(ym)) {
-                    const { partner1, partner2 } = calculateMonthlyShare(exp);
-                    p1 += partner1; p2 += partner2;
-                }
-            });
-            last6Months.push(ym);
-            last6P1.push(p1);
-            last6P2.push(p2);
-        }
-        if (evolutionChart) evolutionChart.destroy();
-        evolutionChart = new Chart(document.getElementById('evolutionChart'), {
-            type: 'line',
-            data: { labels: last6Months, datasets: [
-                { label: partner1Name, data: last6P1, borderColor: 'var(--primary-color)', backgroundColor: 'rgba(233,30,99,0.1)', tension: 0.2, fill: false },
-                { label: partner2Name, data: last6P2, borderColor: '#ffb74d', backgroundColor: 'rgba(255,183,77,0.1)', tension: 0.2, fill: false }
-            ] }
-        });
-        const catMap = new Map();
-        monthExpenses.forEach(exp => {
-            const { partner1, partner2 } = calculateMonthlyShare(exp);
-            const total = partner1+partner2;
-            const cat = exp.categoria || "Outros";
-            catMap.set(cat, (catMap.get(cat)||0)+total);
-        });
-        if (categoryChart) categoryChart.destroy();
-        categoryChart = new Chart(document.getElementById('categoryChart'), { type: 'pie', data: { labels: [...catMap.keys()], datasets: [{ data: [...catMap.values()], backgroundColor: ['var(--primary-color)','#ff6b9d','#c2185b','#f48fb1','#f06292','#ec407a'] }] } });
-        if (compareChart) compareChart.destroy();
-        compareChart = new Chart(document.getElementById('compareChart'), { type: 'bar', data: { labels: [partner1Name, partner2Name], datasets: [{ data: [totalP1Normal, totalP2Normal], backgroundColor: ['var(--primary-color)', '#ffb74d'] }] } });
-
-        const budgetDiv = document.getElementById('budget-list');
-        if (budgetDiv) {
-            budgetDiv.innerHTML = '';
-            for (let [cat, limit] of Object.entries(categoriesBudget)) {
-                const gasto = monthExpenses.filter(e=>e.categoria===cat).reduce((acc,e)=>{ const {partner1,partner2}=calculateMonthlyShare(e); return acc+partner1+partner2; },0);
-                const percent = (gasto/limit)*100;
-                budgetDiv.innerHTML += `<div class="budget-item"><div>${cat}: ${formatMoney(gasto)} / ${formatMoney(limit)}</div><div class="progress-bar"><div class="progress-fill" style="width:${Math.min(percent,100)}%; background:${gasto>limit?'#c62828':'var(--primary-color)'}"></div></div><button class="delete-budget" data-cat="${cat}">❌</button></div>`;
-            }
-            document.querySelectorAll('.delete-budget').forEach(btn => btn.addEventListener('click', async () => await budgetsRef.doc(btn.dataset.cat).delete()));
-        }
-        renderBudgetSummary();
-        renderRecurringAnalysis();
-        renderFinalInstallments();
-
-        const upcomingContainer = document.getElementById('upcoming-installments');
-        if (upcomingContainer) {
-            upcomingContainer.innerHTML = '';
-            const today = new Date();
-            const threeMonths = new Date(); threeMonths.setMonth(today.getMonth()+3);
-            const future = [];
-            monthExpenses.forEach(exp => {
-                for (let i = exp.parcelasPagas||0; i < exp.parcelas; i++) {
-                    const due = new Date(exp.startDate);
-                    due.setMonth(due.getMonth()+i);
-                    if (due > today && due <= threeMonths) {
-                        const { partner1, partner2 } = calculateMonthlyShare(exp);
-                        future.push({ desc: exp.descricao, date: due, value: partner1+partner2 });
-                    }
-                }
-            });
-            future.sort((a,b)=>a.date-b.date).slice(0,6).forEach(p => {
-                const li = document.createElement('li'); li.style.background = 'rgba(233,30,99,0.1)'; li.style.padding = '6px 10px'; li.style.borderRadius = '30px'; li.style.fontSize = '0.75rem';
-                li.textContent = `📌 ${p.desc} - ${formatMoney(p.value)} (${p.date.toLocaleDateString()})`;
-                upcomingContainer.appendChild(li);
-            });
-            if(future.length===0) upcomingContainer.innerHTML = '<li style="background:transparent">Nenhuma parcela futura</li>';
-        }
-        renderHistory();
-        updatePartnerPages();
-        verificarNotificacaoParcelasProximas();
-    }
-
-    function updatePartnerPages() {
-        const targetMonth = `${selectedYear}-${String(selectedMonth+1).padStart(2,'0')}`;
-        renderPartnerExpenses('partner1', 'partner1-expenses-list', targetMonth);
-        renderPartnerExpenses('partner2', 'partner2-expenses-list', targetMonth);
-        const format = (ym) => { const [y,m]=ym.split('-'); return new Date(parseInt(y), parseInt(m)-1,1).toLocaleDateString('pt-BR',{month:'long',year:'numeric'}); };
-        document.getElementById('global-month-display').innerText = format(targetMonth);
-    }
-
     function sortHistoryItems(items, sortType) {
         const copy = [...items];
         switch(sortType) {
@@ -1043,22 +1037,30 @@
         }
         const sortSelect = document.getElementById('sort-order');
         items = sortHistoryItems(items, sortSelect ? sortSelect.value : 'date_asc');
-        if (items.length === 0) { tbody.innerHTML = '<tr><td colspan="6" style="text-align:center">Nenhuma despesa</td></tr>'; return; }
+        if (items.length === 0) { tbody.innerHTML = '<tr><td colspan="7" style="text-align:center">Nenhuma despesa</td><tr>'; return; }
         tbody.innerHTML = items.map(exp => {
             const parcelaValor = exp.valorTotal / exp.parcelas;
             const primeiraParcela = getFirstInstallmentDate(exp);
             const dataCompra = new Date(exp.startDate);
             const payerText = getPayerText(exp);
+            const statusText = exp.quitado ? '✅ Quitado' : '⏳ Pendente';
+            const statusColor = exp.quitado ? 'status-paid' : 'status-pending';
             const detailsHtml = `<div class="expense-details"><div class="expense-details-row"><i class="fas fa-money-bill-wave"></i><span>Total: <span class="detail-highlight">${formatMoney(exp.valorTotal)}</span></span><span class="installment-info">| ${exp.parcelas}x de ${formatMoney(parcelaValor)}</span></div><div class="expense-details-row"><i class="fas fa-calendar-alt"></i><span>Compra: <span class="detail-value">${dataCompra.toLocaleDateString('pt-BR')}</span></span><span>| 1ª parcela: <span class="detail-value">${primeiraParcela.toLocaleDateString('pt-BR')}</span></span></div><div class="expense-details-row"><i class="fas fa-tag"></i><span>Categoria: <span class="detail-value">${escapeHtml(exp.categoria || 'Geral')}</span></span>${exp.observacao ? `<span><i class="fas fa-comment"></i> ${escapeHtml(exp.observacao)}</span>` : ''}</div></div>`;
             return `<tr data-id="${exp.id}"><td class="checkbox-col" data-label=""><input type="checkbox" class="expense-checkbox" data-id="${exp.id}" ${selectedExpenses.has(exp.id) ? 'checked' : ''} style="width:18px;height:18px;"></td>
                     <td data-label="Descrição / Detalhes"><strong>${escapeHtml(exp.descricao)}</strong>${detailsHtml}</td>
                     <td data-label="Valor parcela atual"><span class="detail-highlight">${formatMoney(exp.valorMes)}</span></td>
                     <td data-label="Data parcela"><span class="detail-value">${exp.dueDate.toLocaleDateString('pt-BR')}</span></td>
                     <td data-label="Pagador"><i class="fas fa-user"></i> ${escapeHtml(payerText)}</td>
-                    <td data-label="Ações" class="action-buttons"><button class="edit-expense btn-small" data-id="${exp.id}" title="Editar"><i class="fas fa-edit"></i></button><button class="delete-expense btn-small btn-danger" data-id="${exp.id}" title="Excluir"><i class="fas fa-trash-alt"></i></button></td>
-                </tr>`;
+                    <td data-label="Status"><span class="final-installment-status ${statusColor}" style="display:inline-block;">${statusText}</span></td>
+                    <td data-label="Ações" class="action-buttons">
+                        ${!exp.quitado ? `<button class="btn-small btn-quitar" data-id="${exp.id}" title="Quitar"><i class="fas fa-check-circle"></i></button>` : ''}
+                        <button class="edit-expense btn-small" data-id="${exp.id}" title="Editar"><i class="fas fa-edit"></i></button>
+                        <button class="delete-expense btn-small btn-danger" data-id="${exp.id}" title="Excluir"><i class="fas fa-trash-alt"></i></button>
+                    </td>
+                </table>`;
         }).join('');
         document.querySelectorAll('.expense-checkbox').forEach(cb => cb.addEventListener('change', (e) => { if(e.target.checked) selectedExpenses.add(e.target.dataset.id); else selectedExpenses.delete(e.target.dataset.id); updateSelectionBar(); updateHeaderCheckbox(); }));
+        document.querySelectorAll('.btn-quitar').forEach(btn => btn.addEventListener('click', async (e) => { e.stopPropagation(); await quitarDespesa(btn.dataset.id); }));
         document.querySelectorAll('.edit-expense').forEach(btn => btn.addEventListener('click', () => startEditExpense(btn.dataset.id)));
         document.querySelectorAll('.delete-expense').forEach(btn => btn.addEventListener('click', async () => await deleteExpenseById(btn.dataset.id)));
         updateSelectionBar(); updateHeaderCheckbox();
@@ -1090,7 +1092,7 @@
             await batch.commit();
             selectedExpenses.clear();
             Swal.fire('Excluídas!', '', 'success');
-            await updateDashboard();
+            debouncedUpdateDashboard();
         }
     }
     function applyFilters() {
@@ -1142,12 +1144,12 @@
         if (nm < 0) { nm = 11; ny--; } else if (nm > 11) { nm = 0; ny++; }
         selectedMonth = nm; selectedYear = ny;
         selectedExpenses.clear();
-        await updateDashboard();
+        debouncedUpdateDashboard();
     }
     async function setMonthYear(year, month) {
         selectedYear = year; selectedMonth = month;
         selectedExpenses.clear();
-        await updateDashboard();
+        debouncedUpdateDashboard();
     }
     async function quickExpense() {
         const { value: fv } = await Swal.fire({
@@ -1163,14 +1165,15 @@
             await expensesRef.add({
                 descricao: fv.desc, valorTotal: fv.valor, parcelas: 1, parcelasPagas: 0, startDate: startDateStr,
                 paidBy: 'both', splitType: '50-50', categoria: fv.cat, installmentMonths,
-                observacao: '', thirdParties: [], createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                observacao: '', thirdParties: [], quitado: false,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
                 updatedAt: firebase.firestore.FieldValue.serverTimestamp()
             });
             Swal.fire('Adicionada!', '', 'success');
-            await updateDashboard();
+            debouncedUpdateDashboard();
         }
     }
-    async function setSavingsGoal(v) { await metaRef.set({ value: v }); updateDashboard(); }
+    async function setSavingsGoal(v) { await metaRef.set({ value: v }); debouncedUpdateDashboard(); }
     async function renderGoals() {
         const container = document.getElementById('goals-list');
         if (!container) return;
@@ -1244,16 +1247,17 @@
     }
     function getConciergeMessage(page) {
         const msgs = {
-            0: `💡 Dica: agora você vê separadamente os gastos normais e recorrentes. Use o calendário para navegar.`,
-            1: `📊 Gastos de ${partner1Name}. Defina limite mensal.`,
-            2: `📊 Gastos de ${partner2Name}. Defina limite mensal.`,
+            0: `💡 Dica: agora você pode quitar despesas (botão verde). Gastos quitados saem do resumo mensal.`,
+            1: `📊 Gastos pendentes de ${partner1Name}. Use "Quitar" para remover do mês.`,
+            2: `📊 Gastos pendentes de ${partner2Name}.`,
             3: `➕ Adicione despesas parceladas ou com divisão personalizada.`,
-            4: `📋 Histórico mostra detalhes completos: total, parcelas, datas e pagador.`,
+            4: `📋 Histórico mostra todas as despesas (pendentes e quitadas).`,
             5: `⚙️ Configure rendas, orçamentos, categorias, cor do tema e exporte PDF.`,
             6: `💰 Gerencie devedores.`,
             7: `💬 Mural compartilhado.`,
             8: `🎯 Metas de economia do casal.`,
-            9: `📅 Acompanhe quando cada compra parcelada será totalmente quitada.`
+            9: `📅 Acompanhe quando cada compra parcelada será totalmente quitada.`,
+            10: `📆 Fechamento mensal: veja os gastos totais por parceiro no período de fatura.`
         };
         return msgs[page] || `Página ${page+1}`;
     }
@@ -1301,7 +1305,7 @@
         Swal.fire({ title: 'Gerando PDF...', text: 'Aguarde...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
         try {
             const targetMonth = `${selectedYear}-${String(selectedMonth+1).padStart(2,'0')}`;
-            const monthExpenses = allExpenses.filter(exp => exp.installmentMonths?.includes(targetMonth));
+            const monthExpenses = allExpenses.filter(exp => exp.installmentMonths?.includes(targetMonth) && !exp.quitado);
             let totalP1=0, totalP2=0;
             monthExpenses.forEach(exp => {
                 const { partner1, partner2 } = calculateMonthlyShare(exp);
@@ -1313,7 +1317,7 @@
                     <h1 style="color: var(--primary-color, #e91e63);">CASH CASAL - Relatório Mensal</h1>
                     <h2>${new Date(selectedYear, selectedMonth).toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' })}</h2>
                     <hr>
-                    <h3>Resumo de Gastos</h3>
+                    <h3>Resumo de Gastos Pendentes</h3>
                     <p><strong>${partner1Name}:</strong> ${formatMoney(totalP1)}</p>
                     <p><strong>${partner2Name}:</strong> ${formatMoney(totalP2)}</p>
                     <p><strong>Total do casal:</strong> ${formatMoney(totalGeral)}</p>
@@ -1352,15 +1356,163 @@
         }
     }
 
+    // ==================== FECHAMENTO MENSAL ====================
+    function updateClosingSummary() {
+        const year = parseInt(document.getElementById('closing-year').value);
+        const month = parseInt(document.getElementById('closing-month').value);
+        const monthStr = `${year}-${String(month+1).padStart(2,'0')}`;
+        let totalP1 = 0, totalP2 = 0;
+        allExpenses.forEach(exp => {
+            if (exp.installmentMonths && exp.installmentMonths.includes(monthStr)) {
+                const { partner1, partner2 } = calculateMonthlyShare(exp);
+                totalP1 += partner1;
+                totalP2 += partner2;
+            }
+        });
+        document.getElementById('closing-total1').innerText = formatMoney(totalP1);
+        document.getElementById('closing-total2').innerText = formatMoney(totalP2);
+        document.getElementById('closing-total-casal').innerText = formatMoney(totalP1 + totalP2);
+    }
+    function populateClosingSelectors() {
+        const monthSelect = document.getElementById('closing-month');
+        const yearSelect = document.getElementById('closing-year');
+        monthSelect.innerHTML = '';
+        yearSelect.innerHTML = '';
+        for (let i = 0; i < 12; i++) {
+            const option = document.createElement('option');
+            option.value = i;
+            option.text = new Date(2000, i, 1).toLocaleString('pt-BR', { month: 'long' });
+            monthSelect.appendChild(option);
+        }
+        const currentYear = new Date().getFullYear();
+        for (let y = currentYear - 2; y <= currentYear + 2; y++) {
+            const option = document.createElement('option');
+            option.value = y;
+            option.text = y;
+            yearSelect.appendChild(option);
+        }
+        monthSelect.value = selectedMonth;
+        yearSelect.value = selectedYear;
+        updateClosingSummary();
+    }
+
+    // ==================== UPDATE DASHBOARD PRINCIPAL ====================
+    async function updateDashboard() {
+        if (!currentPartnerId) return;
+        const targetMonth = `${selectedYear}-${String(selectedMonth+1).padStart(2,'0')}`;
+        await generateRecurringForMonth(targetMonth);
+        const monthExpenses = allExpenses.filter(exp => exp.installmentMonths?.includes(targetMonth));
+        const pendingExpenses = monthExpenses.filter(exp => !exp.quitado);
+        const normalExpenses = pendingExpenses.filter(exp => !exp.recurringTemplateId && exp.recorrente !== 'monthly');
+        const recurringExpenses = pendingExpenses.filter(exp => exp.recurringTemplateId || exp.recorrente === 'monthly');
+        let totalP1Normal = 0, totalP2Normal = 0;
+        normalExpenses.forEach(exp => {
+            const { partner1, partner2 } = calculateMonthlyShare(exp);
+            totalP1Normal += partner1; totalP2Normal += partner2;
+        });
+        let totalP1Rec = 0, totalP2Rec = 0;
+        recurringExpenses.forEach(exp => {
+            const { partner1, partner2 } = calculateMonthlyShare(exp);
+            totalP1Rec += partner1; totalP2Rec += partner2;
+        });
+        document.getElementById('gasto-partner1').innerText = formatMoney(totalP1Normal);
+        document.getElementById('gasto-partner2').innerText = formatMoney(totalP2Normal);
+        document.getElementById('recurring-partner1').innerText = formatMoney(totalP1Rec);
+        document.getElementById('recurring-partner2').innerText = formatMoney(totalP2Rec);
+        document.getElementById('total-recurring').innerText = formatMoney(totalP1Rec + totalP2Rec);
+        const totalGastoNormal = totalP1Normal+totalP2Normal;
+        let progresso = Math.max(0, (savingsGoal - totalGastoNormal)/savingsGoal*100);
+        progresso = Math.min(100,progresso);
+        document.getElementById('meta-progress').innerText = `${Math.round(progresso)}%`;
+        document.getElementById('meta-fill').style.width = `${progresso}%`;
+        checkLimitsAndAlert();
+
+        const last6Months = [], last6P1 = [], last6P2 = [];
+        for (let i = 5; i >= 0; i--) {
+            let d = new Date(selectedYear, selectedMonth - i, 1);
+            let ym = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+            let p1=0, p2=0;
+            allExpenses.forEach(exp => {
+                if (exp.installmentMonths?.includes(ym) && !exp.quitado) {
+                    const { partner1, partner2 } = calculateMonthlyShare(exp);
+                    p1 += partner1; p2 += partner2;
+                }
+            });
+            last6Months.push(ym);
+            last6P1.push(p1);
+            last6P2.push(p2);
+        }
+        updateEvolutionChart(last6Months, last6P1, last6P2);
+        const catMap = new Map();
+        monthExpenses.filter(exp => !exp.quitado).forEach(exp => {
+            const { partner1, partner2 } = calculateMonthlyShare(exp);
+            const total = partner1+partner2;
+            const cat = exp.categoria || "Outros";
+            catMap.set(cat, (catMap.get(cat)||0)+total);
+        });
+        updateCategoryChart([...catMap.keys()], [...catMap.values()]);
+        updateCompareChart(totalP1Normal, totalP2Normal);
+        const budgetDiv = document.getElementById('budget-list');
+        if (budgetDiv) {
+            budgetDiv.innerHTML = '';
+            for (let [cat, limit] of Object.entries(categoriesBudget)) {
+                const gasto = pendingExpenses.filter(e=>e.categoria===cat).reduce((acc,e)=>{ const {partner1,partner2}=calculateMonthlyShare(e); return acc+partner1+partner2; },0);
+                const percent = (gasto/limit)*100;
+                budgetDiv.innerHTML += `<div class="budget-item"><div>${cat}: ${formatMoney(gasto)} / ${formatMoney(limit)}</div><div class="progress-bar"><div class="progress-fill" style="width:${Math.min(percent,100)}%; background:${gasto>limit?'#c62828':'var(--primary-color)'}"></div></div><button class="delete-budget" data-cat="${cat}">❌</button></div>`;
+            }
+            document.querySelectorAll('.delete-budget').forEach(btn => btn.addEventListener('click', async () => await budgetsRef.doc(btn.dataset.cat).delete()));
+        }
+        renderBudgetSummary();
+        renderRecurringAnalysis();
+        renderFinalInstallments();
+
+        const upcomingContainer = document.getElementById('upcoming-installments');
+        if (upcomingContainer) {
+            upcomingContainer.innerHTML = '';
+            const today = new Date();
+            const threeMonths = new Date(); threeMonths.setMonth(today.getMonth()+3);
+            const future = [];
+            pendingExpenses.forEach(exp => {
+                for (let i = exp.parcelasPagas||0; i < exp.parcelas; i++) {
+                    const due = new Date(exp.startDate);
+                    due.setMonth(due.getMonth()+i);
+                    if (due > today && due <= threeMonths) {
+                        const { partner1, partner2 } = calculateMonthlyShare(exp);
+                        future.push({ desc: exp.descricao, date: due, value: partner1+partner2 });
+                    }
+                }
+            });
+            future.sort((a,b)=>a.date-b.date).slice(0,6).forEach(p => {
+                const li = document.createElement('li'); li.style.background = 'rgba(233,30,99,0.1)'; li.style.padding = '6px 10px'; li.style.borderRadius = '30px'; li.style.fontSize = '0.75rem';
+                li.textContent = `📌 ${p.desc} - ${formatMoney(p.value)} (${p.date.toLocaleDateString()})`;
+                upcomingContainer.appendChild(li);
+            });
+            if(future.length===0) upcomingContainer.innerHTML = '<li style="background:transparent">Nenhuma parcela futura</li>';
+        }
+        renderHistory();
+        updatePartnerPages();
+        verificarNotificacaoParcelasProximas();
+        updateClosingSummary(); // atualiza também o fechamento com os dados atuais
+        if (firstLoad) { showLoading(false); firstLoad = false; }
+    }
+
+    function updatePartnerPages() {
+        const targetMonth = `${selectedYear}-${String(selectedMonth+1).padStart(2,'0')}`;
+        renderPartnerExpenses('partner1', 'partner1-expenses-list', targetMonth);
+        renderPartnerExpenses('partner2', 'partner2-expenses-list', targetMonth);
+        const format = (ym) => { const [y,m]=ym.split('-'); return new Date(parseInt(y), parseInt(m)-1,1).toLocaleDateString('pt-BR',{month:'long',year:'numeric'}); };
+        document.getElementById('global-month-display').innerText = format(targetMonth);
+    }
+
     function setupFirestoreListeners() {
-        expensesRef.onSnapshot(s => { allExpenses = s.docs.map(d=> ({ id: d.id, ...d.data() })); updateDashboard(); });
-        budgetsRef.onSnapshot(s => { categoriesBudget = {}; s.forEach(d=>{ categoriesBudget[d.id]=d.data().limit; }); updateDashboard(); });
+        expensesRef.onSnapshot(s => { allExpenses = s.docs.map(d=> ({ id: d.id, ...d.data() })); debouncedUpdateDashboard(); });
+        budgetsRef.onSnapshot(s => { categoriesBudget = {}; s.forEach(d=>{ categoriesBudget[d.id]=d.data().limit; }); debouncedUpdateDashboard(); });
         recurringRef.onSnapshot(s => { recurringTemplates = s.docs.map(d=> ({ id: d.id, ...d.data() })); });
-        metaRef.onSnapshot(d => { savingsGoal = d.exists ? d.data().value : 500; document.getElementById('meta-valor').value = savingsGoal; updateDashboard(); });
-        namesRef.onSnapshot(d => { if(d.exists){ partner1Name = d.data().name1 || 'P1'; partner2Name = d.data().name2 || 'P2'; } updateUIWithNames(); updateDashboard(); });
+        metaRef.onSnapshot(d => { savingsGoal = d.exists ? d.data().value : 500; document.getElementById('meta-valor').value = savingsGoal; debouncedUpdateDashboard(); });
+        namesRef.onSnapshot(d => { if(d.exists){ partner1Name = d.data().name1 || 'P1'; partner2Name = d.data().name2 || 'P2'; } updateUIWithNames(); debouncedUpdateDashboard(); });
         debtorsRef.onSnapshot(s => { debtors = s.docs.map(d=> ({ id: d.id, ...d.data() })); renderDebtors(); });
         messagesRef.orderBy('createdAt','desc').onSnapshot(s => { messages = s.docs.map(d=> ({ id: d.id, ...d.data() })); renderMessages(); });
-        incomesRef.onSnapshot(d => { if(d.exists){ incomes.partner1 = d.data().income1||0; incomes.partner2 = d.data().income2||0; } document.getElementById('income1').value = incomes.partner1; document.getElementById('income2').value = incomes.partner2; updateDashboard(); });
+        incomesRef.onSnapshot(d => { if(d.exists){ incomes.partner1 = d.data().income1||0; incomes.partner2 = d.data().income2||0; } document.getElementById('income1').value = incomes.partner1; document.getElementById('income2').value = incomes.partner2; debouncedUpdateDashboard(); });
         goalsRef.onSnapshot(s => { goals = s.docs.map(d=> ({ id: d.id, ...d.data() })); renderGoals(); });
         individualGoalsRef.onSnapshot(s => { s.forEach(d=>{ if(d.id==='partner1') individualGoal1 = d.data(); if(d.id==='partner2') individualGoal2 = d.data(); }); updateIndividualGoalUI(); });
         categoriesRef.onSnapshot(() => loadCategories());
@@ -1403,6 +1555,7 @@
         updateUIWithNames();
         document.getElementById('login-container').style.display = 'none';
         document.getElementById('app-container').style.display = 'flex';
+        showLoading(true);
         setupFirestoreListeners();
         await loadCategories();
         await loadLimits();
@@ -1411,6 +1564,9 @@
         document.getElementById('start-date').value = getLocalDateString();
         await updateDashboard();
         setupSwipe();
+        populateClosingSelectors();
+        showLoading(false);
+        firstLoad = false;
     }
     function logout() { location.reload(); }
     function updateUserSelect() {
@@ -1453,7 +1609,7 @@
                 selectedMonth = res.value.month;
                 selectedYear = res.value.year;
                 selectedExpenses.clear();
-                updateDashboard();
+                debouncedUpdateDashboard();
             }
         });
     }
@@ -1506,6 +1662,7 @@
     document.getElementById('custom-split').style.display = 'none';
     document.getElementById('save-limit1-btn').addEventListener('click', () => { const val = parseFloat(document.getElementById('limit1').value); if (!isNaN(val) && val >= 0) saveLimit('partner1', val); else Swal.fire('Erro', 'Valor inválido', 'error'); });
     document.getElementById('save-limit2-btn').addEventListener('click', () => { const val = parseFloat(document.getElementById('limit2').value); if (!isNaN(val) && val >= 0) saveLimit('partner2', val); else Swal.fire('Erro', 'Valor inválido', 'error'); });
+    document.getElementById('update-closing-btn').addEventListener('click', updateClosingSummary);
     if (localStorage.getItem('lightTheme') === 'enabled') { document.body.classList.add('light-theme'); document.getElementById('theme-icon-header').innerHTML = '<i class="fas fa-sun"></i>'; }
     document.getElementById('conciergeAvatar').addEventListener('click', () => { const activePage = Math.round(document.getElementById('swipeContainer').scrollLeft / document.getElementById('swipeContainer').clientWidth); showConciergeMessage(getConciergeMessage(activePage), 8000); });
     document.getElementById('name1').addEventListener('input', updateUserSelect);
