@@ -16,7 +16,7 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         :root { --primary-color: #e91e63; --primary-gradient: linear-gradient(95deg, var(--primary-color), #c2185b); --primary-light: #ff6b9d; --primary-dark: #c2185b; }
-        body { font-family: 'Inter', sans-serif; background: #000000; color: #ffffff; transition: background 0.2s, color 0.2s; overflow-x: hidden; font-size: 16px; }
+        body { font-family: 'Inter', sans-serif; background: #000000; color: #ffffff; transition: background 0.2s, color 0.2s; overflow-x: hidden; font-size: 16px; padding-bottom: 70px; }
         body.light-theme { background: #ffe4e8; color: #1a1a1a; }
         button, .btn, .btn-small, input, select, textarea, .profile-btn, .month-nav button, .concierge-avatar, .theme-icon { touch-action: manipulation; }
         button, .btn, .btn-small { min-height: 40px; padding: 8px 14px; font-size: 0.9rem; font-weight: 600; border-radius: 40px; cursor: pointer; border: none; }
@@ -59,8 +59,9 @@
         .form-row { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 12px; }
         .input-group { flex: 1; min-width: 130px; }
         .input-group label { display: block; margin-bottom: 4px; font-size: 0.75rem; font-weight: 500; opacity: 0.8; }
-        .goal-item, .expense-item, .debtor-item, .message-item, .budget-item, .category-item, .final-installment-item { background: rgba(233,30,99,0.1); border-radius: 20px; padding: 12px; margin-bottom: 10px; }
-        .expense-item { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
+        .goal-item, .expense-item, .debtor-item, .message-item, .budget-item, .category-item, .final-installment-item, .paid-item { background: rgba(233,30,99,0.1); border-radius: 20px; padding: 12px; margin-bottom: 10px; }
+        .expense-item, .paid-item { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
+        .paid-item { background: rgba(76,175,80,0.15); border-left: 4px solid #4caf50; }
         .final-installment-item { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
         .final-installment-info { flex: 2; }
         .final-installment-value { font-weight: 700; color: var(--primary-color); }
@@ -81,8 +82,7 @@
             .checkbox-col:before { display: none; }
             .filters-row { flex-direction: column; }
             .filter-group { width: 100%; }
-            .final-installment-item { flex-direction: column; align-items: flex-start; }
-            .expense-item { flex-direction: column; align-items: stretch; }
+            .final-installment-item, .expense-item, .paid-item { flex-direction: column; align-items: stretch; }
         }
         .selection-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; padding: 10px 12px; background: rgba(233,30,99,0.15); border-radius: 28px; flex-wrap: wrap; gap: 10px; }
         .income-row { display: flex; gap: 12px; align-items: center; margin-bottom: 12px; flex-wrap: wrap; }
@@ -116,6 +116,52 @@
         .loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: center; z-index: 9999; flex-direction: column; gap: 16px; }
         .spinner { width: 50px; height: 50px; border: 5px solid rgba(233,30,99,0.3); border-top: 5px solid var(--primary-color); border-radius: 50%; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        /* Menu de navegação inferior com rolagem horizontal - Ícones Font Awesome */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0,0,0,0.9);
+            backdrop-filter: blur(12px);
+            border-top: 1px solid var(--primary-color);
+            z-index: 100;
+            overflow-x: auto;
+            overflow-y: hidden;
+            white-space: nowrap;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: thin;
+            padding: 6px 0;
+        }
+        .bottom-nav::-webkit-scrollbar { height: 3px; }
+        .bottom-nav::-webkit-scrollbar-track { background: rgba(255,255,255,0.1); }
+        .bottom-nav::-webkit-scrollbar-thumb { background: var(--primary-color); border-radius: 10px; }
+        .nav-btn {
+            background: none;
+            border: none;
+            color: rgba(255,255,255,0.7);
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            font-size: 0.7rem;
+            padding: 6px 12px;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: 0.2s;
+            min-width: 65px;
+        }
+        .nav-btn i { font-size: 1.4rem; }
+        .nav-btn span { font-size: 0.65rem; }
+        .nav-btn.active { color: var(--primary-color); background: rgba(233,30,99,0.15); }
+        body.light-theme .nav-btn { color: rgba(0,0,0,0.6); }
+        body.light-theme .nav-btn.active { color: var(--primary-color); background: rgba(233,30,99,0.1); }
+        @media (max-width: 550px) {
+            .nav-btn { min-width: 55px; padding: 4px 8px; }
+            .nav-btn span { display: none; }
+            .nav-btn i { font-size: 1.3rem; }
+        }
     </style>
 </head>
 <body>
@@ -181,15 +227,17 @@
             <div class="card"><div class="card-title"><i class="fas fa-chart-simple"></i> Resumo de Orçamentos</div><div id="budget-summary-list"></div></div>
             <div class="card"><div class="card-title"><i class="fas fa-calendar-alt"></i> Próximas parcelas</div><ul id="upcoming-installments" style="list-style: none; padding: 0; display: flex; flex-direction: column; gap: 6px;"></ul></div>
         </div>
-        <!-- Página 1: Gastos Parceiro 1 -->
+        <!-- Página 1: Gastos Parceiro 1 (com quitadas) -->
         <div class="swipe-page" data-page="1" id="page-partner1">
-            <div class="card"><div class="card-title"><i class="fas fa-user"></i> Gastos pendentes de <span id="partner1-name-label"></span></div><div id="partner1-expenses-list"></div></div>
+            <div class="card"><div class="card-title"><i class="fas fa-clock"></i> Gastos pendentes de <span id="partner1-name-label"></span></div><div id="partner1-expenses-list"></div></div>
+            <div class="card"><div class="card-title"><i class="fas fa-check-circle"></i> Gastos quitados de <span id="partner1-paid-label"></span></div><div id="partner1-paid-list"></div></div>
             <div class="card"><div class="card-title"><i class="fas fa-bullseye"></i> Meta individual de <span id="goal-individual-name1"></span></div><input type="number" id="goal1-target" placeholder="Alvo R$"><input type="number" id="goal1-current" placeholder="Atual R$"><button id="save-goal1-btn" class="btn btn-primary">Salvar meta</button><div class="progress-bar"><div class="progress-fill" id="goal1-progress-fill"></div></div><div id="goal1-progress-text" style="text-align:center;">0%</div></div>
             <div class="card"><div class="card-title"><i class="fas fa-chart-line"></i> Limite de gasto mensal</div><div class="form-row"><div class="input-group"><label>Valor limite (R$)</label><input type="number" id="limit1" step="50" placeholder="Ex: 1000"></div><button id="save-limit1-btn" class="btn btn-primary">Definir limite</button></div><div id="limit-alert1" class="alert-warning" style="display: none;"><i class="fas fa-exclamation-triangle"></i><span><strong>Atenção!</strong> Você já atingiu ou ultrapassou o limite de gastos definido para este mês.</span></div></div>
         </div>
-        <!-- Página 2: Gastos Parceiro 2 -->
+        <!-- Página 2: Gastos Parceiro 2 (com quitadas) -->
         <div class="swipe-page" data-page="2" id="page-partner2">
-            <div class="card"><div class="card-title"><i class="fas fa-user"></i> Gastos pendentes de <span id="partner2-name-label"></span></div><div id="partner2-expenses-list"></div></div>
+            <div class="card"><div class="card-title"><i class="fas fa-clock"></i> Gastos pendentes de <span id="partner2-name-label"></span></div><div id="partner2-expenses-list"></div></div>
+            <div class="card"><div class="card-title"><i class="fas fa-check-circle"></i> Gastos quitados de <span id="partner2-paid-label"></span></div><div id="partner2-paid-list"></div></div>
             <div class="card"><div class="card-title"><i class="fas fa-bullseye"></i> Meta individual de <span id="goal-individual-name2"></span></div><input type="number" id="goal2-target" placeholder="Alvo R$"><input type="number" id="goal2-current" placeholder="Atual R$"><button id="save-goal2-btn" class="btn btn-primary">Salvar meta</button><div class="progress-bar"><div class="progress-fill" id="goal2-progress-fill"></div></div><div id="goal2-progress-text" style="text-align:center;">0%</div></div>
             <div class="card"><div class="card-title"><i class="fas fa-chart-line"></i> Limite de gasto mensal</div><div class="form-row"><div class="input-group"><label>Valor limite (R$)</label><input type="number" id="limit2" step="50" placeholder="Ex: 1000"></div><button id="save-limit2-btn" class="btn btn-primary">Definir limite</button></div><div id="limit-alert2" class="alert-warning" style="display: none;"><i class="fas fa-exclamation-triangle"></i><span><strong>Atenção!</strong> Você já atingiu ou ultrapassou o limite de gastos definido para este mês.</span></div></div>
         </div>
@@ -256,7 +304,7 @@
         <div class="swipe-page" data-page="9">
             <div class="card"><div class="card-title"><i class="fas fa-calendar-check"></i> Parcelas Finais</div><div id="final-installments-list"></div></div>
         </div>
-        <!-- Página 10: Fechamento Mensal (NOVA) -->
+        <!-- Página 10: Fechamento Mensal -->
         <div class="swipe-page" data-page="10">
             <div class="card">
                 <div class="card-title"><i class="fas fa-file-invoice-dollar"></i> Fechamento Mensal</div>
@@ -276,6 +324,21 @@
         </div>
     </div>
     <div class="page-indicators" id="pageIndicators"></div>
+</div>
+
+<!-- Menu de navegação inferior com rolagem horizontal - Ícones Font Awesome -->
+<div class="bottom-nav">
+    <button class="nav-btn" data-page="0"><i class="fas fa-chart-line"></i><span>Início</span></button>
+    <button class="nav-btn" data-page="1"><i class="fas fa-user"></i><span id="nav-partner1"></span></button>
+    <button class="nav-btn" data-page="2"><i class="fas fa-user"></i><span id="nav-partner2"></span></button>
+    <button class="nav-btn" data-page="3"><i class="fas fa-plus-circle"></i><span>Nova</span></button>
+    <button class="nav-btn" data-page="4"><i class="fas fa-history"></i><span>Histórico</span></button>
+    <button class="nav-btn" data-page="5"><i class="fas fa-cog"></i><span>Config</span></button>
+    <button class="nav-btn" data-page="6"><i class="fas fa-hand-holding-usd"></i><span>Dívidas</span></button>
+    <button class="nav-btn" data-page="7"><i class="fas fa-comments"></i><span>Mural</span></button>
+    <button class="nav-btn" data-page="8"><i class="fas fa-bullseye"></i><span>Metas</span></button>
+    <button class="nav-btn" data-page="9"><i class="fas fa-calendar-check"></i><span>Parcelas</span></button>
+    <button class="nav-btn" data-page="10"><i class="fas fa-file-invoice-dollar"></i><span>Fechamento</span></button>
 </div>
 
 <div class="concierge-container"><div class="concierge-bubble" id="conciergeBubble" style="display: none;"><span id="conciergeMessage"></span></div><div class="concierge-avatar" id="conciergeAvatar"><i class="fas fa-robot"></i></div></div>
@@ -328,12 +391,32 @@
     const formatMoney = (val) => val.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
     const escapeHtml = (str) => str?.replace(/[&<>]/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[m])) || '';
 
+    // ==================== NAVEGAÇÃO POR BOTÕES ====================
+    function goToPage(pageIndex) {
+        const container = document.getElementById('swipeContainer');
+        if (container) {
+            const pageWidth = container.clientWidth;
+            container.scrollTo({ left: pageWidth * pageIndex, behavior: 'smooth' });
+        }
+    }
+    function updateActiveNavButton(activeIndex) {
+        document.querySelectorAll('.nav-btn').forEach((btn, idx) => {
+            if (parseInt(btn.dataset.page) === activeIndex) btn.classList.add('active');
+            else btn.classList.remove('active');
+        });
+    }
+    function updateNavNames() {
+        const nav1 = document.getElementById('nav-partner1');
+        const nav2 = document.getElementById('nav-partner2');
+        if (nav1) nav1.innerText = partner1Name || 'P1';
+        if (nav2) nav2.innerText = partner2Name || 'P2';
+    }
+
+    // ==================== FUNÇÕES AUXILIARES ====================
     function getLocalDateString() {
         const now = new Date();
         return `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
     }
-
-    // ==================== FUNÇÕES AUXILIARES ====================
     function getFaturaMonthYear(date) {
         const day = date.getDate();
         let month = date.getMonth(), year = date.getFullYear();
@@ -379,19 +462,13 @@
         return { partner1: p1, partner2: p2 };
     }
 
-    // ==================== FUNÇÃO PARA QUITAR DESPESA ====================
+    // ==================== QUITAR DESPESA ====================
     async function quitarDespesa(id) {
         try {
             const docSnap = await expensesRef.doc(id).get();
-            if (!docSnap.exists) {
-                Swal.fire('Aviso', 'Esta despesa já não existe.', 'info');
-                return;
-            }
+            if (!docSnap.exists) { Swal.fire('Aviso', 'Esta despesa já não existe.', 'info'); return; }
             const expenseData = docSnap.data();
-            if (expenseData.quitado) {
-                Swal.fire('Informação', 'Esta despesa já está quitada.', 'info');
-                return;
-            }
+            if (expenseData.quitado) { Swal.fire('Informação', 'Esta despesa já está quitada.', 'info'); return; }
             const result = await Swal.fire({
                 title: 'Quitar despesa',
                 text: `Deseja marcar "${expenseData.descricao}" como paga?`,
@@ -402,7 +479,7 @@
             });
             if (result.isConfirmed) {
                 await expensesRef.doc(id).update({ quitado: true });
-                Swal.fire('Quitada!', 'Despesa marcada como paga e removida dos gastos pendentes.', 'success');
+                Swal.fire('Quitada!', 'Despesa marcada como paga e movida para o painel de quitadas.', 'success');
                 debouncedUpdateDashboard();
             }
         } catch (error) {
@@ -538,7 +615,7 @@
             startDate: startDateStr, paidBy, splitType, customPercent,
             categoria, observacao, installmentMonths,
             thirdParties: thirdPartiesToSave,
-            quitado: false,  // nova despesa começa como não quitada
+            quitado: false,
             updatedAt: firebase.firestore.FieldValue.serverTimestamp()
         };
         if (!editingDocId) expenseData.createdAt = firebase.firestore.FieldValue.serverTimestamp();
@@ -785,35 +862,54 @@
         document.getElementById('userAvatar').innerText = currentPartnerId === 'partner1' ? partner1Name : partner2Name;
         document.getElementById('partner1-name-label').innerText = partner1Name;
         document.getElementById('partner2-name-label').innerText = partner2Name;
+        document.getElementById('partner1-paid-label').innerText = partner1Name;
+        document.getElementById('partner2-paid-label').innerText = partner2Name;
         document.getElementById('income-name1').innerText = partner1Name;
         document.getElementById('income-name2').innerText = partner2Name;
         document.getElementById('goal-individual-name1').innerText = partner1Name;
         document.getElementById('goal-individual-name2').innerText = partner2Name;
         document.getElementById('closing-name1').innerText = partner1Name;
         document.getElementById('closing-name2').innerText = partner2Name;
+        updateNavNames();
         const paidBy = document.getElementById('paid-by');
         if(paidBy) { paidBy.options[0].text = partner1Name; paidBy.options[1].text = partner2Name; }
         const filterPayer = document.getElementById('filter-payer');
         if(filterPayer && filterPayer.options.length>=2) { filterPayer.options[1].text = partner1Name; filterPayer.options[2].text = partner2Name; }
     }
 
-    // ==================== RENDERIZAÇÕES ====================
-    async function renderPartnerExpenses(partnerKey, containerId, monthYear) {
+    // ==================== RENDERIZAÇÕES (com separação de quitadas) ====================
+    async function renderPartnerExpensesWithPaid(partnerKey, containerId, containerPaidId, monthYear) {
         const container = document.getElementById(containerId);
-        if (!container) return;
-        let filtered = allExpenses.filter(exp => exp.installmentMonths?.includes(monthYear) && !exp.quitado);
+        const containerPaid = document.getElementById(containerPaidId);
+        if (!container || !containerPaid) return;
+        let filtered = allExpenses.filter(exp => exp.installmentMonths?.includes(monthYear));
         const targetPartner = partnerKey === 'partner1' ? 'partner1' : 'partner2';
-        let items = [];
+        let pendingItems = [];
+        let paidItems = [];
         for (const exp of filtered) {
             const { partner1, partner2 } = calculateMonthlyShare(exp);
             const valor = targetPartner === 'partner1' ? partner1 : partner2;
             if (valor <= 0) continue;
             const dueDate = getInstallmentDateForMonth(exp, monthYear);
-            items.push({ id: exp.id, descricao: exp.descricao, valor, data: dueDate, categoria: exp.categoria });
+            const item = { id: exp.id, descricao: exp.descricao, valor, data: dueDate, categoria: exp.categoria };
+            if (exp.quitado) {
+                paidItems.push(item);
+            } else {
+                pendingItems.push(item);
+            }
         }
-        items.sort((a,b) => (a.data || 0) - (b.data || 0));
-        if (items.length === 0) { container.innerHTML = '<div style="text-align:center; padding:16px;">Nenhum gasto pendente neste mês.</div>'; return; }
-        container.innerHTML = items.map(exp => `<div class="expense-item"><div><strong>${escapeHtml(exp.descricao)}</strong><br><span class="expense-date">${exp.data ? exp.data.toLocaleDateString('pt-BR') : 'Data?'} - ${exp.categoria || ''}</span></div><div><span class="detail-highlight">${formatMoney(exp.valor)}</span><div style="display: flex; gap: 6px;"><button class="btn-small btn-quitar" data-id="${exp.id}" title="Quitar"><i class="fas fa-check-circle"></i> Quitar</button><button class="btn-small delete-partner-expense" data-id="${exp.id}" title="Excluir"><i class="fas fa-trash"></i></button></div></div></div>`).join('');
+        pendingItems.sort((a,b) => (a.data || 0) - (b.data || 0));
+        paidItems.sort((a,b) => (b.data || 0) - (a.data || 0)); // mais recentes primeiro
+        if (pendingItems.length === 0) {
+            container.innerHTML = '<div style="text-align:center; padding:16px;">Nenhum gasto pendente neste mês.</div>';
+        } else {
+            container.innerHTML = pendingItems.map(exp => `<div class="expense-item"><div><strong>${escapeHtml(exp.descricao)}</strong><br><span class="expense-date">${exp.data ? exp.data.toLocaleDateString('pt-BR') : 'Data?'} - ${exp.categoria || ''}</span></div><div><span class="detail-highlight">${formatMoney(exp.valor)}</span><div style="display: flex; gap: 6px;"><button class="btn-small btn-quitar" data-id="${exp.id}" title="Quitar"><i class="fas fa-check-circle"></i> Quitar</button><button class="btn-small delete-partner-expense" data-id="${exp.id}" title="Excluir"><i class="fas fa-trash"></i></button></div></div></div>`).join('');
+        }
+        if (paidItems.length === 0) {
+            containerPaid.innerHTML = '<div style="text-align:center; padding:16px;">Nenhum gasto quitado neste mês.</div>';
+        } else {
+            containerPaid.innerHTML = paidItems.map(exp => `<div class="paid-item"><div><strong>${escapeHtml(exp.descricao)}</strong><br><span class="expense-date">${exp.data ? exp.data.toLocaleDateString('pt-BR') : 'Data?'} - ${exp.categoria || ''}</span></div><div>${formatMoney(exp.valor)}</div></div>`).join('');
+        }
         document.querySelectorAll('.btn-quitar').forEach(btn => btn.addEventListener('click', async (e) => {
             e.stopPropagation();
             await quitarDespesa(btn.dataset.id);
@@ -1037,7 +1133,7 @@
         }
         const sortSelect = document.getElementById('sort-order');
         items = sortHistoryItems(items, sortSelect ? sortSelect.value : 'date_asc');
-        if (items.length === 0) { tbody.innerHTML = '<tr><td colspan="7" style="text-align:center">Nenhuma despesa</td><tr>'; return; }
+        if (items.length === 0) { tbody.innerHTML = '</table><td colspan="7" style="text-align:center">Nenhuma despesa</td></tr>'; return; }
         tbody.innerHTML = items.map(exp => {
             const parcelaValor = exp.valorTotal / exp.parcelas;
             const primeiraParcela = getFirstInstallmentDate(exp);
@@ -1057,7 +1153,7 @@
                         <button class="edit-expense btn-small" data-id="${exp.id}" title="Editar"><i class="fas fa-edit"></i></button>
                         <button class="delete-expense btn-small btn-danger" data-id="${exp.id}" title="Excluir"><i class="fas fa-trash-alt"></i></button>
                     </td>
-                </table>`;
+                 </tr>`;
         }).join('');
         document.querySelectorAll('.expense-checkbox').forEach(cb => cb.addEventListener('change', (e) => { if(e.target.checked) selectedExpenses.add(e.target.dataset.id); else selectedExpenses.delete(e.target.dataset.id); updateSelectionBar(); updateHeaderCheckbox(); }));
         document.querySelectorAll('.btn-quitar').forEach(btn => btn.addEventListener('click', async (e) => { e.stopPropagation(); await quitarDespesa(btn.dataset.id); }));
@@ -1247,9 +1343,9 @@
     }
     function getConciergeMessage(page) {
         const msgs = {
-            0: `💡 Dica: agora você pode quitar despesas (botão verde). Gastos quitados saem do resumo mensal.`,
-            1: `📊 Gastos pendentes de ${partner1Name}. Use "Quitar" para remover do mês.`,
-            2: `📊 Gastos pendentes de ${partner2Name}.`,
+            0: `💡 Dica: agora você pode quitar despesas (botão verde). Gastos quitados saem do resumo mensal e vão para o painel de quitados.`,
+            1: `📊 Gastos pendentes e quitados de ${partner1Name}.`,
+            2: `📊 Gastos pendentes e quitados de ${partner2Name}.`,
             3: `➕ Adicione despesas parceladas ou com divisão personalizada.`,
             4: `📋 Histórico mostra todas as despesas (pendentes e quitadas).`,
             5: `⚙️ Configure rendas, orçamentos, categorias, cor do tema e exporte PDF.`,
@@ -1444,7 +1540,7 @@
         }
         updateEvolutionChart(last6Months, last6P1, last6P2);
         const catMap = new Map();
-        monthExpenses.filter(exp => !exp.quitado).forEach(exp => {
+        pendingExpenses.forEach(exp => {
             const { partner1, partner2 } = calculateMonthlyShare(exp);
             const total = partner1+partner2;
             const cat = exp.categoria || "Outros";
@@ -1490,16 +1586,16 @@
             if(future.length===0) upcomingContainer.innerHTML = '<li style="background:transparent">Nenhuma parcela futura</li>';
         }
         renderHistory();
+        await renderPartnerExpensesWithPaid('partner1', 'partner1-expenses-list', 'partner1-paid-list', targetMonth);
+        await renderPartnerExpensesWithPaid('partner2', 'partner2-expenses-list', 'partner2-paid-list', targetMonth);
         updatePartnerPages();
         verificarNotificacaoParcelasProximas();
-        updateClosingSummary(); // atualiza também o fechamento com os dados atuais
+        updateClosingSummary();
         if (firstLoad) { showLoading(false); firstLoad = false; }
     }
 
     function updatePartnerPages() {
         const targetMonth = `${selectedYear}-${String(selectedMonth+1).padStart(2,'0')}`;
-        renderPartnerExpenses('partner1', 'partner1-expenses-list', targetMonth);
-        renderPartnerExpenses('partner2', 'partner2-expenses-list', targetMonth);
         const format = (ym) => { const [y,m]=ym.split('-'); return new Date(parseInt(y), parseInt(m)-1,1).toLocaleDateString('pt-BR',{month:'long',year:'numeric'}); };
         document.getElementById('global-month-display').innerText = format(targetMonth);
     }
@@ -1535,7 +1631,7 @@
         const update = () => {
             const active = Math.round(container.scrollLeft / container.clientWidth);
             document.querySelectorAll('.indicator').forEach((dot, idx) => dot.classList.toggle('active', idx === active));
-            if (active !== lastActive) { lastActive = active; updateConciergeForPage(active); }
+            if (active !== lastActive) { lastActive = active; updateConciergeForPage(active); updateActiveNavButton(active); }
         };
         container.addEventListener('scroll', update);
         setTimeout(update, 100);
@@ -1565,6 +1661,12 @@
         await updateDashboard();
         setupSwipe();
         populateClosingSelectors();
+        document.querySelectorAll('.nav-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const page = parseInt(btn.dataset.page);
+                goToPage(page);
+            });
+        });
         showLoading(false);
         firstLoad = false;
     }
