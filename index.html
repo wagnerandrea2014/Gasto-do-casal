@@ -68,7 +68,7 @@
             min-height: 36px;
         }
 
-        /* ========== BARRA DE NAVEGAÇÃO ESTILO D (CORRIGIDA - 5x5 COM ROLAGEM) ========== */
+        /* ========== BARRA DE NAVEGAÇÃO ========== */
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -263,6 +263,52 @@
         .budget-summary-value { min-width: 100px; text-align: right; }
         .budget-warning { color: #ff9800; }
         .budget-danger { color: #e91e63; font-weight: bold; }
+
+        /* Estilos específicos para devedores agrupados */
+        .debtor-group {
+            background: rgba(233,30,99,0.08);
+            border-radius: 28px;
+            padding: 12px;
+            margin-bottom: 16px;
+            border-left: 4px solid var(--primary-color);
+        }
+        .debtor-name {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--primary-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .debt-entry {
+            background: rgba(0,0,0,0.2);
+            border-radius: 20px;
+            padding: 10px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        body.light-theme .debt-entry {
+            background: rgba(0,0,0,0.05);
+        }
+        .debt-date {
+            font-size: 0.75rem;
+            opacity: 0.8;
+        }
+        .debt-value {
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+        .add-debt-btn {
+            margin-top: 8px;
+            width: 100%;
+        }
     </style>
 </head>
 <body>
@@ -389,9 +435,22 @@
             <div class="card"><div class="card-title"><i class="fas fa-palette"></i> Personalizar tema</div><div class="form-row"><div class="input-group"><label>Cor principal</label><input type="color" id="primary-color-picker" value="#e91e63"></div><div class="input-group"><label>Visualização</label><div class="color-preview" id="color-preview" style="background-color:#e91e63;"></div></div></div><button id="reset-color-btn" class="btn btn-secondary" style="width:100%; margin-top:8px;">🔄 Restaurar cor padrão (rosa)</button></div>
             <div class="card"><div class="card-title"><i class="fas fa-trash-alt"></i> Limpar dados recorrentes</div><button id="clear-recurring-btn" class="btn btn-danger" style="width:100%;"><i class="fas fa-sync-alt"></i> Remover todas as despesas recorrentes</button></div>
         </div>
-        <!-- Página 6: Devedores -->
+        <!-- Página 6: Devedores (REFORMULADA) -->
         <div class="swipe-page" data-page="6">
-            <div class="card"><div class="card-title"><i class="fas fa-hand-holding-usd"></i> Devedores (terceiros)</div><div id="debtors-list"></div><div class="debtor-form-group"><div style="flex:2;"><label>Nome</label><input type="text" id="new-debtor-name" placeholder="Ex: João"></div><div style="flex:1;"><label>Valor (R$)</label><input type="number" id="new-debtor-value" placeholder="0,00" step="0.01"></div><div style="flex:1;"><label>Data</label><input type="date" id="new-debtor-date"></div><div style="flex:0 0 auto;"><button id="add-debtor-btn" class="btn btn-success">Adicionar</button></div></div></div>
+            <div class="card">
+                <div class="card-title"><i class="fas fa-hand-holding-usd"></i> Devedores (terceiros)</div>
+                <div id="debtors-list"></div>
+                <!-- Formulário para novo débito (pode ser novo devedor ou débito adicional) -->
+                <div style="margin-top: 20px; border-top: 1px solid var(--primary-color); padding-top: 16px;">
+                    <div class="card-title"><i class="fas fa-plus-circle"></i> Adicionar novo débito</div>
+                    <div class="debtor-form-group">
+                        <div style="flex:2;"><label>Nome do devedor</label><input type="text" id="new-debtor-name" placeholder="Ex: João"></div>
+                        <div style="flex:1;"><label>Valor (R$)</label><input type="number" id="new-debtor-value" placeholder="0,00" step="0.01"></div>
+                        <div style="flex:1;"><label>Data</label><input type="date" id="new-debtor-date"></div>
+                        <div style="flex:0 0 auto;"><button id="add-debtor-btn" class="btn btn-success">Adicionar</button></div>
+                    </div>
+                </div>
+            </div>
         </div>
         <!-- Página 7: Mural -->
         <div class="swipe-page" data-page="7">
@@ -968,7 +1027,167 @@
         if(filterPayer && filterPayer.options.length>=2) { filterPayer.options[1].text = partner1Name; filterPayer.options[2].text = partner2Name; }
     }
 
-    // ==================== FUNÇÃO RENDER PARTNER EXPENSES (ATUALIZADA) ====================
+    // ==================== FUNÇÃO RENDER DEBTORS (AGRUPADO) ====================
+    function renderDebtors() {
+        const container = document.getElementById('debtors-list');
+        if (!container) return;
+
+        if (debtors.length === 0) {
+            container.innerHTML = '<div style="text-align:center; padding:16px;">Nenhum devedor cadastrado.</div>';
+            document.getElementById('total-a-receber').innerText = formatMoney(0);
+            document.getElementById('debtors-count').innerHTML = `0 devedor(es)`;
+            return;
+        }
+
+        // Agrupar por nome (case insensitive, mas preserva capitalização original)
+        const groups = new Map();
+        debtors.forEach(debt => {
+            const nomeLower = debt.nome.toLowerCase();
+            if (!groups.has(nomeLower)) {
+                groups.set(nomeLower, {
+                    nomeOriginal: debt.nome,
+                    debts: []
+                });
+            }
+            groups.get(nomeLower).debts.push({
+                id: debt.id,
+                valor: debt.valor,
+                data: debt.data ? new Date(debt.data) : null,
+                dataStr: debt.data || ''
+            });
+        });
+
+        // Calcular total geral
+        const totalGeral = debtors.reduce((sum, d) => sum + d.valor, 0);
+        document.getElementById('total-a-receber').innerText = formatMoney(totalGeral);
+        document.getElementById('debtors-count').innerHTML = `${groups.size} devedor(es)`;
+
+        // Ordenar grupos por nome
+        const sortedGroups = Array.from(groups.entries()).sort((a,b) => a[0].localeCompare(b[0]));
+
+        let html = '';
+        for (const [_, group] of sortedGroups) {
+            // Ordenar débitos por data (mais antigo primeiro)
+            const sortedDebts = group.debts.sort((a,b) => (a.data || 0) - (b.data || 0));
+            const totalDevedor = sortedDebts.reduce((sum, d) => sum + d.valor, 0);
+
+            html += `<div class="debtor-group">
+                        <div class="debtor-name">
+                            <span><i class="fas fa-user"></i> ${escapeHtml(group.nomeOriginal)}</span>
+                            <span class="detail-highlight">Total: ${formatMoney(totalDevedor)}</span>
+                        </div>
+                        <div class="debt-entries">`;
+            for (const debt of sortedDebts) {
+                const dataFormatada = debt.data ? debt.data.toLocaleDateString('pt-BR') : (debt.dataStr ? new Date(debt.dataStr).toLocaleDateString('pt-BR') : 'Data não definida');
+                html += `<div class="debt-entry">
+                            <div>
+                                <div class="debt-date">📅 ${dataFormatada}</div>
+                                <div class="debt-value">${formatMoney(debt.valor)}</div>
+                            </div>
+                            <div style="display: flex; gap: 8px;">
+                                <button class="btn-small btn-success pay-debt" data-id="${debt.id}" data-value="${debt.valor}" data-name="${escapeHtml(group.nomeOriginal)}" title="Quitar"><i class="fas fa-check-circle"></i> Quitar</button>
+                                <button class="btn-small btn-danger delete-debt" data-id="${debt.id}" title="Excluir"><i class="fas fa-trash-alt"></i> Excluir</button>
+                            </div>
+                        </div>`;
+            }
+            html += `</div>
+                        <button class="btn btn-secondary add-debt-to-group" data-name="${escapeHtml(group.nomeOriginal)}" style="margin-top: 8px; width: 100%;"><i class="fas fa-plus-circle"></i> + Nova dívida para ${escapeHtml(group.nomeOriginal)}</button>
+                    </div>`;
+        }
+
+        container.innerHTML = html;
+
+        // Eventos para quitar débito individual
+        document.querySelectorAll('.pay-debt').forEach(btn => {
+            btn.addEventListener('click', async (e) => {
+                const id = btn.dataset.id;
+                const valor = parseFloat(btn.dataset.value);
+                const nome = btn.dataset.name;
+                const confirm = await Swal.fire({
+                    title: 'Receber dívida',
+                    text: `Confirmar recebimento de ${formatMoney(valor)} de ${nome}?`,
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonText: 'Sim, receber',
+                    cancelButtonText: 'Cancelar'
+                });
+                if (confirm.isConfirmed) {
+                    await debtorsRef.doc(id).delete();
+                    Swal.fire('Recebido!', 'Dívida removida.', 'success');
+                }
+            });
+        });
+
+        // Eventos para excluir débito individual
+        document.querySelectorAll('.delete-debt').forEach(btn => {
+            btn.addEventListener('click', async (e) => {
+                const id = btn.dataset.id;
+                const confirm = await Swal.fire({
+                    title: 'Excluir débito',
+                    text: 'Remover este débito permanentemente?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Sim, excluir',
+                    cancelButtonText: 'Cancelar'
+                });
+                if (confirm.isConfirmed) {
+                    await debtorsRef.doc(id).delete();
+                    Swal.fire('Excluído!', 'Débito removido.', 'success');
+                }
+            });
+        });
+
+        // Eventos para adicionar nova dívida a um devedor existente
+        document.querySelectorAll('.add-debt-to-group').forEach(btn => {
+            btn.addEventListener('click', async () => {
+                const nomeExistente = btn.dataset.name;
+                const { value: formValues } = await Swal.fire({
+                    title: `Nova dívida para ${nomeExistente}`,
+                    html: `
+                        <input id="debt-value" type="number" step="0.01" placeholder="Valor (R$)" class="swal2-input">
+                        <input id="debt-date" type="date" class="swal2-input">
+                    `,
+                    focusConfirm: false,
+                    preConfirm: () => {
+                        const valor = parseFloat(document.getElementById('debt-value').value);
+                        const data = document.getElementById('debt-date').value;
+                        if (isNaN(valor) || valor <= 0) {
+                            Swal.showValidationMessage('Valor inválido');
+                            return false;
+                        }
+                        if (!data) {
+                            Swal.showValidationMessage('Selecione uma data');
+                            return false;
+                        }
+                        return { valor, data };
+                    }
+                });
+                if (formValues) {
+                    await debtorsRef.add({
+                        nome: nomeExistente,
+                        valor: formValues.valor,
+                        data: formValues.data
+                    });
+                    Swal.fire('Adicionado!', 'Nova dívida registrada.', 'success');
+                }
+            });
+        });
+    }
+
+    async function addDebtor() {
+        const nome = document.getElementById('new-debtor-name').value.trim();
+        const valor = parseFloat(document.getElementById('new-debtor-value').value);
+        let data = document.getElementById('new-debtor-date').value;
+        if (!nome || isNaN(valor) || valor<=0) { Swal.fire('Erro','Preencha nome e valor válido.','error'); return; }
+        if (!data) data = new Date().toISOString().slice(0,10);
+        await debtorsRef.add({ nome, valor, data });
+        document.getElementById('new-debtor-name').value = '';
+        document.getElementById('new-debtor-value').value = '';
+        document.getElementById('new-debtor-date').value = '';
+        Swal.fire('Adicionado!','','success');
+    }
+
+    // ==================== OUTRAS FUNÇÕES (RENDER PARTNER EXPENSES, ETC) ====================
     async function renderPartnerExpensesWithPaid(partnerKey, containerId, containerPaidId, monthYear) {
         const container = document.getElementById(containerId);
         const containerPaid = document.getElementById(containerPaidId);
@@ -1002,13 +1221,11 @@
             }
         }
 
-        // Ordenar pendentes por createdAt (mais recente primeiro)
         pending.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
         const normais = pending.filter(i => !i.recorrente);
         const recorrentes = pending.filter(i => i.recorrente);
         paid.sort((a, b) => (b.data || 0) - (a.data || 0));
 
-        // HTML Gastos Normais Pendentes
         let htmlNormais = '';
         if (normais.length === 0) {
             htmlNormais = '<div style="text-align:center; padding:8px;">Nenhum gasto normal pendente.</div>';
@@ -1031,7 +1248,6 @@
             `).join('');
         }
 
-        // HTML Gastos Recorrentes Pendentes
         let htmlRecorrentes = '';
         if (recorrentes.length === 0) {
             htmlRecorrentes = '<div style="text-align:center; padding:8px;">Nenhum gasto recorrente pendente.</div>';
@@ -1054,7 +1270,6 @@
             `).join('');
         }
 
-        // HTML Gastos Quitados
         let htmlPaid = '';
         if (paid.length === 0) {
             htmlPaid = '<div style="text-align:center; padding:8px;">Nenhum gasto quitado neste mês.</div>';
@@ -1096,31 +1311,6 @@
             e.stopPropagation();
             await deleteExpenseById(btn.dataset.id);
         }));
-    }
-
-    function renderDebtors() {
-        const container = document.getElementById('debtors-list');
-        if (!container) return;
-        if (debtors.length === 0) { container.innerHTML = '<div style="text-align:center; padding:16px;">Nenhum devedor cadastrado.</div>'; return; }
-        const total = debtors.reduce((s,d)=>s+d.valor,0);
-        document.getElementById('total-a-receber').innerText = formatMoney(total);
-        document.getElementById('debtors-count').innerHTML = `${debtors.length} devedor(es)`;
-        container.innerHTML = debtors.map(d => `<div class="debtor-item"><div><strong>${escapeHtml(d.nome)}</strong><br>${d.data ? new Date(d.data).toLocaleDateString('pt-BR') : ''}</div><div>${formatMoney(d.valor)}<button class="btn-small btn-quitar" data-id="${d.id}" data-val="${d.valor}" data-name="${escapeHtml(d.nome)}">💰 Quitar</button><button class="btn-small delete-debtor" data-id="${d.id}">🗑️</button></div></div>`).join('');
-        document.querySelectorAll('.btn-quitar').forEach(btn => btn.addEventListener('click', async () => { if(await Swal.fire({title:'Receber',text:`Confirmar recebimento de ${formatMoney(parseFloat(btn.dataset.val))} de ${btn.dataset.name}?`,icon:'question',showCancelButton:true}).then(r=>r.isConfirmed)) await debtorsRef.doc(btn.dataset.id).delete(); }));
-        document.querySelectorAll('.delete-debtor').forEach(btn => btn.addEventListener('click', async () => { if(await Swal.fire({title:'Excluir',text:'Remover devedor?',icon:'warning',showCancelButton:true}).then(r=>r.isConfirmed)) await debtorsRef.doc(btn.dataset.id).delete(); }));
-    }
-
-    async function addDebtor() {
-        const nome = document.getElementById('new-debtor-name').value.trim();
-        const valor = parseFloat(document.getElementById('new-debtor-value').value);
-        let data = document.getElementById('new-debtor-date').value;
-        if (!nome || isNaN(valor) || valor<=0) { Swal.fire('Erro','Preencha nome e valor válido.','error'); return; }
-        if (!data) data = new Date().toISOString().slice(0,10);
-        await debtorsRef.add({ nome, valor, data });
-        document.getElementById('new-debtor-name').value = '';
-        document.getElementById('new-debtor-value').value = '';
-        document.getElementById('new-debtor-date').value = '';
-        Swal.fire('Adicionado!','','success');
     }
 
     async function saveIncomes() {
@@ -1309,13 +1499,12 @@
             const { partner1, partner2 } = calculateMonthlyShare(exp);
             items.push({ ...exp, dueDate, valorMes: partner1+partner2 });
         }
-        // Ordenar por createdAt (mais recente) como padrão
         items.sort((a, b) => (b.createdAt?.toDate?.() || 0) - (a.createdAt?.toDate?.() || 0));
         const sortSelect = document.getElementById('sort-order');
         if (sortSelect && sortSelect.value !== 'date_asc') {
             items = sortHistoryItems(items, sortSelect.value);
         }
-        if (items.length === 0) { tbody.innerHTML = '<tr><td colspan="7" style="text-align:center">Nenhuma despesa</td></tr>'; return; }
+        if (items.length === 0) { tbody.innerHTML = '<table><td colspan="7" style="text-align:center">Nenhuma despesa</td></tr>'; return; }
         tbody.innerHTML = items.map(exp => {
             const parcelaValor = exp.valorTotal / exp.parcelas;
             const primeiraParcela = getFirstInstallmentDate(exp);
@@ -1424,11 +1613,6 @@
         selectedExpenses.clear();
         debouncedUpdateDashboard();
     }
-    async function setMonthYear(year, month) {
-        selectedYear = year; selectedMonth = month;
-        selectedExpenses.clear();
-        debouncedUpdateDashboard();
-    }
     async function quickExpense() {
         const { value: fv } = await Swal.fire({
             title: 'Despesa rápida',
@@ -1531,7 +1715,7 @@
             3: `➕ Adicione despesas parceladas ou com divisão personalizada.`,
             4: `📋 Histórico mostra todas as despesas (pendentes e quitadas).`,
             5: `⚙️ Configure rendas, orçamentos, categorias, cor do tema e exporte PDF.`,
-            6: `💰 Gerencie devedores.`,
+            6: `💰 Gerencie devedores. Agora com agrupamento por pessoa.`,
             7: `💬 Mural compartilhado.`,
             8: `🎯 Metas de economia do casal.`,
             9: `📅 Acompanhe quando cada compra parcelada será totalmente quitada.`,
@@ -1945,7 +2129,6 @@
     document.getElementById('save-limit1-btn').addEventListener('click', () => { const val = parseFloat(document.getElementById('limit1').value); if (!isNaN(val) && val >= 0) saveLimit('partner1', val); else Swal.fire('Erro', 'Valor inválido', 'error'); });
     document.getElementById('save-limit2-btn').addEventListener('click', () => { const val = parseFloat(document.getElementById('limit2').value); if (!isNaN(val) && val >= 0) saveLimit('partner2', val); else Swal.fire('Erro', 'Valor inválido', 'error'); });
     document.getElementById('update-closing-btn').addEventListener('click', updateClosingSummary);
-    // Botão adicionar categoria (corrigido)
     document.getElementById('add-category-btn')?.addEventListener('click', async () => {
         const newCat = document.getElementById('new-category-name').value.trim();
         if (!newCat) {
