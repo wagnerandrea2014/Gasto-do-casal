@@ -968,38 +968,126 @@
         if(filterPayer && filterPayer.options.length>=2) { filterPayer.options[1].text = partner1Name; filterPayer.options[2].text = partner2Name; }
     }
 
+    // ==================== FUNÇÃO RENDER PARTNER EXPENSES (ATUALIZADA) ====================
     async function renderPartnerExpensesWithPaid(partnerKey, containerId, containerPaidId, monthYear) {
         const container = document.getElementById(containerId);
         const containerPaid = document.getElementById(containerPaidId);
         if (!container || !containerPaid) return;
+
         let filtered = allExpenses.filter(exp => exp.installmentMonths?.includes(monthYear));
         const targetPartner = partnerKey === 'partner1' ? 'partner1' : 'partner2';
-        let pendingItems = [];
-        let paidItems = [];
+
+        let pending = [];
+        let paid = [];
+
         for (const exp of filtered) {
             const { partner1, partner2 } = calculateMonthlyShare(exp);
             const valor = targetPartner === 'partner1' ? partner1 : partner2;
             if (valor <= 0) continue;
             const dueDate = getInstallmentDateForMonth(exp, monthYear);
-            const item = { id: exp.id, descricao: exp.descricao, valor, data: dueDate, categoria: exp.categoria };
+            const item = {
+                id: exp.id,
+                descricao: exp.descricao,
+                valor,
+                data: dueDate,
+                categoria: exp.categoria,
+                observacao: exp.observacao,
+                recorrente: !!(exp.recurringTemplateId || exp.recorrente === 'monthly'),
+                createdAt: exp.createdAt ? exp.createdAt.toDate() : new Date(exp.startDate)
+            };
             if (exp.quitado) {
-                paidItems.push(item);
+                paid.push(item);
             } else {
-                pendingItems.push(item);
+                pending.push(item);
             }
         }
-        pendingItems.sort((a,b) => (a.data || 0) - (b.data || 0));
-        paidItems.sort((a,b) => (b.data || 0) - (a.data || 0));
-        if (pendingItems.length === 0) {
-            container.innerHTML = '<div style="text-align:center; padding:16px;">Nenhum gasto pendente neste mês.</div>';
+
+        // Ordenar pendentes por createdAt (mais recente primeiro)
+        pending.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+        const normais = pending.filter(i => !i.recorrente);
+        const recorrentes = pending.filter(i => i.recorrente);
+        paid.sort((a, b) => (b.data || 0) - (a.data || 0));
+
+        // HTML Gastos Normais Pendentes
+        let htmlNormais = '';
+        if (normais.length === 0) {
+            htmlNormais = '<div style="text-align:center; padding:8px;">Nenhum gasto normal pendente.</div>';
         } else {
-            container.innerHTML = pendingItems.map(exp => `<div class="expense-item"><div><strong>${escapeHtml(exp.descricao)}</strong><br><span class="expense-date">${exp.data ? exp.data.toLocaleDateString('pt-BR') : 'Data?'} - ${exp.categoria || ''}</span></div><div><span class="detail-highlight">${formatMoney(exp.valor)}</span><div style="display: flex; gap: 6px;"><button class="btn-small btn-quitar" data-id="${exp.id}" title="Quitar"><i class="fas fa-check-circle"></i> Quitar</button><button class="btn-small delete-partner-expense" data-id="${exp.id}" title="Excluir"><i class="fas fa-trash"></i></button></div></div></div>`).join('');
+            htmlNormais = normais.map(exp => `
+                <div class="expense-item">
+                    <div>
+                        <strong>${escapeHtml(exp.descricao)}</strong>
+                        ${exp.observacao ? `<br><span style="font-size:0.7rem; opacity:0.8;">📝 ${escapeHtml(exp.observacao)}</span>` : ''}
+                        <br><span class="expense-date">${exp.data ? exp.data.toLocaleDateString('pt-BR') : 'Data?'} - ${exp.categoria || ''}</span>
+                    </div>
+                    <div>
+                        <span class="detail-highlight">${formatMoney(exp.valor)}</span>
+                        <div style="display: flex; gap: 6px; margin-top: 6px;">
+                            <button class="btn-small btn-quitar" data-id="${exp.id}" title="Quitar"><i class="fas fa-check-circle"></i> Quitar</button>
+                            <button class="btn-small delete-partner-expense" data-id="${exp.id}" title="Excluir"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
         }
-        if (paidItems.length === 0) {
-            containerPaid.innerHTML = '<div style="text-align:center; padding:16px;">Nenhum gasto quitado neste mês.</div>';
+
+        // HTML Gastos Recorrentes Pendentes
+        let htmlRecorrentes = '';
+        if (recorrentes.length === 0) {
+            htmlRecorrentes = '<div style="text-align:center; padding:8px;">Nenhum gasto recorrente pendente.</div>';
         } else {
-            containerPaid.innerHTML = paidItems.map(exp => `<div class="paid-item"><div><strong>${escapeHtml(exp.descricao)}</strong><br><span class="expense-date">${exp.data ? exp.data.toLocaleDateString('pt-BR') : 'Data?'} - ${exp.categoria || ''}</span></div><div>${formatMoney(exp.valor)}</div></div>`).join('');
+            htmlRecorrentes = recorrentes.map(exp => `
+                <div class="expense-item" style="border-left: 3px solid var(--primary-color);">
+                    <div>
+                        <strong>${escapeHtml(exp.descricao)} <span style="background:var(--primary-color); color:white; font-size:0.65rem; border-radius:20px; padding:2px 8px; margin-left:6px;">🔄 Recorrente</span></strong>
+                        ${exp.observacao ? `<br><span style="font-size:0.7rem; opacity:0.8;">📝 ${escapeHtml(exp.observacao)}</span>` : ''}
+                        <br><span class="expense-date">${exp.data ? exp.data.toLocaleDateString('pt-BR') : 'Data?'} - ${exp.categoria || ''}</span>
+                    </div>
+                    <div>
+                        <span class="detail-highlight">${formatMoney(exp.valor)}</span>
+                        <div style="display: flex; gap: 6px; margin-top: 6px;">
+                            <button class="btn-small btn-quitar" data-id="${exp.id}" title="Quitar"><i class="fas fa-check-circle"></i> Quitar</button>
+                            <button class="btn-small delete-partner-expense" data-id="${exp.id}" title="Excluir"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
         }
+
+        // HTML Gastos Quitados
+        let htmlPaid = '';
+        if (paid.length === 0) {
+            htmlPaid = '<div style="text-align:center; padding:8px;">Nenhum gasto quitado neste mês.</div>';
+        } else {
+            htmlPaid = paid.map(exp => `
+                <div class="paid-item">
+                    <div>
+                        <strong>${escapeHtml(exp.descricao)}</strong>
+                        ${exp.observacao ? `<br><span style="font-size:0.7rem;">📝 ${escapeHtml(exp.observacao)}</span>` : ''}
+                        <br><span class="expense-date">${exp.data ? exp.data.toLocaleDateString('pt-BR') : 'Data?'} - ${exp.categoria || ''}</span>
+                    </div>
+                    <div>${formatMoney(exp.valor)}</div>
+                </div>
+            `).join('');
+        }
+
+        container.innerHTML = `
+            <div style="margin-bottom: 16px;">
+                <div style="font-weight: 600; margin-bottom: 8px;"><i class="fas fa-clock"></i> Gastos normais pendentes</div>
+                ${htmlNormais}
+            </div>
+            <div style="margin-bottom: 16px;">
+                <div style="font-weight: 600; margin-bottom: 8px;"><i class="fas fa-sync-alt"></i> Gastos recorrentes pendentes</div>
+                ${htmlRecorrentes}
+            </div>
+        `;
+        containerPaid.innerHTML = `
+            <div>
+                <div style="font-weight: 600; margin-bottom: 8px;"><i class="fas fa-check-circle"></i> Gastos quitados</div>
+                ${htmlPaid}
+            </div>
+        `;
+
         document.querySelectorAll('.btn-quitar').forEach(btn => btn.addEventListener('click', async (e) => {
             e.stopPropagation();
             await quitarDespesa(btn.dataset.id);
@@ -1221,8 +1309,12 @@
             const { partner1, partner2 } = calculateMonthlyShare(exp);
             items.push({ ...exp, dueDate, valorMes: partner1+partner2 });
         }
+        // Ordenar por createdAt (mais recente) como padrão
+        items.sort((a, b) => (b.createdAt?.toDate?.() || 0) - (a.createdAt?.toDate?.() || 0));
         const sortSelect = document.getElementById('sort-order');
-        items = sortHistoryItems(items, sortSelect ? sortSelect.value : 'date_asc');
+        if (sortSelect && sortSelect.value !== 'date_asc') {
+            items = sortHistoryItems(items, sortSelect.value);
+        }
         if (items.length === 0) { tbody.innerHTML = '<tr><td colspan="7" style="text-align:center">Nenhuma despesa</td></tr>'; return; }
         tbody.innerHTML = items.map(exp => {
             const parcelaValor = exp.valorTotal / exp.parcelas;
@@ -1243,7 +1335,7 @@
                         <button class="edit-expense btn-small" data-id="${exp.id}" title="Editar"><i class="fas fa-edit"></i></button>
                         <button class="delete-expense btn-small btn-danger" data-id="${exp.id}" title="Excluir"><i class="fas fa-trash-alt"></i></button>
                     </td>
-                  </tr>`;
+                   </tr>`;
         }).join('');
         document.querySelectorAll('.expense-checkbox').forEach(cb => cb.addEventListener('change', (e) => { if(e.target.checked) selectedExpenses.add(e.target.dataset.id); else selectedExpenses.delete(e.target.dataset.id); updateSelectionBar(); updateHeaderCheckbox(); }));
         document.querySelectorAll('.btn-quitar').forEach(btn => btn.addEventListener('click', async (e) => { e.stopPropagation(); await quitarDespesa(btn.dataset.id); }));
@@ -1853,6 +1945,21 @@
     document.getElementById('save-limit1-btn').addEventListener('click', () => { const val = parseFloat(document.getElementById('limit1').value); if (!isNaN(val) && val >= 0) saveLimit('partner1', val); else Swal.fire('Erro', 'Valor inválido', 'error'); });
     document.getElementById('save-limit2-btn').addEventListener('click', () => { const val = parseFloat(document.getElementById('limit2').value); if (!isNaN(val) && val >= 0) saveLimit('partner2', val); else Swal.fire('Erro', 'Valor inválido', 'error'); });
     document.getElementById('update-closing-btn').addEventListener('click', updateClosingSummary);
+    // Botão adicionar categoria (corrigido)
+    document.getElementById('add-category-btn')?.addEventListener('click', async () => {
+        const newCat = document.getElementById('new-category-name').value.trim();
+        if (!newCat) {
+            Swal.fire('Aviso', 'Digite o nome da categoria.', 'warning');
+            return;
+        }
+        if (categoriesList.some(c => c.name.toLowerCase() === newCat.toLowerCase())) {
+            Swal.fire('Aviso', 'Essa categoria já existe.', 'warning');
+            return;
+        }
+        await categoriesRef.add({ name: newCat });
+        document.getElementById('new-category-name').value = '';
+        Swal.fire('Categoria adicionada!', '', 'success');
+    });
     if (localStorage.getItem('lightTheme') === 'enabled') { document.body.classList.add('light-theme'); document.getElementById('theme-icon-header').innerHTML = '<i class="fas fa-sun"></i>'; }
     document.getElementById('conciergeAvatar').addEventListener('click', () => { const activePage = Math.round(document.getElementById('swipeContainer').scrollLeft / document.getElementById('swipeContainer').clientWidth); showConciergeMessage(getConciergeMessage(activePage), 8000); });
     document.getElementById('name1').addEventListener('input', updateUserSelect);
