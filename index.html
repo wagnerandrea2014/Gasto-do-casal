@@ -68,7 +68,7 @@
             min-height: 36px;
         }
 
-        /* ========== BARRA DE NAVEGAÇÃO ========== */
+        /* ========== BARRA DE NAVEGAÇÃO ESTILO D (CORRIGIDA - 5x5 COM ROLAGEM) ========== */
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -263,51 +263,74 @@
         .budget-summary-value { min-width: 100px; text-align: right; }
         .budget-warning { color: #ff9800; }
         .budget-danger { color: #e91e63; font-weight: bold; }
-
-        /* Estilos específicos para devedores agrupados */
+        
+        /* Estilos para os grupos de devedores */
         .debtor-group {
             background: rgba(233,30,99,0.08);
-            border-radius: 28px;
+            border-radius: 24px;
             padding: 12px;
             margin-bottom: 16px;
-            border-left: 4px solid var(--primary-color);
+            border: 1px solid rgba(233,30,99,0.3);
         }
-        .debtor-name {
-            font-size: 1.2rem;
-            font-weight: 700;
+        .debtor-group-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
             margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--primary-color);
+        }
+        .debtor-group-name {
+            font-size: 1.2rem;
+            font-weight: 800;
             color: var(--primary-color);
+        }
+        .debtor-group-actions {
+            display: flex;
+            gap: 8px;
+        }
+        .debtor-entry {
             display: flex;
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
-            gap: 8px;
+            gap: 12px;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(233,30,99,0.2);
         }
-        .debt-entry {
-            background: rgba(0,0,0,0.2);
-            border-radius: 20px;
-            padding: 10px;
-            margin-bottom: 8px;
+        .debtor-entry:last-child {
+            border-bottom: none;
+        }
+        .debtor-entry-info {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
             flex-wrap: wrap;
-            gap: 8px;
+            gap: 16px;
+            align-items: baseline;
+            flex: 2;
         }
-        body.light-theme .debt-entry {
-            background: rgba(0,0,0,0.05);
-        }
-        .debt-date {
-            font-size: 0.75rem;
+        .debtor-entry-date {
+            font-size: 0.8rem;
             opacity: 0.8;
+            min-width: 100px;
         }
-        .debt-value {
+        .debtor-entry-value {
             font-weight: 700;
             color: var(--primary-color);
         }
-        .add-debt-btn {
-            margin-top: 8px;
-            width: 100%;
+        .debtor-entry-buttons {
+            display: flex;
+            gap: 8px;
+        }
+        @media (max-width: 550px) {
+            .debtor-entry {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .debtor-entry-info {
+                justify-content: space-between;
+            }
         }
     </style>
 </head>
@@ -435,20 +458,15 @@
             <div class="card"><div class="card-title"><i class="fas fa-palette"></i> Personalizar tema</div><div class="form-row"><div class="input-group"><label>Cor principal</label><input type="color" id="primary-color-picker" value="#e91e63"></div><div class="input-group"><label>Visualização</label><div class="color-preview" id="color-preview" style="background-color:#e91e63;"></div></div></div><button id="reset-color-btn" class="btn btn-secondary" style="width:100%; margin-top:8px;">🔄 Restaurar cor padrão (rosa)</button></div>
             <div class="card"><div class="card-title"><i class="fas fa-trash-alt"></i> Limpar dados recorrentes</div><button id="clear-recurring-btn" class="btn btn-danger" style="width:100%;"><i class="fas fa-sync-alt"></i> Remover todas as despesas recorrentes</button></div>
         </div>
-        <!-- Página 6: Devedores (REFORMULADA) -->
+        <!-- Página 6: Devedores (AGRUPADO) -->
         <div class="swipe-page" data-page="6">
-            <div class="card">
-                <div class="card-title"><i class="fas fa-hand-holding-usd"></i> Devedores (terceiros)</div>
+            <div class="card"><div class="card-title"><i class="fas fa-hand-holding-usd"></i> Devedores (terceiros)</div>
                 <div id="debtors-list"></div>
-                <!-- Formulário para novo débito (pode ser novo devedor ou débito adicional) -->
-                <div style="margin-top: 20px; border-top: 1px solid var(--primary-color); padding-top: 16px;">
-                    <div class="card-title"><i class="fas fa-plus-circle"></i> Adicionar novo débito</div>
-                    <div class="debtor-form-group">
-                        <div style="flex:2;"><label>Nome do devedor</label><input type="text" id="new-debtor-name" placeholder="Ex: João"></div>
-                        <div style="flex:1;"><label>Valor (R$)</label><input type="number" id="new-debtor-value" placeholder="0,00" step="0.01"></div>
-                        <div style="flex:1;"><label>Data</label><input type="date" id="new-debtor-date"></div>
-                        <div style="flex:0 0 auto;"><button id="add-debtor-btn" class="btn btn-success">Adicionar</button></div>
-                    </div>
+                <div class="debtor-form-group">
+                    <div style="flex:2;"><label>Nome do devedor</label><input type="text" id="new-debtor-name" placeholder="Ex: João"></div>
+                    <div style="flex:1;"><label>Valor (R$)</label><input type="number" id="new-debtor-value" placeholder="0,00" step="0.01"></div>
+                    <div style="flex:1;"><label>Data</label><input type="date" id="new-debtor-date"></div>
+                    <div style="flex:0 0 auto;"><button id="add-debtor-btn" class="btn btn-success">Adicionar</button></div>
                 </div>
             </div>
         </div>
@@ -531,6 +549,91 @@
     const limitsRef = db.collection(`shared/${COUPLE_ID}/settings`).doc("limits");
     const themeRef = db.collection(`shared/${COUPLE_ID}/settings`).doc("theme");
 
+    // ==================== AJUSTE DE FUSO HORÁRIO (RECIFE) ====================
+    const TIMEZONE = "America/Recife";
+    
+    function getCurrentDateRecife() {
+        // Retorna a data atual no fuso de Recife no formato YYYY-MM-DD
+        const now = new Date();
+        const formatter = new Intl.DateTimeFormat('pt-BR', {
+            timeZone: TIMEZONE,
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit'
+        });
+        const [{ value: day }, , { value: month }, , { value: year }] = formatter.formatToParts(now);
+        return `${year}-${month}-${day}`;
+    }
+    
+    function parseLocalDateToDate(dateStr) {
+        // Converte string YYYY-MM-DD para objeto Date considerando o fuso Recife
+        const [year, month, day] = dateStr.split('-').map(Number);
+        return new Date(year, month - 1, day);
+    }
+    
+    function formatDateToLocale(dateStr) {
+        if (!dateStr) return '';
+        const date = parseLocalDateToDate(dateStr);
+        return date.toLocaleDateString('pt-BR', { timeZone: TIMEZONE });
+    }
+    
+    function addMonthsToDateStr(dateStr, monthsToAdd) {
+        const date = parseLocalDateToDate(dateStr);
+        date.setMonth(date.getMonth() + monthsToAdd);
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    }
+    
+    function getMonthYearFromDateStr(dateStr) {
+        const [year, month] = dateStr.split('-');
+        return `${year}-${month}`;
+    }
+    
+    function getFaturaMonthYearFromDateStr(dateStr) {
+        const day = parseInt(dateStr.split('-')[2]);
+        let [year, month] = dateStr.split('-').map(Number);
+        if (day <= 1) {
+            if (month === 1) {
+                month = 12;
+                year--;
+            } else {
+                month--;
+            }
+        }
+        return `${year}-${String(month).padStart(2, '0')}`;
+    }
+    
+    function generateInstallmentMonths(startDateStr, totalParcelas, parcelasPagas = 0) {
+        const months = [];
+        for (let i = parcelasPagas; i < totalParcelas; i++) {
+            const dueDateStr = addMonthsToDateStr(startDateStr, i);
+            months.push(getFaturaMonthYearFromDateStr(dueDateStr));
+        }
+        return months;
+    }
+    
+    function getInstallmentDateForMonth(exp, targetMonthYear) {
+        const startDateStr = exp.startDate;
+        for (let i = exp.parcelasPagas || 0; i < exp.parcelas; i++) {
+            const dueDateStr = addMonthsToDateStr(startDateStr, i);
+            if (getMonthYearFromDateStr(dueDateStr) === targetMonthYear) {
+                return parseLocalDateToDate(dueDateStr);
+            }
+        }
+        return null;
+    }
+    
+    function getFirstInstallmentDate(exp) {
+        const startDateStr = exp.startDate;
+        const dueDateStr = addMonthsToDateStr(startDateStr, exp.parcelasPagas || 0);
+        return parseLocalDateToDate(dueDateStr);
+    }
+    
+    // Substituir chamadas antigas
+    const getLocalDateString = getCurrentDateRecife;
+    
     let currentPartnerId = "", partner1Name = "", partner2Name = "";
     let selectedMonth = new Date().getMonth(), selectedYear = new Date().getFullYear();
     let allExpenses = [], currentDisplayExpenses = [], categoriesBudget = {}, recurringTemplates = [], editingDocId = null;
@@ -570,41 +673,6 @@
         if (nav2) nav2.innerText = partner2Name || 'P2';
     }
 
-    function getLocalDateString() {
-        const now = new Date();
-        return `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
-    }
-    function getFaturaMonthYear(date) {
-        const day = date.getDate();
-        let month = date.getMonth(), year = date.getFullYear();
-        if (day <= 1) { if (month === 0) { month = 11; year--; } else month--; }
-        return `${year}-${String(month+1).padStart(2,'0')}`;
-    }
-    function generateInstallmentMonths(startDateISO, totalParcelas, parcelasPagas = 0) {
-        const start = new Date(startDateISO);
-        const months = [];
-        for (let i = parcelasPagas; i < totalParcelas; i++) {
-            const due = new Date(start);
-            due.setMonth(start.getMonth() + i);
-            months.push(getFaturaMonthYear(due));
-        }
-        return months;
-    }
-    function getInstallmentDateForMonth(exp, targetMonthYear) {
-        const start = new Date(exp.startDate);
-        for (let i = exp.parcelasPagas || 0; i < exp.parcelas; i++) {
-            const due = new Date(start);
-            due.setMonth(start.getMonth() + i);
-            if (`${due.getFullYear()}-${String(due.getMonth()+1).padStart(2,'0')}` === targetMonthYear) return due;
-        }
-        return null;
-    }
-    function getFirstInstallmentDate(exp) {
-        const start = new Date(exp.startDate);
-        const due = new Date(start);
-        due.setMonth(start.getMonth() + (exp.parcelasPagas || 0));
-        return due;
-    }
     function calculateMonthlyShare(exp) {
         const parcelaValor = exp.valorTotal / exp.parcelas;
         let valorAposTerceiros = parcelaValor;
@@ -815,10 +883,11 @@
                     return;
                 }
                 const firstDay = new Date(selectedYear, selectedMonth, 1);
-                const newInstallments = generateInstallmentMonths(firstDay.toISOString().slice(0,10), template.parcelas, 0);
+                const firstDayStr = `${firstDay.getFullYear()}-${String(firstDay.getMonth()+1).padStart(2,'0')}-01`;
+                const newInstallments = generateInstallmentMonths(firstDayStr, template.parcelas, 0);
                 const expenseData = {
                     ...template,
-                    startDate: firstDay.toISOString().slice(0,10),
+                    startDate: firstDayStr,
                     installmentMonths: newInstallments,
                     createdAt: firebase.firestore.FieldValue.serverTimestamp(),
                     updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
@@ -898,22 +967,26 @@
     function verificarNotificacaoParcelasProximas() {
         const targetMonth = `${selectedYear}-${String(selectedMonth+1).padStart(2,'0')}`;
         const monthExpenses = allExpenses.filter(exp => exp.installmentMonths?.includes(targetMonth) && !exp.quitado);
-        const hoje = new Date(), tresDias = new Date(); tresDias.setDate(hoje.getDate() + 3);
+        const hoje = new Date();
+        const hojeRecifeStr = getCurrentDateRecife();
+        const hojeRecife = parseLocalDateToDate(hojeRecifeStr);
+        const tresDias = new Date(hojeRecife);
+        tresDias.setDate(hojeRecife.getDate() + 3);
         const proximas = [];
         monthExpenses.forEach(exp => {
             for (let i = exp.parcelasPagas || 0; i < exp.parcelas; i++) {
-                const due = new Date(exp.startDate);
-                due.setMonth(due.getMonth() + i);
-                if (due >= hoje && due <= tresDias) {
+                const dueDateStr = addMonthsToDateStr(exp.startDate, i);
+                const dueDate = parseLocalDateToDate(dueDateStr);
+                if (dueDate >= hojeRecife && dueDate <= tresDias) {
                     const { partner1, partner2 } = calculateMonthlyShare(exp);
-                    proximas.push({ desc: exp.descricao, valor: partner1+partner2, data: due });
+                    proximas.push({ desc: exp.descricao, valor: partner1+partner2, data: dueDate });
                 }
             }
         });
         if (proximas.length > 0 && (ultimoMesNotificacao.mes !== selectedMonth || ultimoMesNotificacao.ano !== selectedYear)) {
             ultimoMesNotificacao = { mes: selectedMonth, ano: selectedYear };
             let msg = `📅 Você tem ${proximas.length} parcela(s) vencendo nos próximos 3 dias:\n\n`;
-            proximas.slice(0,3).forEach(p => msg += `• ${p.desc}: ${formatMoney(p.valor)} (${p.data.toLocaleDateString()})\n`);
+            proximas.slice(0,3).forEach(p => msg += `• ${p.desc}: ${formatMoney(p.valor)} (${p.data.toLocaleDateString('pt-BR', { timeZone: TIMEZONE })})\n`);
             if (proximas.length > 3) msg += `\n...e mais ${proximas.length-3} parcela(s).`;
             Swal.fire({ title: '⚠️ Parcelas próximas do vencimento', text: msg, icon: 'warning', confirmButtonColor: '#e91e63', confirmButtonText: 'Ok' });
         }
@@ -1027,167 +1100,7 @@
         if(filterPayer && filterPayer.options.length>=2) { filterPayer.options[1].text = partner1Name; filterPayer.options[2].text = partner2Name; }
     }
 
-    // ==================== FUNÇÃO RENDER DEBTORS (AGRUPADO) ====================
-    function renderDebtors() {
-        const container = document.getElementById('debtors-list');
-        if (!container) return;
-
-        if (debtors.length === 0) {
-            container.innerHTML = '<div style="text-align:center; padding:16px;">Nenhum devedor cadastrado.</div>';
-            document.getElementById('total-a-receber').innerText = formatMoney(0);
-            document.getElementById('debtors-count').innerHTML = `0 devedor(es)`;
-            return;
-        }
-
-        // Agrupar por nome (case insensitive, mas preserva capitalização original)
-        const groups = new Map();
-        debtors.forEach(debt => {
-            const nomeLower = debt.nome.toLowerCase();
-            if (!groups.has(nomeLower)) {
-                groups.set(nomeLower, {
-                    nomeOriginal: debt.nome,
-                    debts: []
-                });
-            }
-            groups.get(nomeLower).debts.push({
-                id: debt.id,
-                valor: debt.valor,
-                data: debt.data ? new Date(debt.data) : null,
-                dataStr: debt.data || ''
-            });
-        });
-
-        // Calcular total geral
-        const totalGeral = debtors.reduce((sum, d) => sum + d.valor, 0);
-        document.getElementById('total-a-receber').innerText = formatMoney(totalGeral);
-        document.getElementById('debtors-count').innerHTML = `${groups.size} devedor(es)`;
-
-        // Ordenar grupos por nome
-        const sortedGroups = Array.from(groups.entries()).sort((a,b) => a[0].localeCompare(b[0]));
-
-        let html = '';
-        for (const [_, group] of sortedGroups) {
-            // Ordenar débitos por data (mais antigo primeiro)
-            const sortedDebts = group.debts.sort((a,b) => (a.data || 0) - (b.data || 0));
-            const totalDevedor = sortedDebts.reduce((sum, d) => sum + d.valor, 0);
-
-            html += `<div class="debtor-group">
-                        <div class="debtor-name">
-                            <span><i class="fas fa-user"></i> ${escapeHtml(group.nomeOriginal)}</span>
-                            <span class="detail-highlight">Total: ${formatMoney(totalDevedor)}</span>
-                        </div>
-                        <div class="debt-entries">`;
-            for (const debt of sortedDebts) {
-                const dataFormatada = debt.data ? debt.data.toLocaleDateString('pt-BR') : (debt.dataStr ? new Date(debt.dataStr).toLocaleDateString('pt-BR') : 'Data não definida');
-                html += `<div class="debt-entry">
-                            <div>
-                                <div class="debt-date">📅 ${dataFormatada}</div>
-                                <div class="debt-value">${formatMoney(debt.valor)}</div>
-                            </div>
-                            <div style="display: flex; gap: 8px;">
-                                <button class="btn-small btn-success pay-debt" data-id="${debt.id}" data-value="${debt.valor}" data-name="${escapeHtml(group.nomeOriginal)}" title="Quitar"><i class="fas fa-check-circle"></i> Quitar</button>
-                                <button class="btn-small btn-danger delete-debt" data-id="${debt.id}" title="Excluir"><i class="fas fa-trash-alt"></i> Excluir</button>
-                            </div>
-                        </div>`;
-            }
-            html += `</div>
-                        <button class="btn btn-secondary add-debt-to-group" data-name="${escapeHtml(group.nomeOriginal)}" style="margin-top: 8px; width: 100%;"><i class="fas fa-plus-circle"></i> + Nova dívida para ${escapeHtml(group.nomeOriginal)}</button>
-                    </div>`;
-        }
-
-        container.innerHTML = html;
-
-        // Eventos para quitar débito individual
-        document.querySelectorAll('.pay-debt').forEach(btn => {
-            btn.addEventListener('click', async (e) => {
-                const id = btn.dataset.id;
-                const valor = parseFloat(btn.dataset.value);
-                const nome = btn.dataset.name;
-                const confirm = await Swal.fire({
-                    title: 'Receber dívida',
-                    text: `Confirmar recebimento de ${formatMoney(valor)} de ${nome}?`,
-                    icon: 'question',
-                    showCancelButton: true,
-                    confirmButtonText: 'Sim, receber',
-                    cancelButtonText: 'Cancelar'
-                });
-                if (confirm.isConfirmed) {
-                    await debtorsRef.doc(id).delete();
-                    Swal.fire('Recebido!', 'Dívida removida.', 'success');
-                }
-            });
-        });
-
-        // Eventos para excluir débito individual
-        document.querySelectorAll('.delete-debt').forEach(btn => {
-            btn.addEventListener('click', async (e) => {
-                const id = btn.dataset.id;
-                const confirm = await Swal.fire({
-                    title: 'Excluir débito',
-                    text: 'Remover este débito permanentemente?',
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonText: 'Sim, excluir',
-                    cancelButtonText: 'Cancelar'
-                });
-                if (confirm.isConfirmed) {
-                    await debtorsRef.doc(id).delete();
-                    Swal.fire('Excluído!', 'Débito removido.', 'success');
-                }
-            });
-        });
-
-        // Eventos para adicionar nova dívida a um devedor existente
-        document.querySelectorAll('.add-debt-to-group').forEach(btn => {
-            btn.addEventListener('click', async () => {
-                const nomeExistente = btn.dataset.name;
-                const { value: formValues } = await Swal.fire({
-                    title: `Nova dívida para ${nomeExistente}`,
-                    html: `
-                        <input id="debt-value" type="number" step="0.01" placeholder="Valor (R$)" class="swal2-input">
-                        <input id="debt-date" type="date" class="swal2-input">
-                    `,
-                    focusConfirm: false,
-                    preConfirm: () => {
-                        const valor = parseFloat(document.getElementById('debt-value').value);
-                        const data = document.getElementById('debt-date').value;
-                        if (isNaN(valor) || valor <= 0) {
-                            Swal.showValidationMessage('Valor inválido');
-                            return false;
-                        }
-                        if (!data) {
-                            Swal.showValidationMessage('Selecione uma data');
-                            return false;
-                        }
-                        return { valor, data };
-                    }
-                });
-                if (formValues) {
-                    await debtorsRef.add({
-                        nome: nomeExistente,
-                        valor: formValues.valor,
-                        data: formValues.data
-                    });
-                    Swal.fire('Adicionado!', 'Nova dívida registrada.', 'success');
-                }
-            });
-        });
-    }
-
-    async function addDebtor() {
-        const nome = document.getElementById('new-debtor-name').value.trim();
-        const valor = parseFloat(document.getElementById('new-debtor-value').value);
-        let data = document.getElementById('new-debtor-date').value;
-        if (!nome || isNaN(valor) || valor<=0) { Swal.fire('Erro','Preencha nome e valor válido.','error'); return; }
-        if (!data) data = new Date().toISOString().slice(0,10);
-        await debtorsRef.add({ nome, valor, data });
-        document.getElementById('new-debtor-name').value = '';
-        document.getElementById('new-debtor-value').value = '';
-        document.getElementById('new-debtor-date').value = '';
-        Swal.fire('Adicionado!','','success');
-    }
-
-    // ==================== OUTRAS FUNÇÕES (RENDER PARTNER EXPENSES, ETC) ====================
+    // ==================== FUNÇÃO RENDER PARTNER EXPENSES (ATUALIZADA) ====================
     async function renderPartnerExpensesWithPaid(partnerKey, containerId, containerPaidId, monthYear) {
         const container = document.getElementById(containerId);
         const containerPaid = document.getElementById(containerPaidId);
@@ -1212,7 +1125,7 @@
                 categoria: exp.categoria,
                 observacao: exp.observacao,
                 recorrente: !!(exp.recurringTemplateId || exp.recorrente === 'monthly'),
-                createdAt: exp.createdAt ? exp.createdAt.toDate() : new Date(exp.startDate)
+                createdAt: exp.createdAt ? exp.createdAt.toDate() : parseLocalDateToDate(exp.startDate)
             };
             if (exp.quitado) {
                 paid.push(item);
@@ -1235,7 +1148,7 @@
                     <div>
                         <strong>${escapeHtml(exp.descricao)}</strong>
                         ${exp.observacao ? `<br><span style="font-size:0.7rem; opacity:0.8;">📝 ${escapeHtml(exp.observacao)}</span>` : ''}
-                        <br><span class="expense-date">${exp.data ? exp.data.toLocaleDateString('pt-BR') : 'Data?'} - ${exp.categoria || ''}</span>
+                        <br><span class="expense-date">${exp.data ? exp.data.toLocaleDateString('pt-BR', { timeZone: TIMEZONE }) : 'Data?'} - ${exp.categoria || ''}</span>
                     </div>
                     <div>
                         <span class="detail-highlight">${formatMoney(exp.valor)}</span>
@@ -1257,7 +1170,7 @@
                     <div>
                         <strong>${escapeHtml(exp.descricao)} <span style="background:var(--primary-color); color:white; font-size:0.65rem; border-radius:20px; padding:2px 8px; margin-left:6px;">🔄 Recorrente</span></strong>
                         ${exp.observacao ? `<br><span style="font-size:0.7rem; opacity:0.8;">📝 ${escapeHtml(exp.observacao)}</span>` : ''}
-                        <br><span class="expense-date">${exp.data ? exp.data.toLocaleDateString('pt-BR') : 'Data?'} - ${exp.categoria || ''}</span>
+                        <br><span class="expense-date">${exp.data ? exp.data.toLocaleDateString('pt-BR', { timeZone: TIMEZONE }) : 'Data?'} - ${exp.categoria || ''}</span>
                     </div>
                     <div>
                         <span class="detail-highlight">${formatMoney(exp.valor)}</span>
@@ -1279,7 +1192,7 @@
                     <div>
                         <strong>${escapeHtml(exp.descricao)}</strong>
                         ${exp.observacao ? `<br><span style="font-size:0.7rem;">📝 ${escapeHtml(exp.observacao)}</span>` : ''}
-                        <br><span class="expense-date">${exp.data ? exp.data.toLocaleDateString('pt-BR') : 'Data?'} - ${exp.categoria || ''}</span>
+                        <br><span class="expense-date">${exp.data ? exp.data.toLocaleDateString('pt-BR', { timeZone: TIMEZONE }) : 'Data?'} - ${exp.categoria || ''}</span>
                     </div>
                     <div>${formatMoney(exp.valor)}</div>
                 </div>
@@ -1311,6 +1224,160 @@
             e.stopPropagation();
             await deleteExpenseById(btn.dataset.id);
         }));
+    }
+
+    // ==================== FUNÇÃO RENDER DEBTORS AGRUPADA ====================
+    function renderDebtors() {
+        const container = document.getElementById('debtors-list');
+        if (!container) return;
+
+        if (debtors.length === 0) {
+            container.innerHTML = '<div style="text-align:center; padding:16px;">Nenhum devedor cadastrado.</div>';
+            document.getElementById('total-a-receber').innerText = formatMoney(0);
+            document.getElementById('debtors-count').innerHTML = `0 devedor(es)`;
+            return;
+        }
+
+        const groups = new Map();
+        for (const debtor of debtors) {
+            const name = debtor.nome.trim();
+            if (!groups.has(name)) groups.set(name, []);
+            groups.get(name).push(debtor);
+        }
+
+        const totalGeral = debtors.reduce((sum, d) => sum + d.valor, 0);
+        document.getElementById('total-a-receber').innerText = formatMoney(totalGeral);
+        document.getElementById('debtors-count').innerHTML = `${groups.size} devedor(es)`;
+
+        const sortedGroups = Array.from(groups.entries()).sort((a, b) => a[0].localeCompare(b[0]));
+
+        let html = '';
+        for (const [name, debts] of sortedGroups) {
+            const sortedDebts = [...debts].sort((a, b) => new Date(a.data) - new Date(b.data));
+            const totalGroup = debts.reduce((sum, d) => sum + d.valor, 0);
+
+            html += `
+                <div class="debtor-group" data-name="${escapeHtml(name)}">
+                    <div class="debtor-group-header">
+                        <div class="debtor-group-name">${escapeHtml(name)}</div>
+                        <div class="debtor-group-actions">
+                            <span style="font-size:0.8rem;">💰 ${formatMoney(totalGroup)}</span>
+                            <button class="btn-small btn-primary add-debt-to-group" data-name="${escapeHtml(name)}" title="Nova dívida para este devedor"><i class="fas fa-plus"></i> Nova</button>
+                        </div>
+                    </div>
+                    <div class="debtor-entries">
+            `;
+            for (const debt of sortedDebts) {
+                const dateFormatted = debt.data ? parseLocalDateToDate(debt.data).toLocaleDateString('pt-BR', { timeZone: TIMEZONE }) : 'Data não informada';
+                html += `
+                    <div class="debtor-entry" data-id="${debt.id}">
+                        <div class="debtor-entry-info">
+                            <span class="debtor-entry-date"><i class="fas fa-calendar-alt"></i> ${dateFormatted}</span>
+                            <span class="debtor-entry-value">${formatMoney(debt.valor)}</span>
+                        </div>
+                        <div class="debtor-entry-buttons">
+                            <button class="btn-small btn-quitar" data-id="${debt.id}" data-name="${escapeHtml(name)}" data-val="${debt.valor}" title="Receber este valor"><i class="fas fa-hand-holding-usd"></i> Quitar</button>
+                            <button class="btn-small btn-danger delete-debtor-entry" data-id="${debt.id}" data-name="${escapeHtml(name)}" title="Excluir esta dívida"><i class="fas fa-trash-alt"></i> Excluir</button>
+                        </div>
+                    </div>
+                `;
+            }
+            html += `
+                    </div>
+                </div>
+            `;
+        }
+        container.innerHTML = html;
+
+        document.querySelectorAll('.btn-quitar').forEach(btn => {
+            btn.addEventListener('click', async (e) => {
+                e.stopPropagation();
+                const id = btn.dataset.id;
+                const name = btn.dataset.name;
+                const valor = parseFloat(btn.dataset.val);
+                const result = await Swal.fire({
+                    title: 'Receber dívida',
+                    text: `Confirmar recebimento de ${formatMoney(valor)} de ${name}?`,
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonText: 'Sim, receber',
+                    cancelButtonText: 'Cancelar'
+                });
+                if (result.isConfirmed) {
+                    await debtorsRef.doc(id).delete();
+                    Swal.fire('Recebido!', `Dívida de ${formatMoney(valor)} quitada.`, 'success');
+                }
+            });
+        });
+
+        document.querySelectorAll('.delete-debtor-entry').forEach(btn => {
+            btn.addEventListener('click', async (e) => {
+                e.stopPropagation();
+                const id = btn.dataset.id;
+                const name = btn.dataset.name;
+                const result = await Swal.fire({
+                    title: 'Excluir dívida',
+                    text: `Remover esta dívida de ${name} permanentemente?`,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#e91e63',
+                    confirmButtonText: 'Sim, excluir'
+                });
+                if (result.isConfirmed) {
+                    await debtorsRef.doc(id).delete();
+                    Swal.fire('Excluída!', 'Dívida removida.', 'success');
+                }
+            });
+        });
+
+        document.querySelectorAll('.add-debt-to-group').forEach(btn => {
+            btn.addEventListener('click', async (e) => {
+                e.stopPropagation();
+                const debtorName = btn.dataset.name;
+                const { value: form } = await Swal.fire({
+                    title: `Nova dívida para ${debtorName}`,
+                    html: `
+                        <input id="swal-value" type="number" step="0.01" placeholder="Valor (R$)" class="swal2-input" required>
+                        <input id="swal-date" type="date" value="${getCurrentDateRecife()}" class="swal2-input" required>
+                    `,
+                    focusConfirm: false,
+                    preConfirm: () => {
+                        const valor = parseFloat(document.getElementById('swal-value').value);
+                        const data = document.getElementById('swal-date').value;
+                        if (isNaN(valor) || valor <= 0) {
+                            Swal.showValidationMessage('Valor inválido');
+                            return false;
+                        }
+                        if (!data) {
+                            Swal.showValidationMessage('Data inválida');
+                            return false;
+                        }
+                        return { valor, data };
+                    }
+                });
+                if (form) {
+                    await debtorsRef.add({
+                        nome: debtorName,
+                        valor: form.valor,
+                        data: form.data
+                    });
+                    Swal.fire('Adicionado!', `Nova dívida de ${formatMoney(form.valor)} para ${debtorName}.`, 'success');
+                }
+            });
+        });
+    }
+
+    async function addDebtor() {
+        const nome = document.getElementById('new-debtor-name').value.trim();
+        const valor = parseFloat(document.getElementById('new-debtor-value').value);
+        let data = document.getElementById('new-debtor-date').value;
+        if (!nome || isNaN(valor) || valor<=0) { Swal.fire('Erro','Preencha nome e valor válido.','error'); return; }
+        if (!data) data = getCurrentDateRecife();
+        await debtorsRef.add({ nome, valor, data });
+        document.getElementById('new-debtor-name').value = '';
+        document.getElementById('new-debtor-value').value = '';
+        document.getElementById('new-debtor-date').value = '';
+        Swal.fire('Adicionado!','','success');
     }
 
     async function saveIncomes() {
@@ -1382,7 +1449,7 @@
             const data = new Date(selectedYear, selectedMonth + i, 1);
             let totalProj = 0;
             for (const exp of recorrentes) {
-                const start = new Date(exp.startDate);
+                const start = parseLocalDateToDate(exp.startDate);
                 const lastParcela = new Date(start);
                 lastParcela.setMonth(start.getMonth() + (exp.parcelas - 1));
                 if (lastParcela >= data && exp.parcelasPagas < exp.parcelas) {
@@ -1390,7 +1457,7 @@
                     totalProj += partner1 + partner2;
                 }
             }
-            proximosMeses.push({ mes: data.toLocaleDateString('pt-BR', { month: 'short', year: 'numeric' }), total: totalProj });
+            proximosMeses.push({ mes: data.toLocaleDateString('pt-BR', { timeZone: TIMEZONE, month: 'short', year: 'numeric' }), total: totalProj });
         }
         listDiv.innerHTML = `<div style="margin-top: 12px;"><strong>📈 Projeção para os próximos meses (recorrentes):</strong></div>
             ${proximosMeses.map(p => `<div class="recurring-item"><span>${p.mes}</span><span>${formatMoney(p.total)}</span></div>`).join('')}
@@ -1441,13 +1508,13 @@
             return;
         }
         const items = installmentExpenses.map(exp => {
-            const startDate = new Date(exp.startDate);
-            const lastDue = new Date(startDate);
-            lastDue.setMonth(startDate.getMonth() + (exp.parcelas - 1));
-            const lastMonthStr = `${lastDue.getFullYear()}-${String(lastDue.getMonth()+1).padStart(2,'0')}`;
+            const start = parseLocalDateToDate(exp.startDate);
+            const lastDue = new Date(start);
+            lastDue.setMonth(start.getMonth() + (exp.parcelas - 1));
             let lastValue = 0;
             const isPaid = (exp.parcelasPagas || 0) >= exp.parcelas || exp.quitado === true;
             if (!isPaid) {
+                const lastMonthStr = `${lastDue.getFullYear()}-${String(lastDue.getMonth()+1).padStart(2,'0')}`;
                 const expClone = { ...exp, installmentMonths: [lastMonthStr] };
                 const { partner1, partner2 } = calculateMonthlyShare(expClone);
                 lastValue = partner1 + partner2;
@@ -1469,7 +1536,7 @@
             return `<div class="final-installment-item"><div class="final-installment-info">
                         <div><strong>${escapeHtml(item.descricao)}</strong></div>
                         <div class="installment-info">${item.parcelas}x de ${formatMoney(item.valorTotal / item.parcelas)}</div>
-                        <div>📅 Última parcela: <span class="detail-value">${item.dataUltima.toLocaleDateString('pt-BR')}</span></div>
+                        <div>📅 Última parcela: <span class="detail-value">${item.dataUltima.toLocaleDateString('pt-BR', { timeZone: TIMEZONE })}</span></div>
                         <div>💰 Valor da última: <span class="final-installment-value">${formatMoney(item.valorUltima)}</span></div>
                     </div><div class="final-installment-status ${statusClass}">${statusText}</div></div>`;
         }).join('');
@@ -1504,19 +1571,19 @@
         if (sortSelect && sortSelect.value !== 'date_asc') {
             items = sortHistoryItems(items, sortSelect.value);
         }
-        if (items.length === 0) { tbody.innerHTML = '<table><td colspan="7" style="text-align:center">Nenhuma despesa</td></tr>'; return; }
+        if (items.length === 0) { tbody.innerHTML = '<tr><td colspan="7" style="text-align:center">Nenhuma despesa</td></tr>'; return; }
         tbody.innerHTML = items.map(exp => {
             const parcelaValor = exp.valorTotal / exp.parcelas;
             const primeiraParcela = getFirstInstallmentDate(exp);
-            const dataCompra = new Date(exp.startDate);
+            const dataCompra = parseLocalDateToDate(exp.startDate);
             const payerText = getPayerText(exp);
             const statusText = exp.quitado ? '✅ Quitado' : '⏳ Pendente';
             const statusColor = exp.quitado ? 'status-paid' : 'status-pending';
-            const detailsHtml = `<div class="expense-details"><div class="expense-details-row"><i class="fas fa-money-bill-wave"></i><span>Total: <span class="detail-highlight">${formatMoney(exp.valorTotal)}</span></span><span class="installment-info">| ${exp.parcelas}x de ${formatMoney(parcelaValor)}</span></div><div class="expense-details-row"><i class="fas fa-calendar-alt"></i><span>Compra: <span class="detail-value">${dataCompra.toLocaleDateString('pt-BR')}</span></span><span>| 1ª parcela: <span class="detail-value">${primeiraParcela.toLocaleDateString('pt-BR')}</span></span></div><div class="expense-details-row"><i class="fas fa-tag"></i><span>Categoria: <span class="detail-value">${escapeHtml(exp.categoria || 'Geral')}</span></span>${exp.observacao ? `<span><i class="fas fa-comment"></i> ${escapeHtml(exp.observacao)}</span>` : ''}</div></div>`;
+            const detailsHtml = `<div class="expense-details"><div class="expense-details-row"><i class="fas fa-money-bill-wave"></i><span>Total: <span class="detail-highlight">${formatMoney(exp.valorTotal)}</span></span><span class="installment-info">| ${exp.parcelas}x de ${formatMoney(parcelaValor)}</span></div><div class="expense-details-row"><i class="fas fa-calendar-alt"></i><span>Compra: <span class="detail-value">${dataCompra.toLocaleDateString('pt-BR', { timeZone: TIMEZONE })}</span></span><span>| 1ª parcela: <span class="detail-value">${primeiraParcela.toLocaleDateString('pt-BR', { timeZone: TIMEZONE })}</span></span></div><div class="expense-details-row"><i class="fas fa-tag"></i><span>Categoria: <span class="detail-value">${escapeHtml(exp.categoria || 'Geral')}</span></span>${exp.observacao ? `<span><i class="fas fa-comment"></i> ${escapeHtml(exp.observacao)}</span>` : ''}</div></div>`;
             return `<tr data-id="${exp.id}"><td class="checkbox-col" data-label=""><input type="checkbox" class="expense-checkbox" data-id="${exp.id}" ${selectedExpenses.has(exp.id) ? 'checked' : ''} style="width:18px;height:18px;"></td>
                     <td data-label="Descrição / Detalhes"><strong>${escapeHtml(exp.descricao)}</strong>${detailsHtml}</td>
                     <td data-label="Valor parcela atual"><span class="detail-highlight">${formatMoney(exp.valorMes)}</span></td>
-                    <td data-label="Data parcela"><span class="detail-value">${exp.dueDate.toLocaleDateString('pt-BR')}</span></td>
+                    <td data-label="Data parcela"><span class="detail-value">${exp.dueDate.toLocaleDateString('pt-BR', { timeZone: TIMEZONE })}</span></td>
                     <td data-label="Pagador"><i class="fas fa-user"></i> ${escapeHtml(payerText)}</td>
                     <td data-label="Status"><span class="final-installment-status ${statusColor}" style="display:inline-block;">${statusText}</span></td>
                     <td data-label="Ações" class="action-buttons">
@@ -1613,6 +1680,11 @@
         selectedExpenses.clear();
         debouncedUpdateDashboard();
     }
+    async function setMonthYear(year, month) {
+        selectedYear = year; selectedMonth = month;
+        selectedExpenses.clear();
+        debouncedUpdateDashboard();
+    }
     async function quickExpense() {
         const { value: fv } = await Swal.fire({
             title: 'Despesa rápida',
@@ -1622,7 +1694,7 @@
         });
         if (fv && fv.desc && !isNaN(fv.valor)) {
             const startDate = new Date(selectedYear, selectedMonth, 1);
-            const startDateStr = startDate.toISOString().slice(0,10);
+            const startDateStr = `${startDate.getFullYear()}-${String(startDate.getMonth()+1).padStart(2,'0')}-01`;
             const installmentMonths = generateInstallmentMonths(startDateStr, 1, 0);
             await expensesRef.add({
                 descricao: fv.desc, valorTotal: fv.valor, parcelas: 1, parcelasPagas: 0, startDate: startDateStr,
@@ -1643,7 +1715,7 @@
         container.innerHTML = goals.map(goal => {
             const percent = (goal.current / goal.target) * 100;
             const remaining = goal.target - goal.current;
-            const deadlineText = goal.deadline ? `📅 Prazo: ${new Date(goal.deadline).toLocaleDateString('pt-BR')}` : '';
+            const deadlineText = goal.deadline ? `📅 Prazo: ${parseLocalDateToDate(goal.deadline).toLocaleDateString('pt-BR', { timeZone: TIMEZONE })}` : '';
             return `<div class="goal-item"><div><strong>🎯 ${escapeHtml(goal.name)}</strong> <button class="edit-goal btn-small" data-id="${goal.id}">✏️</button> <button class="delete-goal btn-small btn-danger" data-id="${goal.id}">🗑️</button></div><div class="progress-bar"><div class="progress-fill" style="width:${Math.min(percent,100)}%"></div></div><div>${formatMoney(goal.current)} / ${formatMoney(goal.target)}</div><div>${deadlineText} ${remaining>0?`🔹 Faltam ${formatMoney(remaining)}`:'✅ Meta atingida!'}</div></div>`;
         }).join('');
         document.querySelectorAll('.edit-goal').forEach(btn => btn.addEventListener('click', async () => {
@@ -1687,7 +1759,7 @@
         const sorted = [...messages].sort((a,b)=> (a.createdAt?.toDate?.()||0) - (b.createdAt?.toDate?.()||0));
         container.innerHTML = sorted.map(msg => {
             const isOwn = msg.author === currentName;
-            return `<div class="message-item" style="border-left-color: ${isOwn?'var(--primary-color)':'#4caf50'}"><div><strong>${escapeHtml(msg.author)}</strong> <small>${msg.createdAt?.toDate().toLocaleString('pt-BR')||''}</small></div><div>${escapeHtml(msg.content)}</div>${isOwn?`<div><button class="btn-small delete-message" data-id="${msg.id}">🗑️</button></div>`:''}</div>`;
+            return `<div class="message-item" style="border-left-color: ${isOwn?'var(--primary-color)':'#4caf50'}"><div><strong>${escapeHtml(msg.author)}</strong> <small>${msg.createdAt?.toDate().toLocaleString('pt-BR', { timeZone: TIMEZONE })||''}</small></div><div>${escapeHtml(msg.content)}</div>${isOwn?`<div><button class="btn-small delete-message" data-id="${msg.id}">🗑️</button></div>`:''}</div>`;
         }).join('');
         document.querySelectorAll('.delete-message').forEach(btn => btn.addEventListener('click', async () => { if(await Swal.fire({title:'Confirmar',text:'Excluir mensagem?',icon:'warning',showCancelButton:true}).then(r=>r.isConfirmed)) await messagesRef.doc(btn.dataset.id).delete(); }));
         container.scrollTop = container.scrollHeight;
@@ -1715,7 +1787,7 @@
             3: `➕ Adicione despesas parceladas ou com divisão personalizada.`,
             4: `📋 Histórico mostra todas as despesas (pendentes e quitadas).`,
             5: `⚙️ Configure rendas, orçamentos, categorias, cor do tema e exporte PDF.`,
-            6: `💰 Gerencie devedores. Agora com agrupamento por pessoa.`,
+            6: `💰 Devedores agrupados por nome. Adicione novas dívidas diretamente ao grupo.`,
             7: `💬 Mural compartilhado.`,
             8: `🎯 Metas de economia do casal.`,
             9: `📅 Acompanhe quando cada compra parcelada será totalmente quitada.`,
@@ -1777,7 +1849,7 @@
             const htmlContent = `
                 <div style="font-family: 'Inter', sans-serif; padding: 20px;">
                     <h1 style="color: var(--primary-color, #e91e63);">CASH CASAL - Relatório Mensal</h1>
-                    <h2>${new Date(selectedYear, selectedMonth).toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' })}</h2>
+                    <h2>${new Date(selectedYear, selectedMonth).toLocaleDateString('pt-BR', { timeZone: TIMEZONE, month: 'long', year: 'numeric' })}</h2>
                     <hr>
                     <h3>Resumo de Gastos Pendentes</h3>
                     <p><strong>${partner1Name}:</strong> ${formatMoney(totalP1)}</p>
@@ -1791,10 +1863,10 @@
                         const due = getInstallmentDateForMonth(exp, targetMonth);
                         if (!due) return '';
                         const { partner1, partner2 } = calculateMonthlyShare(exp);
-                        return `<tr><td style="border:1px solid #ddd; padding:8px;">${exp.descricao}</td><td style="border:1px solid #ddd; padding:8px;">${formatMoney(partner1+partner2)}</td><td style="border:1px solid #ddd; padding:8px;">${exp.categoria||'Geral'}</td><td style="border:1px solid #ddd; padding:8px;">${due.toLocaleDateString('pt-BR')}</td></tr>`;
+                        return `<tr><td style="border:1px solid #ddd; padding:8px;">${exp.descricao}</td><td style="border:1px solid #ddd; padding:8px;">${formatMoney(partner1+partner2)}</td><td style="border:1px solid #ddd; padding:8px;">${exp.categoria||'Geral'}</td><td style="border:1px solid #ddd; padding:8px;">${due.toLocaleDateString('pt-BR', { timeZone: TIMEZONE })}</td></tr>`;
                     }).join('')}</tbody>
                     </table>
-                    <hr><p><small>Relatório gerado em ${new Date().toLocaleString('pt-BR')} pelo aplicativo CASH CASAL.</small></p>
+                    <hr><p><small>Relatório gerado em ${new Date().toLocaleString('pt-BR', { timeZone: TIMEZONE })} pelo aplicativo CASH CASAL.</small></p>
                 </div>
             `;
             const tempDiv = document.createElement('div');
@@ -1843,7 +1915,7 @@
         for (let i = 0; i < 12; i++) {
             const option = document.createElement('option');
             option.value = i;
-            option.text = new Date(2000, i, 1).toLocaleString('pt-BR', { month: 'long' });
+            option.text = new Date(2000, i, 1).toLocaleString('pt-BR', { timeZone: TIMEZONE, month: 'long' });
             monthSelect.appendChild(option);
         }
         const currentYear = new Date().getFullYear();
@@ -1935,8 +2007,7 @@
             const future = [];
             pendingExpenses.forEach(exp => {
                 for (let i = exp.parcelasPagas||0; i < exp.parcelas; i++) {
-                    const due = new Date(exp.startDate);
-                    due.setMonth(due.getMonth()+i);
+                    const due = parseLocalDateToDate(addMonthsToDateStr(exp.startDate, i));
                     if (due > today && due <= threeMonths) {
                         const { partner1, partner2 } = calculateMonthlyShare(exp);
                         future.push({ desc: exp.descricao, date: due, value: partner1+partner2 });
@@ -1945,7 +2016,7 @@
             });
             future.sort((a,b)=>a.date-b.date).slice(0,6).forEach(p => {
                 const li = document.createElement('li'); li.style.background = 'rgba(233,30,99,0.1)'; li.style.padding = '6px 10px'; li.style.borderRadius = '30px'; li.style.fontSize = '0.75rem';
-                li.textContent = `📌 ${p.desc} - ${formatMoney(p.value)} (${p.date.toLocaleDateString()})`;
+                li.textContent = `📌 ${p.desc} - ${formatMoney(p.value)} (${p.date.toLocaleDateString('pt-BR', { timeZone: TIMEZONE })})`;
                 upcomingContainer.appendChild(li);
             });
             if(future.length===0) upcomingContainer.innerHTML = '<li style="background:transparent">Nenhuma parcela futura</li>';
@@ -1961,7 +2032,7 @@
 
     function updatePartnerPages() {
         const targetMonth = `${selectedYear}-${String(selectedMonth+1).padStart(2,'0')}`;
-        const format = (ym) => { const [y,m]=ym.split('-'); return new Date(parseInt(y), parseInt(m)-1,1).toLocaleDateString('pt-BR',{month:'long',year:'numeric'}); };
+        const format = (ym) => { const [y,m]=ym.split('-'); return new Date(parseInt(y), parseInt(m)-1,1).toLocaleDateString('pt-BR', { timeZone: TIMEZONE, month: 'long', year: 'numeric' }); };
         document.getElementById('global-month-display').innerText = format(targetMonth);
     }
 
@@ -2065,7 +2136,7 @@
         for (let y = selectedYear-2; y <= selectedYear+2; y++) anos.push(y);
         Swal.fire({
             title: 'Selecionar mês/ano',
-            html: `<select id="swal-month" class="swal2-select">${Array(12).fill().map((_,i)=>`<option value="${i}" ${i===selectedMonth?'selected':''}>${new Date(0,i).toLocaleString('pt-BR',{month:'long'})}</option>`).join('')}</select><select id="swal-year" class="swal2-select">${anos.map(y=>`<option value="${y}" ${y===selectedYear?'selected':''}>${y}</option>`).join('')}</select>`,
+            html: `<select id="swal-month" class="swal2-select">${Array(12).fill().map((_,i)=>`<option value="${i}" ${i===selectedMonth?'selected':''}>${new Date(0,i).toLocaleString('pt-BR', { timeZone: TIMEZONE, month: 'long' })}</option>`).join('')}</select><select id="swal-year" class="swal2-select">${anos.map(y=>`<option value="${y}" ${y===selectedYear?'selected':''}>${y}</option>`).join('')}</select>`,
             preConfirm: () => {
                 const month = parseInt(document.getElementById('swal-month').value);
                 const year = parseInt(document.getElementById('swal-year').value);
@@ -2129,6 +2200,7 @@
     document.getElementById('save-limit1-btn').addEventListener('click', () => { const val = parseFloat(document.getElementById('limit1').value); if (!isNaN(val) && val >= 0) saveLimit('partner1', val); else Swal.fire('Erro', 'Valor inválido', 'error'); });
     document.getElementById('save-limit2-btn').addEventListener('click', () => { const val = parseFloat(document.getElementById('limit2').value); if (!isNaN(val) && val >= 0) saveLimit('partner2', val); else Swal.fire('Erro', 'Valor inválido', 'error'); });
     document.getElementById('update-closing-btn').addEventListener('click', updateClosingSummary);
+    // Botão adicionar categoria (corrigido)
     document.getElementById('add-category-btn')?.addEventListener('click', async () => {
         const newCat = document.getElementById('new-category-name').value.trim();
         if (!newCat) {
