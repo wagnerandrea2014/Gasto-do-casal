@@ -676,6 +676,41 @@
             width: 100%;
             margin-top: 8px;
         }
+
+        /* Estilo do alerta de limite de gastos */
+        .limit-alert-global {
+            background: rgba(233,30,99,0.9);
+            border-radius: 20px;
+            padding: 12px 16px;
+            margin-bottom: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            border: 1px solid #ffb74d;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+        .limit-alert-global .alert-text {
+            flex: 2;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        .limit-alert-global .alert-text i {
+            margin-right: 8px;
+        }
+        .limit-alert-global button {
+            background: white;
+            color: var(--primary-color);
+            border: none;
+            font-weight: bold;
+            box-shadow: none;
+            padding: 6px 16px;
+            font-size: 0.8rem;
+        }
+        .limit-alert-global button:active {
+            transform: scale(0.96);
+        }
     </style>
 </head>
 <body>
@@ -731,6 +766,7 @@
         <!-- Página 0: Dashboard -->
         <div class="swipe-page" data-page="0">
             <div id="monthly-closure-alert-container"></div>
+            <div id="global-limit-alert-container"></div> <!-- Container para alerta de limite global -->
             <div class="card">
                 <div class="card-title"><i class="fas fa-chart-line"></i> Resumo do Mês <span style="font-size:0.7rem;">(gastos normais pendentes)</span></div>
                 <div class="dashboard-row">
@@ -756,6 +792,7 @@
         </div>
         <!-- Página 1: Gastos Parceiro 1 -->
         <div class="swipe-page" data-page="1" id="page-partner1">
+            <div id="limit-alert-partner1" class="limit-alert-container"></div>
             <div class="card"><div class="card-title"><i class="fas fa-clock"></i> Gastos pendentes de <span id="partner1-name-label"></span></div><div id="partner1-expenses-list"></div></div>
             <div class="card"><div class="card-title"><i class="fas fa-check-circle"></i> Gastos quitados de <span id="partner1-paid-label"></span></div><div id="partner1-paid-list"></div></div>
             <div class="card"><div class="card-title"><i class="fas fa-bullseye"></i> Meta individual de <span id="goal-individual-name1"></span></div><input type="number" id="goal1-target" placeholder="Alvo R$"><input type="number" id="goal1-current" placeholder="Atual R$"><button id="save-goal1-btn" class="btn btn-primary">Salvar meta</button><div class="progress-bar"><div class="progress-fill" id="goal1-progress-fill"></div></div><div id="goal1-progress-text" style="text-align:center;">0%</div></div>
@@ -763,6 +800,7 @@
         </div>
         <!-- Página 2: Gastos Parceiro 2 -->
         <div class="swipe-page" data-page="2" id="page-partner2">
+            <div id="limit-alert-partner2" class="limit-alert-container"></div>
             <div class="card"><div class="card-title"><i class="fas fa-clock"></i> Gastos pendentes de <span id="partner2-name-label"></span></div><div id="partner2-expenses-list"></div></div>
             <div class="card"><div class="card-title"><i class="fas fa-check-circle"></i> Gastos quitados de <span id="partner2-paid-label"></span></div><div id="partner2-paid-list"></div></div>
             <div class="card"><div class="card-title"><i class="fas fa-bullseye"></i> Meta individual de <span id="goal-individual-name2"></span></div><input type="number" id="goal2-target" placeholder="Alvo R$"><input type="number" id="goal2-current" placeholder="Atual R$"><button id="save-goal2-btn" class="btn btn-primary">Salvar meta</button><div class="progress-bar"><div class="progress-fill" id="goal2-progress-fill"></div></div><div id="goal2-progress-text" style="text-align:center;">0%</div></div>
@@ -1156,8 +1194,8 @@
     let lastBackupTimestamp = 0;
     let backupCheckInterval = null;
     
-    // Contador de notificações não lidas
-    let unreadCount = 0;
+    // Controle de alertas de limite dispensados (por parceiro e por sessão)
+    let dismissedLimits = { partner1: false, partner2: false };
     
     const formatMoney = (val) => val.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
     const escapeHtml = (str) => str?.replace(/[&<>]/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[m])) || '';
@@ -1247,6 +1285,121 @@
         snapshot.forEach(doc => batch.update(doc.ref, { read: true }));
         await batch.commit();
         updateBellBadge();
+    }
+    
+    // ==================== ALERTA DE LIMITE DE GASTOS ====================
+    function checkLimitOverrun(partnerKey) {
+        const targetMonth = `${selectedYear}-${String(selectedMonth+1).padStart(2,'0')}`;
+        let total = 0;
+        allExpenses.forEach(exp => {
+            if (exp.quitado) return;
+            if (exp.installmentMonths && exp.installmentMonths.includes(targetMonth)) {
+                const { partner1, partner2 } = calculateMonthlyShare(exp);
+                total += partnerKey === 'partner1' ? partner1 : partner2;
+            }
+        });
+        const limit = limits[partnerKey] || 0;
+        return { overrun: limit > 0 && total >= limit, total, limit };
+    }
+    
+    // Verificar se a fatura do mês anterior foi paga (para saber se o alerta deve sumir)
+    async function isPreviousMonthInvoicePaid() {
+        const hoje = parseLocalDateToDate(getCurrentDateRecife());
+        let mesAnterior = hoje.getMonth() - 1;
+        let anoAnterior = hoje.getFullYear();
+        if (mesAnterior < 0) {
+            mesAnterior = 11;
+            anoAnterior--;
+        }
+        const monthKey = `${anoAnterior}-${String(mesAnterior+1).padStart(2,'0')}`;
+        const doc = await invoicesRef.doc(monthKey).get();
+        return doc.exists;
+    }
+    
+    // Verificar se já virou o ciclo (dia >= 2 do mês atual)
+    function isCycleChanged() {
+        const hoje = parseLocalDateToDate(getCurrentDateRecife());
+        return hoje.getDate() >= 2;
+    }
+    
+    // Função principal que decide se o alerta deve ser exibido
+    async function shouldShowLimitAlert(partnerKey) {
+        if (dismissedLimits[partnerKey]) return false;
+        const { overrun } = checkLimitOverrun(partnerKey);
+        if (!overrun) return false;
+        // Se já pagou a fatura do mês anterior, o alerta não deve mais aparecer (condição de persistência)
+        const invoicePaid = await isPreviousMonthInvoicePaid();
+        if (invoicePaid) return false;
+        // Se já virou o ciclo (dia 2 em diante), o alerta também não é mais necessário
+        if (isCycleChanged()) return false;
+        return true;
+    }
+    
+    async function renderLimitAlerts() {
+        // Para o parceiro logado, exibir no topo da página 0 (Dashboard)
+        const currentPartner = currentPartnerId;
+        const shouldShow = await shouldShowLimitAlert(currentPartner);
+        const globalContainer = document.getElementById('global-limit-alert-container');
+        if (globalContainer && shouldShow) {
+            const { total, limit } = checkLimitOverrun(currentPartner);
+            globalContainer.innerHTML = `
+                <div class="limit-alert-global">
+                    <div class="alert-text">
+                        <i class="fas fa-exclamation-triangle"></i> 
+                        <strong>${currentPartner === 'partner1' ? partner1Name : partner2Name}</strong> atingiu o limite de gastos mensal! 
+                        Total: ${formatMoney(total)} / Limite: ${formatMoney(limit)}
+                    </div>
+                    <button id="dismiss-limit-global">OK</button>
+                </div>
+            `;
+            const btn = document.getElementById('dismiss-limit-global');
+            if (btn) {
+                btn.addEventListener('click', () => {
+                    dismissedLimits[currentPartner] = true;
+                    globalContainer.innerHTML = '';
+                    // Também esconde o alerta na página do parceiro se estiver visível
+                    const partnerAlertContainer = document.getElementById(`limit-alert-${currentPartner}`);
+                    if (partnerAlertContainer) partnerAlertContainer.innerHTML = '';
+                });
+            }
+        } else if (globalContainer) {
+            globalContainer.innerHTML = '';
+        }
+        
+        // Para a página específica de cada parceiro (páginas 1 e 2)
+        for (const pk of ['partner1', 'partner2']) {
+            const should = await shouldShowLimitAlert(pk);
+            const container = document.getElementById(`limit-alert-${pk}`);
+            if (container) {
+                if (should) {
+                    const { total, limit } = checkLimitOverrun(pk);
+                    container.innerHTML = `
+                        <div class="limit-alert-global">
+                            <div class="alert-text">
+                                <i class="fas fa-exclamation-triangle"></i> 
+                                <strong>${pk === 'partner1' ? partner1Name : partner2Name}</strong> atingiu o limite de gastos mensal! 
+                                Total: ${formatMoney(total)} / Limite: ${formatMoney(limit)}
+                            </div>
+                            <button id="dismiss-limit-${pk}">OK</button>
+                        </div>
+                    `;
+                    const btn = document.getElementById(`dismiss-limit-${pk}`);
+                    if (btn) {
+                        btn.addEventListener('click', () => {
+                            dismissedLimits[pk] = true;
+                            container.innerHTML = '';
+                            // Se for o parceiro logado, também remove do global
+                            if (pk === currentPartner) {
+                                const globalCont = document.getElementById('global-limit-alert-container');
+                                if (globalCont) globalCont.innerHTML = '';
+                            }
+                        });
+                    }
+                } else {
+                    container.innerHTML = '';
+                }
+            }
+        }
     }
     
     // ==================== FUNÇÕES EXISTENTES (resumidas) ====================
@@ -1553,6 +1706,8 @@
         checkLimitsAndAlert();
         await addNotification('limit_changed', `definiu limite de ${partner === 'partner1' ? partner1Name : partner2Name} para ${formatMoney(value)}`);
         Swal.fire('Limite salvo!', `Novo limite: ${formatMoney(value)}`, 'success');
+        // Re-renderizar alertas de limite
+        renderLimitAlerts();
     }
     function checkLimitsAndAlert() {
         const targetMonth = `${selectedYear}-${String(selectedMonth+1).padStart(2,'0')}`;
@@ -1565,6 +1720,8 @@
         const alert2 = document.getElementById('limit-alert2');
         if (alert1) alert1.style.display = (limits.partner1 > 0 && totalP1 >= limits.partner1) ? 'flex' : 'none';
         if (alert2) alert2.style.display = (limits.partner2 > 0 && totalP2 >= limits.partner2) ? 'flex' : 'none';
+        // Atualizar alertas visuais de limite
+        renderLimitAlerts();
     }
     
     // Função de notificação de parcelas próximas foi removida
@@ -1666,7 +1823,6 @@
         document.getElementById('gasto-partner2-label').innerHTML = `👩 Gasto de ${partner2Name}`;
         document.getElementById('recurring-partner1-label').innerHTML = `🧑 Gasto recorrente de ${partner1Name}`;
         document.getElementById('recurring-partner2-label').innerHTML = `👩 Gasto recorrente de ${partner2Name}`;
-        // Atualiza avatar e nome no header
         const avatar = document.getElementById('userAvatar');
         const userNameSpan = document.getElementById('user-name-display');
         if (avatar) avatar.innerText = currentPartnerId === 'partner1' ? partner1Name.substring(0,2).toUpperCase() : partner2Name.substring(0,2).toUpperCase();
@@ -1825,6 +1981,8 @@
             month: mes
         });
         await addNotification('invoice_paid', `pagou a fatura de ${new Date(ano, mes, 1).toLocaleDateString('pt-BR', { month: 'long', year: 'numeric', timeZone: TIMEZONE })} (${formatMoney(total)})`);
+        // Após pagar fatura, re-verificar alertas de limite (devem sumir)
+        renderLimitAlerts();
     }
     
     function calcularTotalPendenteMes(ano, mes) {
@@ -2517,11 +2675,14 @@
         if (nm < 0) { nm = 11; ny--; } else if (nm > 11) { nm = 0; ny++; }
         selectedMonth = nm; selectedYear = ny;
         selectedExpenses.clear();
+        // Resetar alertas dispensados ao mudar de mês
+        dismissedLimits = { partner1: false, partner2: false };
         debouncedUpdateDashboard();
     }
     async function setMonthYear(year, month) {
         selectedYear = year; selectedMonth = month;
         selectedExpenses.clear();
+        dismissedLimits = { partner1: false, partner2: false };
         debouncedUpdateDashboard();
     }
     async function quickExpense() {
@@ -2883,12 +3044,12 @@
         updateClosingSummary();
         await updateMonthlyClosureAlert();
         await renderInvoices();
+        await renderLimitAlerts(); // atualiza alertas de limite
         if (firstLoad) { showLoading(false); firstLoad = false; }
     }
     
     function updatePartnerPages() {
         const targetMonth = `${selectedYear}-${String(selectedMonth+1).padStart(2,'0')}`;
-        // Atualiza o display do mês no cabeçalho (sem ano)
         const date = new Date(selectedYear, selectedMonth, 1);
         const monthName = date.toLocaleDateString('pt-BR', { month: 'long', timeZone: TIMEZONE });
         document.getElementById('global-month-display').innerText = monthName;
@@ -2906,9 +3067,9 @@
         goalsRef.onSnapshot(s => { goals = s.docs.map(d=> ({ id: d.id, ...d.data() })); renderGoals(); });
         individualGoalsRef.onSnapshot(s => { s.forEach(d=>{ if(d.id==='partner1') individualGoal1 = d.data(); if(d.id==='partner2') individualGoal2 = d.data(); }); updateIndividualGoalUI(); });
         categoriesRef.onSnapshot(() => loadCategories());
-        limitsRef.onSnapshot(d => { if(d.exists) { limits = d.data(); document.getElementById('limit1').value = limits.partner1 || 0; document.getElementById('limit2').value = limits.partner2 || 0; checkLimitsAndAlert(); } });
+        limitsRef.onSnapshot(d => { if(d.exists) { limits = d.data(); document.getElementById('limit1').value = limits.partner1 || 0; document.getElementById('limit2').value = limits.partner2 || 0; checkLimitsAndAlert(); renderLimitAlerts(); } });
         themeRef.onSnapshot(d => { if(d.exists && d.data().primaryColor) applyPrimaryColor(d.data().primaryColor); });
-        invoicesRef.onSnapshot(() => renderInvoices());
+        invoicesRef.onSnapshot(() => { renderInvoices(); renderLimitAlerts(); });
         notificationsRef.onSnapshot(() => updateBellBadge());
     }
     
@@ -3025,6 +3186,7 @@
                 selectedMonth = res.value.month;
                 selectedYear = res.value.year;
                 selectedExpenses.clear();
+                dismissedLimits = { partner1: false, partner2: false };
                 debouncedUpdateDashboard();
             }
         });
@@ -3040,7 +3202,6 @@
         formDirty = false;
         document.getElementById('start-date').value = getLocalDateString();
     });
-    // Removidos eventos das setas de navegação
     document.getElementById('calendar-btn').addEventListener('click', openCalendarPicker);
     document.getElementById('set-meta-btn').addEventListener('click', async () => { let v = parseFloat(document.getElementById('meta-valor').value); if(isNaN(v)||v<=0) v=500; await setSavingsGoal(v); await addNotification('savings_goal', `definiu meta de economia para ${formatMoney(v)}`); });
     document.getElementById('add-debtor-btn').addEventListener('click', addDebtor);
