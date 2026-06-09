@@ -18,7 +18,7 @@
         :root { --primary-color: #e91e63; --primary-gradient: linear-gradient(135deg, var(--primary-color), #c2185b); --primary-light: #ff6b9d; --primary-dark: #c2185b; }
         body { font-family: 'Inter', sans-serif; background: #000000; color: #ffffff; transition: background 0.2s, color 0.2s; overflow-x: hidden; font-size: 16px; padding-bottom: 70px; }
         body.light-theme { background: #ffe4e8; color: #1a1a1a; }
-        button, .btn, .btn-small, input, select, textarea, .profile-btn, .month-nav button, .concierge-avatar, .theme-icon { touch-action: manipulation; }
+        button, .btn, .btn-small, input, select, textarea, .profile-btn, .month-nav button, .concierge-avatar, .theme-icon, .bell-icon { touch-action: manipulation; }
 
         /* ========== ESTILOS GLOBAIS DE BOTÕES ========== */
         button, .btn, .btn-small {
@@ -252,6 +252,8 @@
         .month-nav button { width: 32px; height: 32px; background: var(--primary-color); border: none; border-radius: 50%; color: white; cursor: pointer; font-weight: bold; font-size: 1rem; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
         .month-nav span { font-size: 0.85rem; font-weight: 500; }
         .theme-icon { background: none; border: none; font-size: 1.3rem; color: var(--primary-color); cursor: pointer; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 50%; transition: 0.2s; }
+        .bell-icon { background: none; border: none; font-size: 1.3rem; color: var(--primary-color); cursor: pointer; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 50%; transition: 0.2s; position: relative; }
+        .bell-icon .badge { position: absolute; top: 0; right: 0; background: #f44336; color: white; font-size: 0.6rem; border-radius: 50%; width: 16px; height: 16px; display: flex; align-items: center; justify-content: center; font-weight: bold; }
         .header-actions { display: flex; align-items: center; gap: 8px; }
         .calendar-btn { background: none; border: none; font-size: 1.2rem; color: var(--primary-color); cursor: pointer; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 50%; }
         .swipe-container { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth; width: 100%; flex: 1; -webkit-overflow-scrolling: touch; scrollbar-width: none; will-change: transform; transform: translateZ(0); }
@@ -475,6 +477,79 @@
             font-size: 0.7rem;
             font-weight: 600;
         }
+
+        /* Modal de notificações */
+        .notifications-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(5px);
+        }
+        .notifications-modal .modal-content {
+            background: #1a1a1a;
+            border-radius: 28px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 80%;
+            overflow-y: auto;
+            border: 1px solid var(--primary-color);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.5);
+        }
+        body.light-theme .notifications-modal .modal-content {
+            background: #ffffff;
+            color: #1a1a1a;
+        }
+        .notifications-modal .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px;
+            border-bottom: 1px solid var(--primary-color);
+            position: sticky;
+            top: 0;
+            background: inherit;
+            border-radius: 28px 28px 0 0;
+        }
+        .notifications-modal .modal-header h3 {
+            margin: 0;
+            color: var(--primary-color);
+        }
+        .notifications-modal .modal-header button {
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+            color: var(--primary-color);
+        }
+        .notifications-modal .modal-body {
+            padding: 16px;
+        }
+        .notification-item {
+            background: rgba(233,30,99,0.08);
+            border-radius: 16px;
+            padding: 12px;
+            margin-bottom: 12px;
+            border-left: 3px solid var(--primary-color);
+        }
+        .notification-time {
+            font-size: 0.7rem;
+            opacity: 0.7;
+            margin-bottom: 4px;
+        }
+        .notification-text {
+            font-size: 0.85rem;
+        }
+        .clear-notifications-btn {
+            width: 100%;
+            margin-top: 8px;
+        }
     </style>
 </head>
 <body>
@@ -511,6 +586,7 @@
             <button id="calendar-btn" class="calendar-btn" title="Selecionar mês/ano"><i class="fas fa-calendar-alt"></i></button>
         </div>
         <div class="header-actions">
+            <button id="bell-icon" class="bell-icon" title="Notificações"><i class="fas fa-bell"></i><span id="bell-badge" class="badge" style="display: none;">0</span></button>
             <button id="theme-icon-header" class="theme-icon"><i class="fas fa-moon"></i></button>
             <div class="profile-btn" id="logoutBtn"><div id="userAvatar" class="profile-avatar">P</div><i class="fas fa-sign-out-alt"></i></div>
         </div>
@@ -602,6 +678,32 @@
             <div class="card"><div class="card-title"><i class="fas fa-file-pdf"></i> Relatório mensal</div><button id="export-pdf-btn" class="btn btn-primary" style="width:100%;">📄 Exportar relatório em PDF</button></div>
             <div class="card"><div class="card-title"><i class="fas fa-palette"></i> Personalizar tema</div><div class="form-row"><div class="input-group"><label>Cor principal</label><input type="color" id="primary-color-picker" value="#e91e63"></div><div class="input-group"><label>Visualização</label><div class="color-preview" id="color-preview" style="background-color:#e91e63;"></div></div></div><button id="reset-color-btn" class="btn btn-secondary" style="width:100%; margin-top:8px;">🔄 Restaurar cor padrão (rosa)</button></div>
             <div class="card"><div class="card-title"><i class="fas fa-trash-alt"></i> Limpar dados recorrentes</div><button id="clear-recurring-btn" class="btn btn-danger" style="width:100%;"><i class="fas fa-sync-alt"></i> Remover todas as despesas recorrentes</button></div>
+            <!-- Backup Automático -->
+            <div class="card">
+                <div class="card-title"><i class="fas fa-cloud-upload-alt"></i> Backup Automático</div>
+                <div class="form-row">
+                    <div class="input-group" style="flex: 1;">
+                        <label><i class="fas fa-power-off"></i> Ativar backup automático</label>
+                        <div style="display: flex; align-items: center; gap: 8px; margin-top: 4px;">
+                            <input type="checkbox" id="auto-backup-toggle" style="width: auto; min-height: unset; transform: scale(1.2); margin-right: 8px;">
+                            <span id="auto-backup-status" style="font-size:0.8rem;">Desativado</span>
+                        </div>
+                    </div>
+                    <div class="input-group" style="flex: 1;">
+                        <label><i class="fas fa-calendar-alt"></i> Intervalo</label>
+                        <select id="backup-interval">
+                            <option value="daily">Diário</option>
+                            <option value="weekly">Semanal</option>
+                            <option value="monthly">Mensal</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="info-message" style="margin: 8px 0;">
+                    <i class="fas fa-info-circle"></i> Último backup: <span id="last-backup-date">Nunca</span>
+                </div>
+                <button id="force-backup-btn" class="btn btn-secondary" style="width:100%; margin-top: 8px;">💾 Forçar backup agora</button>
+                <button id="save-backup-settings" class="btn btn-primary" style="width:100%; margin-top: 8px;">Salvar configurações</button>
+            </div>
         </div>
         <!-- Página 6: Devedores (AGRUPADO) -->
         <div class="swipe-page" data-page="6">
@@ -673,6 +775,19 @@
     <button class="nav-btn" data-page="11"><i class="fas fa-receipt"></i><span>Faturas</span></button>
 </div>
 
+<!-- Modal de Notificações -->
+<div id="notifications-modal" class="notifications-modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3><i class="fas fa-bell"></i> Atividades Recentes</h3>
+            <button id="close-notifications-btn"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="modal-body" id="notifications-list">
+            <div style="text-align:center; padding:16px;">Carregando...</div>
+        </div>
+    </div>
+</div>
+
 <div class="concierge-container"><div class="concierge-bubble" id="conciergeBubble" style="display: none;"><span id="conciergeMessage"></span></div><div class="concierge-avatar" id="conciergeAvatar"><i class="fas fa-robot"></i></div></div>
 
 <script>
@@ -704,6 +819,7 @@
     const limitsRef = db.collection(`shared/${COUPLE_ID}/settings`).doc("limits");
     const themeRef = db.collection(`shared/${COUPLE_ID}/settings`).doc("theme");
     const invoicesRef = db.collection(`shared/${COUPLE_ID}/invoices`);
+    const notificationsRef = db.collection(`shared/${COUPLE_ID}/notifications`);
 
     // ==================== ANIMAÇÃO DE MOEDAS CAINDO ====================
     const canvas = document.getElementById('coins-canvas');
@@ -811,6 +927,11 @@
         return `${year}-${month}-${day}`;
     }
     
+    function getCurrentDateTimeRecife() {
+        const now = new Date();
+        return now.toLocaleString('pt-BR', { timeZone: TIMEZONE });
+    }
+    
     function parseLocalDateToDate(dateStr) {
         const [year, month, day] = dateStr.split('-').map(Number);
         return new Date(year, month - 1, day);
@@ -888,15 +1009,113 @@
     let selectedExpenses = new Set();
     let categoryChart = null, compareChart = null, evolutionChart = null;
     let conciergeTimeout = null;
-    let ultimoMesNotificacao = { mes: -1, ano: -1 };
     let formDirty = false;
     let updateTimeout = null;
     let firstLoad = true;
     let lastChartData = { evolutionHash: "", categoryHash: "", compareHash: "" };
     
+    // Configurações de backup automático
+    let autoBackupEnabled = false;
+    let backupInterval = "weekly";
+    let lastBackupTimestamp = 0;
+    let backupCheckInterval = null;
+    
+    // Contador de notificações não lidas (simplificado)
+    let unreadCount = 0;
+    
     const formatMoney = (val) => val.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
     const escapeHtml = (str) => str?.replace(/[&<>]/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[m])) || '';
     
+    // ==================== FUNÇÃO DE NOTIFICAÇÃO ====================
+    async function addNotification(action, description, partner = null) {
+        const now = new Date();
+        const formattedDate = now.toLocaleDateString('pt-BR', { timeZone: TIMEZONE });
+        const formattedTime = now.toLocaleTimeString('pt-BR', { timeZone: TIMEZONE });
+        const partnerName = partner ? (partner === 'partner1' ? partner1Name : partner2Name) : (currentPartnerId === 'partner1' ? partner1Name : partner2Name);
+        const notification = {
+            action: action,
+            description: description,
+            partner: partnerName,
+            date: formattedDate,
+            time: formattedTime,
+            timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+            read: false
+        };
+        try {
+            await notificationsRef.add(notification);
+        } catch(e) { console.error("Erro ao salvar notificação:", e); }
+    }
+    
+    // ==================== MODAL DE NOTIFICAÇÕES ====================
+    async function loadNotifications() {
+        const container = document.getElementById('notifications-list');
+        if (!container) return;
+        try {
+            const snapshot = await notificationsRef.orderBy('timestamp', 'desc').limit(50).get();
+            if (snapshot.empty) {
+                container.innerHTML = '<div style="text-align:center; padding:16px;">Nenhuma atividade registrada.</div>';
+                return;
+            }
+            let html = '';
+            snapshot.forEach(doc => {
+                const data = doc.data();
+                html += `
+                    <div class="notification-item">
+                        <div class="notification-time"><i class="fas fa-clock"></i> ${data.date} ${data.time}</div>
+                        <div class="notification-text">
+                            <strong>${escapeHtml(data.partner)}</strong> ${escapeHtml(data.description)}
+                        </div>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+            // Adicionar botão limpar
+            const clearBtn = document.createElement('button');
+            clearBtn.className = 'btn btn-danger clear-notifications-btn';
+            clearBtn.innerHTML = '<i class="fas fa-trash-alt"></i> Limpar todas as notificações';
+            clearBtn.onclick = async () => {
+                const result = await Swal.fire({ title: 'Confirmar', text: 'Remover todas as notificações?', icon: 'warning', showCancelButton: true });
+                if (result.isConfirmed) {
+                    const batch = db.batch();
+                    const all = await notificationsRef.get();
+                    all.forEach(d => batch.delete(d.ref));
+                    await batch.commit();
+                    loadNotifications();
+                    updateBellBadge();
+                    Swal.fire('Notificações removidas!', '', 'success');
+                }
+            };
+            container.appendChild(clearBtn);
+        } catch(e) {
+            console.error(e);
+            container.innerHTML = '<div class="info-message" style="text-align:center;">Erro ao carregar notificações.</div>';
+        }
+    }
+    
+    async function updateBellBadge() {
+        const snapshot = await notificationsRef.where('read', '==', false).get();
+        const count = snapshot.size;
+        const badge = document.getElementById('bell-badge');
+        if (badge) {
+            if (count > 0) {
+                badge.style.display = 'flex';
+                badge.innerText = count > 9 ? '9+' : count;
+            } else {
+                badge.style.display = 'none';
+            }
+        }
+    }
+    
+    // Marcar todas como lidas ao abrir modal (opcional)
+    async function markAllAsRead() {
+        const snapshot = await notificationsRef.where('read', '==', false).get();
+        const batch = db.batch();
+        snapshot.forEach(doc => batch.update(doc.ref, { read: true }));
+        await batch.commit();
+        updateBellBadge();
+    }
+    
+    // ==================== FUNÇÕES EXISTENTES (resumidas) ====================
     function goToPage(pageIndex) {
         const container = document.getElementById('swipeContainer');
         if (container) {
@@ -947,6 +1166,7 @@
             });
             if (result.isConfirmed) {
                 await expensesRef.doc(id).update({ quitado: true });
+                await addNotification('expense_paid', `quitou a despesa "${expenseData.descricao}" (R$ ${expenseData.valorTotal.toFixed(2)})`);
                 Swal.fire('Quitada!', 'Despesa marcada como paga e movida para o painel de quitadas.', 'success');
                 debouncedUpdateDashboard();
             }
@@ -1028,6 +1248,7 @@
             }
             if (!confirm) return;
             await expensesRef.doc(id).delete();
+            await addNotification('expense_deleted', `excluiu a despesa "${expenseData.descricao}"`);
             if (deleteTemplate && expenseData.recurringTemplateId) {
                 const templateId = expenseData.recurringTemplateId;
                 await recurringRef.doc(templateId).delete();
@@ -1086,8 +1307,10 @@
         if (!editingDocId) expenseData.createdAt = firebase.firestore.FieldValue.serverTimestamp();
         if (editingDocId) {
             await expensesRef.doc(editingDocId).update(expenseData);
+            await addNotification('expense_updated', `editou a despesa "${descricao}"`);
         } else {
             const newRef = await expensesRef.add(expenseData);
+            await addNotification('expense_added', `adicionou a despesa "${descricao}" (R$ ${valorTotal.toFixed(2)})`);
             if (isRecurring && parcelasPagas === 0) {
                 const templateData = { ...expenseData, templateFor: newRef.id };
                 const templateRef = await recurringRef.add(templateData);
@@ -1170,6 +1393,7 @@
             templatesSnapshot.forEach(doc => batch.delete(doc.ref));
             controlSnapshot.forEach(doc => batch.delete(doc.ref));
             await batch.commit();
+            await addNotification('recurring_cleared', 'removeu todas as despesas recorrentes');
             Swal.fire('Removido!', 'Todas as despesas recorrentes, templates e controles foram excluídos.', 'success');
             debouncedUpdateDashboard();
         } catch (error) {
@@ -1193,6 +1417,7 @@
         else limits.partner2 = value;
         await limitsRef.set(limits);
         checkLimitsAndAlert();
+        await addNotification('limit_changed', `definiu limite de ${partner === 'partner1' ? partner1Name : partner2Name} para ${formatMoney(value)}`);
         Swal.fire('Limite salvo!', `Novo limite: ${formatMoney(value)}`, 'success');
     }
     function checkLimitsAndAlert() {
@@ -1208,32 +1433,7 @@
         if (alert2) alert2.style.display = (limits.partner2 > 0 && totalP2 >= limits.partner2) ? 'flex' : 'none';
     }
     
-    function verificarNotificacaoParcelasProximas() {
-        const targetMonth = `${selectedYear}-${String(selectedMonth+1).padStart(2,'0')}`;
-        const monthExpenses = allExpenses.filter(exp => exp.installmentMonths?.includes(targetMonth) && !exp.quitado);
-        const hojeRecifeStr = getCurrentDateRecife();
-        const hojeRecife = parseLocalDateToDate(hojeRecifeStr);
-        const tresDias = new Date(hojeRecife);
-        tresDias.setDate(hojeRecife.getDate() + 3);
-        const proximas = [];
-        monthExpenses.forEach(exp => {
-            for (let i = exp.parcelasPagas || 0; i < exp.parcelas; i++) {
-                const dueDateStr = addMonthsToDateStr(exp.startDate, i);
-                const dueDate = parseLocalDateToDate(dueDateStr);
-                if (dueDate >= hojeRecife && dueDate <= tresDias) {
-                    const { partner1, partner2 } = calculateMonthlyShare(exp);
-                    proximas.push({ desc: exp.descricao, valor: partner1+partner2, data: dueDate });
-                }
-            }
-        });
-        if (proximas.length > 0 && (ultimoMesNotificacao.mes !== selectedMonth || ultimoMesNotificacao.ano !== selectedYear)) {
-            ultimoMesNotificacao = { mes: selectedMonth, ano: selectedYear };
-            let msg = `📅 Você tem ${proximas.length} parcela(s) vencendo nos próximos 3 dias:\n\n`;
-            proximas.slice(0,3).forEach(p => msg += `• ${p.desc}: ${formatMoney(p.valor)} (${p.data.toLocaleDateString('pt-BR', { timeZone: TIMEZONE })})\n`);
-            if (proximas.length > 3) msg += `\n...e mais ${proximas.length-3} parcela(s).`;
-            Swal.fire({ title: '⚠️ Parcelas próximas do vencimento', text: msg, icon: 'warning', confirmButtonColor: '#e91e63', confirmButtonText: 'Ok' });
-        }
-    }
+    // Removida função de notificação de parcelas próximas (verificarNotificacaoParcelasProximas)
     
     async function loadCategories() {
         const snapshot = await categoriesRef.get();
@@ -1263,11 +1463,16 @@
         container.innerHTML = categoriesList.map(cat => `<div class="category-item"><span>${escapeHtml(cat.name)}</span><div><button class="edit-category btn-small" data-id="${cat.id}" data-name="${escapeHtml(cat.name)}">✏️</button><button class="delete-category btn-small btn-danger" data-id="${cat.id}">🗑️</button></div></div>`).join('');
         document.querySelectorAll('.edit-category').forEach(btn => btn.addEventListener('click', async () => {
             const { value: newName } = await Swal.fire({ title: 'Editar categoria', input: 'text', inputValue: btn.dataset.name, showCancelButton: true });
-            if (newName && newName.trim()) await categoriesRef.doc(btn.dataset.id).update({ name: newName.trim() });
+            if (newName && newName.trim()) {
+                await categoriesRef.doc(btn.dataset.id).update({ name: newName.trim() });
+                await addNotification('category_edited', `editou a categoria "${btn.dataset.name}" para "${newName.trim()}"`);
+            }
         }));
         document.querySelectorAll('.delete-category').forEach(btn => btn.addEventListener('click', async () => {
-            if (await Swal.fire({ title: 'Confirmar', text: 'Remover esta categoria?', icon: 'warning', showCancelButton: true }).then(r=>r.isConfirmed))
+            if (await Swal.fire({ title: 'Confirmar', text: 'Remover esta categoria?', icon: 'warning', showCancelButton: true }).then(r=>r.isConfirmed)) {
                 await categoriesRef.doc(btn.dataset.id).delete();
+                await addNotification('category_deleted', `removeu a categoria "${btn.dataset.name}"`);
+            }
         }));
     }
     
@@ -1293,11 +1498,13 @@
     async function savePrimaryColor(color) {
         await themeRef.set({ primaryColor: color }, { merge: true });
         applyPrimaryColor(color);
+        await addNotification('theme_color_changed', `alterou a cor principal para ${color}`);
         Swal.fire('Cor atualizada!', 'A nova cor foi salva e sincronizada.', 'success');
     }
     async function resetPrimaryColor() {
         await themeRef.set({ primaryColor: '#e91e63' }, { merge: true });
         applyPrimaryColor('#e91e63');
+        await addNotification('theme_color_reset', 'restaurou a cor padrão (rosa)');
         Swal.fire('Cor restaurada!', 'A cor padrão (rosa) foi restaurada.', 'success');
     }
     
@@ -1343,7 +1550,125 @@
         if(filterPayer && filterPayer.options.length>=2) { filterPayer.options[1].text = partner1Name; filterPayer.options[2].text = partner2Name; }
     }
     
-    // ==================== ALERTA DE FECHAMENTO MENSAL ====================
+    // ==================== BACKUP AUTOMÁTICO ====================
+    async function performAutoBackup(showNotification = true) {
+        if (!autoBackupEnabled) return false;
+        try {
+            const collections = ['expenses', 'budgets', 'recurring', 'recurring_control', 'debtors', 'messages', 'goals', 'individualGoals', 'categories', 'invoices'];
+            const settingsDocs = ['savingsGoal', 'names', 'incomes', 'limits', 'theme'];
+            const data = {};
+            for (const col of collections) {
+                const snap = await db.collection(`shared/${COUPLE_ID}/${col}`).get();
+                data[col] = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+            }
+            for (const docId of settingsDocs) {
+                const doc = await db.collection(`shared/${COUPLE_ID}/settings`).doc(docId).get();
+                if(doc.exists) data[docId] = { id: doc.id, ...doc.data() };
+            }
+            const backupStr = JSON.stringify(data, null, 2);
+            localStorage.setItem('cashcasal_auto_backup', backupStr);
+            const now = Date.now();
+            localStorage.setItem('cashcasal_last_backup', now.toString());
+            lastBackupTimestamp = now;
+            updateBackupUI();
+            if (showNotification) {
+                await addNotification('auto_backup', 'realizou backup automático dos dados');
+                Swal.fire('Backup automático', 'Os dados foram salvos com sucesso no armazenamento local.', 'success');
+            }
+            return true;
+        } catch (err) {
+            console.error('Erro no backup automático:', err);
+            if (showNotification) Swal.fire('Erro', 'Não foi possível realizar o backup automático.', 'error');
+            return false;
+        }
+    }
+    
+    function loadBackupSettings() {
+        const enabled = localStorage.getItem('cashcasal_auto_backup_enabled') === 'true';
+        const interval = localStorage.getItem('cashcasal_backup_interval') || 'weekly';
+        const lastBackup = parseInt(localStorage.getItem('cashcasal_last_backup') || '0');
+        autoBackupEnabled = enabled;
+        backupInterval = interval;
+        lastBackupTimestamp = lastBackup;
+        
+        const toggle = document.getElementById('auto-backup-toggle');
+        const intervalSelect = document.getElementById('backup-interval');
+        if (toggle) toggle.checked = enabled;
+        if (intervalSelect) intervalSelect.value = interval;
+        updateBackupUI();
+        if (autoBackupEnabled) startBackupScheduler();
+    }
+    
+    function saveBackupSettings() {
+        const toggle = document.getElementById('auto-backup-toggle');
+        const intervalSelect = document.getElementById('backup-interval');
+        autoBackupEnabled = toggle.checked;
+        backupInterval = intervalSelect.value;
+        localStorage.setItem('cashcasal_auto_backup_enabled', autoBackupEnabled);
+        localStorage.setItem('cashcasal_backup_interval', backupInterval);
+        if (autoBackupEnabled) {
+            startBackupScheduler();
+            checkAndRunBackup(true);
+        } else {
+            if (backupCheckInterval) clearInterval(backupCheckInterval);
+            backupCheckInterval = null;
+        }
+        updateBackupUI();
+        addNotification('backup_settings', `${autoBackupEnabled ? 'ativou' : 'desativou'} o backup automático (intervalo: ${backupInterval})`);
+        Swal.fire('Configurações salvas', `Backup automático ${autoBackupEnabled ? 'ativado' : 'desativado'}.`, 'success');
+    }
+    
+    function updateBackupUI() {
+        const statusSpan = document.getElementById('auto-backup-status');
+        const lastDateSpan = document.getElementById('last-backup-date');
+        if (statusSpan) {
+            statusSpan.innerText = autoBackupEnabled ? 'Ativado' : 'Desativado';
+            statusSpan.style.color = autoBackupEnabled ? '#4caf50' : '#f44336';
+        }
+        if (lastDateSpan) {
+            if (lastBackupTimestamp > 0) {
+                const date = new Date(lastBackupTimestamp);
+                lastDateSpan.innerText = date.toLocaleDateString('pt-BR', { timeZone: TIMEZONE }) + ' ' + date.toLocaleTimeString('pt-BR', { timeZone: TIMEZONE });
+            } else {
+                lastDateSpan.innerText = 'Nunca';
+            }
+        }
+    }
+    
+    function getIntervalMs() {
+        switch(backupInterval) {
+            case 'daily': return 24 * 60 * 60 * 1000;
+            case 'weekly': return 7 * 24 * 60 * 60 * 1000;
+            case 'monthly': return 30 * 24 * 60 * 60 * 1000;
+            default: return 7 * 24 * 60 * 60 * 1000;
+        }
+    }
+    
+    async function checkAndRunBackup(showNotification = false) {
+        if (!autoBackupEnabled) return;
+        const now = Date.now();
+        const intervalMs = getIntervalMs();
+        if (now - lastBackupTimestamp >= intervalMs) {
+            await performAutoBackup(showNotification);
+        }
+    }
+    
+    function startBackupScheduler() {
+        if (backupCheckInterval) clearInterval(backupCheckInterval);
+        backupCheckInterval = setInterval(() => {
+            checkAndRunBackup(false);
+        }, 60 * 60 * 1000);
+    }
+    
+    async function forceBackup() {
+        if (!autoBackupEnabled) {
+            Swal.fire('Aviso', 'Ative o backup automático nas configurações primeiro.', 'warning');
+            return;
+        }
+        await performAutoBackup(true);
+    }
+    
+    // ==================== ALERTA DE FECHAMENTO MENSAL E FATURAS ====================
     async function invoiceExists(monthKey) {
         const doc = await invoicesRef.doc(monthKey).get();
         return doc.exists;
@@ -1352,7 +1677,7 @@
     async function saveInvoice(monthKey, total, ano, mes) {
         const docRef = invoicesRef.doc(monthKey);
         const existing = await docRef.get();
-        if (existing.exists) return; // já salvo
+        if (existing.exists) return;
         await docRef.set({
             monthKey,
             total,
@@ -1361,6 +1686,7 @@
             year: ano,
             month: mes
         });
+        await addNotification('invoice_paid', `pagou a fatura de ${new Date(ano, mes, 1).toLocaleDateString('pt-BR', { month: 'long', year: 'numeric', timeZone: TIMEZONE })} (${formatMoney(total)})`);
     }
     
     function calcularTotalPendenteMes(ano, mes) {
@@ -1431,12 +1757,11 @@
                 await saveInvoice(monthKey, total, ano, mes);
                 Swal.fire('Pagamento confirmado!', `A fatura de ${nomeMes}/${ano} foi registrada como paga.`, 'success');
                 updateMonthlyClosureAlert();
-                renderInvoices(); // atualiza lista de faturas
+                renderInvoices();
             });
         }
     }
     
-    // ==================== PÁGINA DE FATURAS ====================
     async function renderInvoices() {
         const container = document.getElementById('invoices-list');
         if (!container) return;
@@ -1676,6 +2001,7 @@
                 });
                 if (result.isConfirmed) {
                     await debtorsRef.doc(id).delete();
+                    await addNotification('debt_received', `recebeu dívida de ${formatMoney(valor)} de ${name}`);
                     Swal.fire('Recebido!', `Dívida de ${formatMoney(valor)} quitada.`, 'success');
                 }
             });
@@ -1696,6 +2022,7 @@
                 });
                 if (result.isConfirmed) {
                     await debtorsRef.doc(id).delete();
+                    await addNotification('debt_deleted', `removeu dívida de ${name}`);
                     Swal.fire('Excluída!', 'Dívida removida.', 'success');
                 }
             });
@@ -1732,6 +2059,7 @@
                         valor: form.valor,
                         data: form.data
                     });
+                    await addNotification('debt_added', `adicionou dívida de ${formatMoney(form.valor)} para ${debtorName}`);
                     Swal.fire('Adicionado!', `Nova dívida de ${formatMoney(form.valor)} para ${debtorName}.`, 'success');
                 }
             });
@@ -1745,6 +2073,7 @@
         if (!nome || isNaN(valor) || valor<=0) { Swal.fire('Erro','Preencha nome e valor válido.','error'); return; }
         if (!data) data = getCurrentDateRecife();
         await debtorsRef.add({ nome, valor, data });
+        await addNotification('debt_added', `adicionou dívida de ${formatMoney(valor)} para ${nome}`);
         document.getElementById('new-debtor-name').value = '';
         document.getElementById('new-debtor-value').value = '';
         document.getElementById('new-debtor-date').value = '';
@@ -1757,6 +2086,7 @@
         incomes.partner1 = i1; incomes.partner2 = i2;
         const total = i1+i2, p1 = total>0?(i1/total*100).toFixed(1):50, p2 = total>0?(i2/total*100).toFixed(1):50;
         document.getElementById('income-summary').innerHTML = `${partner1Name}: ${formatMoney(i1)} (${p1}%)<br>${partner2Name}: ${formatMoney(i2)} (${p2}%)`;
+        await addNotification('income_updated', `atualizou as rendas: ${partner1Name}=${formatMoney(i1)}, ${partner2Name}=${formatMoney(i2)}`);
         Swal.fire('Rendas salvas!','','success');
         debouncedUpdateDashboard();
     }
@@ -1942,7 +2272,7 @@
         if (sortSelect && sortSelect.value !== 'date_asc') {
             items = sortHistoryItems(items, sortSelect.value);
         }
-        if (items.length === 0) { tbody.innerHTML = '<tr><td colspan="7" style="text-align:center">Nenhuma despesa</td></td>'; return; }
+        if (items.length === 0) { tbody.innerHTML = '<tr><td colspan="7" style="text-align:center">Nenhuma despesa</td></tr>'; return; }
         tbody.innerHTML = items.map(exp => {
             const parcelaValor = exp.valorTotal / exp.parcelas;
             const primeiraParcela = getFirstInstallmentDate(exp);
@@ -1961,9 +2291,8 @@
                         ${!exp.quitado ? `<button class="btn-small btn-quitar" data-id="${exp.id}" title="Quitar"><i class="fas fa-check-circle"></i></button>` : ''}
                         <button class="edit-expense btn-small" data-id="${exp.id}" title="Editar"><i class="fas fa-edit"></i></button>
                         <button class="delete-expense btn-small btn-danger" data-id="${exp.id}" title="Excluir"><i class="fas fa-trash-alt"></i></button>
-                    </div>
                     </td>
-                </tr>`;
+                   </tr>`;
         }).join('');
         document.querySelectorAll('.expense-checkbox').forEach(cb => cb.addEventListener('change', (e) => { if(e.target.checked) selectedExpenses.add(e.target.dataset.id); else selectedExpenses.delete(e.target.dataset.id); updateSelectionBar(); updateHeaderCheckbox(); }));
         document.querySelectorAll('.btn-quitar').forEach(btn => btn.addEventListener('click', async (e) => { e.stopPropagation(); await quitarDespesa(btn.dataset.id); }));
@@ -2075,6 +2404,7 @@
                 createdAt: firebase.firestore.FieldValue.serverTimestamp(),
                 updatedAt: firebase.firestore.FieldValue.serverTimestamp()
             });
+            await addNotification('quick_expense', `adicionou despesa rápida "${fv.desc}" (R$ ${fv.valor.toFixed(2)})`);
             Swal.fire('Adicionada!', '', 'success');
             debouncedUpdateDashboard();
         }
@@ -2093,9 +2423,16 @@
         document.querySelectorAll('.edit-goal').forEach(btn => btn.addEventListener('click', async () => {
             const goal = goals.find(g=>g.id===btn.dataset.id);
             const { value: form } = await Swal.fire({ title: 'Editar meta', html: `<input id="goal-current" type="number" value="${goal.current}" class="swal2-input"><input id="goal-deadline" type="date" value="${goal.deadline||''}" class="swal2-input">`, preConfirm: () => ({ current: parseFloat(document.getElementById('goal-current').value)||0, deadline: document.getElementById('goal-deadline').value }) });
-            if (form) await goalsRef.doc(goal.id).update({ current: form.current, deadline: form.deadline });
+            if (form) {
+                await goalsRef.doc(goal.id).update({ current: form.current, deadline: form.deadline });
+                await addNotification('goal_updated', `editou a meta "${goal.name}"`);
+            }
         }));
-        document.querySelectorAll('.delete-goal').forEach(btn => btn.addEventListener('click', async () => { if(await Swal.fire({title:'Confirmar',text:'Excluir meta?',icon:'warning',showCancelButton:true}).then(r=>r.isConfirmed)) await goalsRef.doc(btn.dataset.id).delete(); }));
+        document.querySelectorAll('.delete-goal').forEach(btn => btn.addEventListener('click', async () => { if(await Swal.fire({title:'Confirmar',text:'Excluir meta?',icon:'warning',showCancelButton:true}).then(r=>r.isConfirmed)) {
+            const goal = goals.find(g=>g.id===btn.dataset.id);
+            await goalsRef.doc(btn.dataset.id).delete();
+            await addNotification('goal_deleted', `removeu a meta "${goal.name}"`);
+        } }));
     }
     async function addGoal() {
         const name = document.getElementById('new-goal-name').value.trim();
@@ -2104,6 +2441,7 @@
         const deadline = document.getElementById('new-goal-deadline').value;
         if (!name || isNaN(target) || target<=0) { Swal.fire('Erro','Preencha nome e alvo.','error'); return; }
         await goalsRef.add({ name, target, current, deadline, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+        await addNotification('goal_added', `criou a meta "${name}" (R$ ${target.toFixed(2)})`);
         document.getElementById('new-goal-name').value = ''; document.getElementById('new-goal-target').value = ''; document.getElementById('new-goal-current').value = '0'; document.getElementById('new-goal-deadline').value = '';
         Swal.fire('Meta criada!','','success');
     }
@@ -2121,6 +2459,7 @@
         const target = parseFloat(document.getElementById(partner==='partner1'?'goal1-target':'goal2-target').value)||0;
         const current = parseFloat(document.getElementById(partner==='partner1'?'goal1-current':'goal2-current').value)||0;
         await individualGoalsRef.doc(partner).set({ target, current });
+        await addNotification('individual_goal_updated', `atualizou meta individual de ${partner === 'partner1' ? partner1Name : partner2Name}`);
         Swal.fire('Meta salva!', '', 'success');
     }
     function renderMessages() {
@@ -2141,6 +2480,7 @@
         if (!content) return;
         const author = currentPartnerId === 'partner1' ? partner1Name : partner2Name;
         await messagesRef.add({ author, content, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+        await addNotification('message_sent', `enviou uma mensagem no mural: "${content.substring(0, 50)}${content.length > 50 ? '...' : ''}"`);
         document.getElementById('message-input').value = '';
     }
     async function clearMural() {
@@ -2148,6 +2488,7 @@
             const batch = db.batch();
             (await messagesRef.get()).forEach(doc => batch.delete(doc.ref));
             await batch.commit();
+            await addNotification('mural_cleared', `limpou todas as mensagens do mural`);
             Swal.fire('Mural limpo!','','success');
         }
     }
@@ -2158,7 +2499,7 @@
             2: `📊 Gastos pendentes e quitados de ${partner2Name}.`,
             3: `➕ Adicione despesas parceladas ou com divisão personalizada.`,
             4: `📋 Histórico mostra todas as despesas (pendentes e quitadas).`,
-            5: `⚙️ Configure rendas, orçamentos, categorias, cor do tema e exporte PDF.`,
+            5: `⚙️ Configure rendas, orçamentos, categorias, cor do tema, backup automático e exporte PDF.`,
             6: `💰 Devedores agrupados por nome. Adicione novas dívidas diretamente ao grupo.`,
             7: `💬 Mural compartilhado.`,
             8: `🎯 Metas de economia do casal.`,
@@ -2172,7 +2513,7 @@
     function updateConciergeForPage(page) { showConciergeMessage(getConciergeMessage(page), 5000); }
     
     async function exportAllData() {
-        const collections = ['expenses', 'budgets', 'recurring', 'recurring_control', 'debtors', 'messages', 'goals', 'individualGoals', 'categories', 'invoices'];
+        const collections = ['expenses', 'budgets', 'recurring', 'recurring_control', 'debtors', 'messages', 'goals', 'individualGoals', 'categories', 'invoices', 'notifications'];
         const settingsDocs = ['savingsGoal', 'names', 'incomes', 'limits', 'theme'];
         const data = {};
         for (const col of collections) {
@@ -2185,6 +2526,7 @@
         }
         const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
         const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `cashcasal_backup_${new Date().toISOString().slice(0,19)}.json`; a.click();
+        await addNotification('export_backup', `exportou backup manual (JSON)`);
     }
     async function importAllData(file) {
         const reader = new FileReader();
@@ -2203,6 +2545,7 @@
                 }
             }
             await batch.commit();
+            await addNotification('import_backup', `restaurou dados a partir de backup JSON`);
             Swal.fire('Restauração concluída!', 'O app será recarregado.', 'success');
             setTimeout(() => location.reload(), 2000);
         };
@@ -2257,6 +2600,7 @@
             doc.addImage(imgData, 'PNG', 10, 10, 190, 0);
             doc.save(`relatorio_${selectedYear}_${selectedMonth+1}.pdf`);
             document.body.removeChild(tempDiv);
+            await addNotification('export_pdf', `exportou relatório mensal em PDF`);
             Swal.fire('PDF gerado!', 'O relatório foi salvo com sucesso.', 'success');
         } catch(e) {
             Swal.fire('Erro', 'Não foi possível gerar o PDF. Tente novamente.', 'error');
@@ -2398,10 +2742,9 @@
         await renderPartnerExpensesWithPaid('partner1', 'partner1-expenses-list', 'partner1-paid-list', targetMonth);
         await renderPartnerExpensesWithPaid('partner2', 'partner2-expenses-list', 'partner2-paid-list', targetMonth);
         updatePartnerPages();
-        verificarNotificacaoParcelasProximas();
         updateClosingSummary();
         await updateMonthlyClosureAlert();
-        await renderInvoices(); // atualiza faturas quando os dados mudam
+        await renderInvoices();
         if (firstLoad) { showLoading(false); firstLoad = false; }
     }
     
@@ -2426,6 +2769,7 @@
         limitsRef.onSnapshot(d => { if(d.exists) { limits = d.data(); document.getElementById('limit1').value = limits.partner1 || 0; document.getElementById('limit2').value = limits.partner2 || 0; checkLimitsAndAlert(); } });
         themeRef.onSnapshot(d => { if(d.exists && d.data().primaryColor) applyPrimaryColor(d.data().primaryColor); });
         invoicesRef.onSnapshot(() => renderInvoices());
+        notificationsRef.onSnapshot(() => updateBellBadge());
     }
     
     function setupSwipe() {
@@ -2480,6 +2824,22 @@
                 goToPage(page);
             });
         });
+        loadBackupSettings();
+        document.getElementById('save-backup-settings')?.addEventListener('click', saveBackupSettings);
+        document.getElementById('force-backup-btn')?.addEventListener('click', forceBackup);
+        // Notificações
+        document.getElementById('bell-icon')?.addEventListener('click', async () => {
+            await loadNotifications();
+            await markAllAsRead();
+            document.getElementById('notifications-modal').style.display = 'flex';
+        });
+        document.getElementById('close-notifications-btn')?.addEventListener('click', () => {
+            document.getElementById('notifications-modal').style.display = 'none';
+        });
+        window.onclick = function(event) {
+            const modal = document.getElementById('notifications-modal');
+            if (event.target === modal) modal.style.display = 'none';
+        };
         showLoading(false);
         firstLoad = false;
     }
@@ -2507,6 +2867,7 @@
         const isLight = document.body.classList.contains('light-theme');
         localStorage.setItem('lightTheme', isLight ? 'enabled' : 'disabled');
         document.getElementById('theme-icon-header').innerHTML = isLight ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
+        addNotification('theme_changed', `alterou o tema para ${isLight ? 'claro' : 'escuro'}`);
     }
     function openCalendarPicker() {
         const anos = [];
@@ -2542,7 +2903,7 @@
     document.getElementById('global-prev-month').addEventListener('click', () => changeMonth(-1));
     document.getElementById('global-next-month').addEventListener('click', () => changeMonth(1));
     document.getElementById('calendar-btn').addEventListener('click', openCalendarPicker);
-    document.getElementById('set-meta-btn').addEventListener('click', async () => { let v = parseFloat(document.getElementById('meta-valor').value); if(isNaN(v)||v<=0) v=500; await setSavingsGoal(v); });
+    document.getElementById('set-meta-btn').addEventListener('click', async () => { let v = parseFloat(document.getElementById('meta-valor').value); if(isNaN(v)||v<=0) v=500; await setSavingsGoal(v); await addNotification('savings_goal', `definiu meta de economia para ${formatMoney(v)}`); });
     document.getElementById('add-debtor-btn').addEventListener('click', addDebtor);
     document.getElementById('save-income-btn').addEventListener('click', saveIncomes);
     document.getElementById('add-goal-btn').addEventListener('click', addGoal);
@@ -2553,7 +2914,7 @@
     document.getElementById('export-all-btn').addEventListener('click', exportAllData);
     document.getElementById('import-all-btn').addEventListener('click', () => document.getElementById('import-file').click());
     document.getElementById('import-file').addEventListener('change', (e) => { if(e.target.files[0]) importAllData(e.target.files[0]); });
-    document.getElementById('add-budget-btn').addEventListener('click', async () => { const cat = document.getElementById('new-budget-cat').value.trim(); const lim = parseFloat(document.getElementById('new-budget-value').value); if(cat && !isNaN(lim)) await budgetsRef.doc(cat).set({ limit: lim }); });
+    document.getElementById('add-budget-btn').addEventListener('click', async () => { const cat = document.getElementById('new-budget-cat').value.trim(); const lim = parseFloat(document.getElementById('new-budget-value').value); if(cat && !isNaN(lim)) { await budgetsRef.doc(cat).set({ limit: lim }); await addNotification('budget_set', `definiu orçamento para ${cat}: ${formatMoney(lim)}`); } });
     document.getElementById('quick-expense-btn').addEventListener('click', quickExpense);
     document.getElementById('theme-icon-header').addEventListener('click', toggleTheme);
     document.getElementById('clear-filters').addEventListener('click', () => { document.getElementById('filter-desc').value = ''; document.getElementById('filter-category').value = ''; document.getElementById('filter-payer').value = ''; applyFilters(); });
@@ -2579,15 +2940,10 @@
     document.getElementById('update-closing-btn').addEventListener('click', updateClosingSummary);
     document.getElementById('add-category-btn')?.addEventListener('click', async () => {
         const newCat = document.getElementById('new-category-name').value.trim();
-        if (!newCat) {
-            Swal.fire('Aviso', 'Digite o nome da categoria.', 'warning');
-            return;
-        }
-        if (categoriesList.some(c => c.name.toLowerCase() === newCat.toLowerCase())) {
-            Swal.fire('Aviso', 'Essa categoria já existe.', 'warning');
-            return;
-        }
+        if (!newCat) { Swal.fire('Aviso', 'Digite o nome da categoria.', 'warning'); return; }
+        if (categoriesList.some(c => c.name.toLowerCase() === newCat.toLowerCase())) { Swal.fire('Aviso', 'Essa categoria já existe.', 'warning'); return; }
         await categoriesRef.add({ name: newCat });
+        await addNotification('category_added', `adicionou a categoria "${newCat}"`);
         document.getElementById('new-category-name').value = '';
         Swal.fire('Categoria adicionada!', '', 'success');
     });
