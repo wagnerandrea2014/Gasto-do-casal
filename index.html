@@ -679,7 +679,7 @@
 
         /* Estilo do alerta de limite de gastos */
         .limit-alert-global {
-            background: rgba(233,30,99,0.9);
+            background: rgba(233,30,63,0.9);
             border-radius: 20px;
             padding: 12px 16px;
             margin-bottom: 16px;
@@ -1302,41 +1302,13 @@
         return { overrun: limit > 0 && total >= limit, total, limit };
     }
     
-    // Verificar se a fatura do mês anterior foi paga (para saber se o alerta deve sumir)
-    async function isPreviousMonthInvoicePaid() {
-        const hoje = parseLocalDateToDate(getCurrentDateRecife());
-        let mesAnterior = hoje.getMonth() - 1;
-        let anoAnterior = hoje.getFullYear();
-        if (mesAnterior < 0) {
-            mesAnterior = 11;
-            anoAnterior--;
-        }
-        const monthKey = `${anoAnterior}-${String(mesAnterior+1).padStart(2,'0')}`;
-        const doc = await invoicesRef.doc(monthKey).get();
-        return doc.exists;
-    }
-    
-    // Verificar se já virou o ciclo (dia >= 2 do mês atual)
-    function isCycleChanged() {
-        const hoje = parseLocalDateToDate(getCurrentDateRecife());
-        return hoje.getDate() >= 2;
-    }
-    
-    // Função principal que decide se o alerta deve ser exibido
     async function shouldShowLimitAlert(partnerKey) {
         if (dismissedLimits[partnerKey]) return false;
         const { overrun } = checkLimitOverrun(partnerKey);
-        if (!overrun) return false;
-        // Se já pagou a fatura do mês anterior, o alerta não deve mais aparecer (condição de persistência)
-        const invoicePaid = await isPreviousMonthInvoicePaid();
-        if (invoicePaid) return false;
-        // Se já virou o ciclo (dia 2 em diante), o alerta também não é mais necessário
-        if (isCycleChanged()) return false;
-        return true;
+        return overrun;
     }
     
     async function renderLimitAlerts() {
-        // Para o parceiro logado, exibir no topo da página 0 (Dashboard)
         const currentPartner = currentPartnerId;
         const shouldShow = await shouldShowLimitAlert(currentPartner);
         const globalContainer = document.getElementById('global-limit-alert-container');
@@ -1357,7 +1329,6 @@
                 btn.addEventListener('click', () => {
                     dismissedLimits[currentPartner] = true;
                     globalContainer.innerHTML = '';
-                    // Também esconde o alerta na página do parceiro se estiver visível
                     const partnerAlertContainer = document.getElementById(`limit-alert-${currentPartner}`);
                     if (partnerAlertContainer) partnerAlertContainer.innerHTML = '';
                 });
@@ -1366,7 +1337,6 @@
             globalContainer.innerHTML = '';
         }
         
-        // Para a página específica de cada parceiro (páginas 1 e 2)
         for (const pk of ['partner1', 'partner2']) {
             const should = await shouldShowLimitAlert(pk);
             const container = document.getElementById(`limit-alert-${pk}`);
@@ -1388,7 +1358,6 @@
                         btn.addEventListener('click', () => {
                             dismissedLimits[pk] = true;
                             container.innerHTML = '';
-                            // Se for o parceiro logado, também remove do global
                             if (pk === currentPartner) {
                                 const globalCont = document.getElementById('global-limit-alert-container');
                                 if (globalCont) globalCont.innerHTML = '';
@@ -1706,7 +1675,6 @@
         checkLimitsAndAlert();
         await addNotification('limit_changed', `definiu limite de ${partner === 'partner1' ? partner1Name : partner2Name} para ${formatMoney(value)}`);
         Swal.fire('Limite salvo!', `Novo limite: ${formatMoney(value)}`, 'success');
-        // Re-renderizar alertas de limite
         renderLimitAlerts();
     }
     function checkLimitsAndAlert() {
@@ -1720,7 +1688,6 @@
         const alert2 = document.getElementById('limit-alert2');
         if (alert1) alert1.style.display = (limits.partner1 > 0 && totalP1 >= limits.partner1) ? 'flex' : 'none';
         if (alert2) alert2.style.display = (limits.partner2 > 0 && totalP2 >= limits.partner2) ? 'flex' : 'none';
-        // Atualizar alertas visuais de limite
         renderLimitAlerts();
     }
     
@@ -1981,7 +1948,6 @@
             month: mes
         });
         await addNotification('invoice_paid', `pagou a fatura de ${new Date(ano, mes, 1).toLocaleDateString('pt-BR', { month: 'long', year: 'numeric', timeZone: TIMEZONE })} (${formatMoney(total)})`);
-        // Após pagar fatura, re-verificar alertas de limite (devem sumir)
         renderLimitAlerts();
     }
     
@@ -2568,7 +2534,7 @@
         if (sortSelect && sortSelect.value !== 'date_asc') {
             items = sortHistoryItems(items, sortSelect.value);
         }
-        if (items.length === 0) { tbody.innerHTML = '<tr><td colspan="7" style="text-align:center">Nenhuma despesa</td></tr>'; return; }
+        if (items.length === 0) { tbody.innerHTML = '<tr><td colspan="7" style="text-align:center">Nenhuma despesa</tr>'; return; }
         tbody.innerHTML = items.map(exp => {
             const parcelaValor = exp.valorTotal / exp.parcelas;
             const primeiraParcela = getFirstInstallmentDate(exp);
@@ -2675,7 +2641,6 @@
         if (nm < 0) { nm = 11; ny--; } else if (nm > 11) { nm = 0; ny++; }
         selectedMonth = nm; selectedYear = ny;
         selectedExpenses.clear();
-        // Resetar alertas dispensados ao mudar de mês
         dismissedLimits = { partner1: false, partner2: false };
         debouncedUpdateDashboard();
     }
@@ -2878,7 +2843,7 @@
                         const due = getInstallmentDateForMonth(exp, targetMonth);
                         if (!due) return '';
                         const { partner1, partner2 } = calculateMonthlyShare(exp);
-                        return `<tr><td style="border:1px solid #ddd; padding:8px;">${exp.descricao}</td><td style="border:1px solid #ddd; padding:8px;">${formatMoney(partner1+partner2)}</td><td style="border:1px solid #ddd; padding:8px;">${exp.categoria||'Geral'}</td><td style="border:1px solid #ddd; padding:8px;">${due.toLocaleDateString('pt-BR', { timeZone: TIMEZONE })}</td></tr>`;
+                        return `<tr><td style="border:1px solid #ddd; padding:8px;">${exp.descricao}</td><td style="border:1px solid #ddd; padding:8px;">${formatMoney(partner1+partner2)}</td><td style="border:1px solid #ddd; padding:8px;">${exp.categoria||'Geral'}</td><td style="border:1px solid #ddd; padding:8px;">${due.toLocaleDateString('pt-BR', { timeZone: TIMEZONE })}</tr>`;
                     }).join('')}</tbody>
                     </table>
                     <hr><p><small>Relatório gerado em ${new Date().toLocaleString('pt-BR', { timeZone: TIMEZONE })} pelo aplicativo CASH CASAL.</small></p>
@@ -3044,7 +3009,7 @@
         updateClosingSummary();
         await updateMonthlyClosureAlert();
         await renderInvoices();
-        await renderLimitAlerts(); // atualiza alertas de limite
+        await renderLimitAlerts();
         if (firstLoad) { showLoading(false); firstLoad = false; }
     }
     
@@ -3128,7 +3093,6 @@
         loadBackupSettings();
         document.getElementById('save-backup-settings')?.addEventListener('click', saveBackupSettings);
         document.getElementById('force-backup-btn')?.addEventListener('click', forceBackup);
-        // Notificações
         document.getElementById('bell-icon')?.addEventListener('click', async () => {
             await loadNotifications();
             await markAllAsRead();
