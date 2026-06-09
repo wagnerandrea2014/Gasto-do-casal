@@ -766,7 +766,7 @@
         <!-- Página 0: Dashboard -->
         <div class="swipe-page" data-page="0">
             <div id="monthly-closure-alert-container"></div>
-            <div id="global-limit-alert-container"></div> <!-- Container para alerta de limite global -->
+            <div id="global-limit-alert-container"></div>
             <div class="card">
                 <div class="card-title"><i class="fas fa-chart-line"></i> Resumo do Mês <span style="font-size:0.7rem;">(gastos normais pendentes)</span></div>
                 <div class="dashboard-row">
@@ -1188,13 +1188,10 @@
     let firstLoad = true;
     let lastChartData = { evolutionHash: "", categoryHash: "", compareHash: "" };
     
-    // Configurações de backup automático
     let autoBackupEnabled = false;
     let backupInterval = "weekly";
     let lastBackupTimestamp = 0;
     let backupCheckInterval = null;
-    
-    // Controle de alertas de limite dispensados (por parceiro e por sessão)
     let dismissedLimits = { partner1: false, partner2: false };
     
     const formatMoney = (val) => val.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
@@ -1691,8 +1688,6 @@
         renderLimitAlerts();
     }
     
-    // Função de notificação de parcelas próximas foi removida
-    
     async function loadCategories() {
         const snapshot = await categoriesRef.get();
         if (snapshot.empty) {
@@ -2184,7 +2179,7 @@
         }));
     }
     
-    // ==================== FUNÇÃO RENDER DEBTORS AGRUPADA ====================
+    // ==================== FUNÇÃO RENDER DEBTORS AGRUPADA (CORRIGIDA) ====================
     function renderDebtors() {
         const container = document.getElementById('debtors-list');
         if (!container) return;
@@ -2234,7 +2229,7 @@
                             <span class="debtor-entry-value">${formatMoney(debt.valor)}</span>
                         </div>
                         <div class="debtor-entry-buttons">
-                            <button class="btn-small btn-quitar" data-id="${debt.id}" data-name="${escapeHtml(name)}" data-val="${debt.valor}" title="Receber este valor"><i class="fas fa-hand-holding-usd"></i> Quitar</button>
+                            <button class="btn-small btn-quitar-debtor" data-id="${debt.id}" data-name="${escapeHtml(name)}" data-val="${debt.valor}" title="Receber este valor"><i class="fas fa-hand-holding-usd"></i> Quitar</button>
                             <button class="btn-small btn-danger delete-debtor-entry" data-id="${debt.id}" data-name="${escapeHtml(name)}" title="Excluir esta dívida"><i class="fas fa-trash-alt"></i> Excluir</button>
                         </div>
                     </div>
@@ -2247,7 +2242,8 @@
         }
         container.innerHTML = html;
     
-        document.querySelectorAll('.btn-quitar').forEach(btn => {
+        // Botão Quitar para devedores (classe exclusiva)
+        document.querySelectorAll('.btn-quitar-debtor').forEach(btn => {
             btn.addEventListener('click', async (e) => {
                 e.stopPropagation();
                 const id = btn.dataset.id;
@@ -2262,13 +2258,19 @@
                     cancelButtonText: 'Cancelar'
                 });
                 if (result.isConfirmed) {
-                    await debtorsRef.doc(id).delete();
-                    await addNotification('debt_received', `recebeu dívida de ${formatMoney(valor)} de ${name}`);
-                    Swal.fire('Recebido!', `Dívida de ${formatMoney(valor)} quitada.`, 'success');
+                    try {
+                        await debtorsRef.doc(id).delete();
+                        await addNotification('debt_received', `recebeu dívida de ${formatMoney(valor)} de ${name}`);
+                        Swal.fire('Recebido!', `Dívida de ${formatMoney(valor)} quitada.`, 'success');
+                    } catch (err) {
+                        console.error(err);
+                        Swal.fire('Erro', 'Não foi possível quitar a dívida. Tente novamente.', 'error');
+                    }
                 }
             });
         });
     
+        // Botão Excluir (mesma classe, sem conflito)
         document.querySelectorAll('.delete-debtor-entry').forEach(btn => {
             btn.addEventListener('click', async (e) => {
                 e.stopPropagation();
@@ -2283,13 +2285,19 @@
                     confirmButtonText: 'Sim, excluir'
                 });
                 if (result.isConfirmed) {
-                    await debtorsRef.doc(id).delete();
-                    await addNotification('debt_deleted', `removeu dívida de ${name}`);
-                    Swal.fire('Excluída!', 'Dívida removida.', 'success');
+                    try {
+                        await debtorsRef.doc(id).delete();
+                        await addNotification('debt_deleted', `removeu dívida de ${name}`);
+                        Swal.fire('Excluída!', 'Dívida removida.', 'success');
+                    } catch (err) {
+                        console.error(err);
+                        Swal.fire('Erro', 'Não foi possível excluir a dívida.', 'error');
+                    }
                 }
             });
         });
     
+        // Botão "Nova dívida" dentro do grupo
         document.querySelectorAll('.add-debt-to-group').forEach(btn => {
             btn.addEventListener('click', async (e) => {
                 e.stopPropagation();
@@ -2316,13 +2324,18 @@
                     }
                 });
                 if (form) {
-                    await debtorsRef.add({
-                        nome: debtorName,
-                        valor: form.valor,
-                        data: form.data
-                    });
-                    await addNotification('debt_added', `adicionou dívida de ${formatMoney(form.valor)} para ${debtorName}`);
-                    Swal.fire('Adicionado!', `Nova dívida de ${formatMoney(form.valor)} para ${debtorName}.`, 'success');
+                    try {
+                        await debtorsRef.add({
+                            nome: debtorName,
+                            valor: form.valor,
+                            data: form.data
+                        });
+                        await addNotification('debt_added', `adicionou dívida de ${formatMoney(form.valor)} para ${debtorName}`);
+                        Swal.fire('Adicionado!', `Nova dívida de ${formatMoney(form.valor)} para ${debtorName}.`, 'success');
+                    } catch (err) {
+                        console.error(err);
+                        Swal.fire('Erro', 'Não foi possível adicionar a dívida.', 'error');
+                    }
                 }
             });
         });
@@ -2534,7 +2547,7 @@
         if (sortSelect && sortSelect.value !== 'date_asc') {
             items = sortHistoryItems(items, sortSelect.value);
         }
-        if (items.length === 0) { tbody.innerHTML = '<tr><td colspan="7" style="text-align:center">Nenhuma despesa</tr>'; return; }
+        if (items.length === 0) { tbody.innerHTML = '<tr><td colspan="7" style="text-align:center">Nenhuma despesa<\/td><\/tr>'; return; }
         tbody.innerHTML = items.map(exp => {
             const parcelaValor = exp.valorTotal / exp.parcelas;
             const primeiraParcela = getFirstInstallmentDate(exp);
@@ -2543,18 +2556,18 @@
             const statusText = exp.quitado ? '✅ Quitado' : '⏳ Pendente';
             const statusColor = exp.quitado ? 'status-paid' : 'status-pending';
             const detailsHtml = `<div class="expense-details"><div class="expense-details-row"><i class="fas fa-money-bill-wave"></i><span>Total: <span class="detail-highlight">${formatMoney(exp.valorTotal)}</span></span><span class="installment-info">| ${exp.parcelas}x de ${formatMoney(parcelaValor)}</span></div><div class="expense-details-row"><i class="fas fa-calendar-alt"></i><span>Compra: <span class="detail-value">${dataCompra.toLocaleDateString('pt-BR', { timeZone: TIMEZONE })}</span></span><span>| 1ª parcela: <span class="detail-value">${primeiraParcela.toLocaleDateString('pt-BR', { timeZone: TIMEZONE })}</span></span></div><div class="expense-details-row"><i class="fas fa-tag"></i><span>Categoria: <span class="detail-value">${escapeHtml(exp.categoria || 'Geral')}</span></span>${exp.observacao ? `<span><i class="fas fa-comment"></i> ${escapeHtml(exp.observacao)}</span>` : ''}</div></div>`;
-            return `<tr data-id="${exp.id}"><td class="checkbox-col" data-label=""><input type="checkbox" class="expense-checkbox" data-id="${exp.id}" ${selectedExpenses.has(exp.id) ? 'checked' : ''} style="width:18px;height:18px;"></td>
-                    <td data-label="Descrição / Detalhes"><strong>${escapeHtml(exp.descricao)}</strong>${detailsHtml}</td>
-                    <td data-label="Valor parcela atual"><span class="detail-highlight">${formatMoney(exp.valorMes)}</span></td>
-                    <td data-label="Data parcela"><span class="detail-value">${exp.dueDate.toLocaleDateString('pt-BR', { timeZone: TIMEZONE })}</span></td>
-                    <td data-label="Pagador"><i class="fas fa-user"></i> ${escapeHtml(payerText)}</td>
-                    <td data-label="Status"><span class="final-installment-status ${statusColor}" style="display:inline-block;">${statusText}</span></td>
+            return `<tr data-id="${exp.id}"><td class="checkbox-col" data-label=""><input type="checkbox" class="expense-checkbox" data-id="${exp.id}" ${selectedExpenses.has(exp.id) ? 'checked' : ''} style="width:18px;height:18px;"><\/td>
+                    <td data-label="Descrição / Detalhes"><strong>${escapeHtml(exp.descricao)}</strong>${detailsHtml}<\/td>
+                    <td data-label="Valor parcela atual"><span class="detail-highlight">${formatMoney(exp.valorMes)}<\/span><\/td>
+                    <td data-label="Data parcela"><span class="detail-value">${exp.dueDate.toLocaleDateString('pt-BR', { timeZone: TIMEZONE })}<\/span><\/td>
+                    <td data-label="Pagador"><i class="fas fa-user"><\/i> ${escapeHtml(payerText)}<\/td>
+                    <td data-label="Status"><span class="final-installment-status ${statusColor}" style="display:inline-block;">${statusText}<\/span><\/td>
                     <td data-label="Ações" class="action-buttons">
-                        ${!exp.quitado ? `<button class="btn-small btn-quitar" data-id="${exp.id}" title="Quitar"><i class="fas fa-check-circle"></i></button>` : ''}
-                        <button class="edit-expense btn-small" data-id="${exp.id}" title="Editar"><i class="fas fa-edit"></i></button>
-                        <button class="delete-expense btn-small btn-danger" data-id="${exp.id}" title="Excluir"><i class="fas fa-trash-alt"></i></button>
-                    </td>
-                   </tr>`;
+                        ${!exp.quitado ? `<button class="btn-small btn-quitar" data-id="${exp.id}" title="Quitar"><i class="fas fa-check-circle"><\/i><\/button>` : ''}
+                        <button class="edit-expense btn-small" data-id="${exp.id}" title="Editar"><i class="fas fa-edit"><\/i><\/button>
+                        <button class="delete-expense btn-small btn-danger" data-id="${exp.id}" title="Excluir"><i class="fas fa-trash-alt"><\/i><\/button>
+                    <\/td>
+                   <\/tr>`;
         }).join('');
         document.querySelectorAll('.expense-checkbox').forEach(cb => cb.addEventListener('change', (e) => { if(e.target.checked) selectedExpenses.add(e.target.dataset.id); else selectedExpenses.delete(e.target.dataset.id); updateSelectionBar(); updateHeaderCheckbox(); }));
         document.querySelectorAll('.btn-quitar').forEach(btn => btn.addEventListener('click', async (e) => { e.stopPropagation(); await quitarDespesa(btn.dataset.id); }));
@@ -2843,7 +2856,7 @@
                         const due = getInstallmentDateForMonth(exp, targetMonth);
                         if (!due) return '';
                         const { partner1, partner2 } = calculateMonthlyShare(exp);
-                        return `<tr><td style="border:1px solid #ddd; padding:8px;">${exp.descricao}</td><td style="border:1px solid #ddd; padding:8px;">${formatMoney(partner1+partner2)}</td><td style="border:1px solid #ddd; padding:8px;">${exp.categoria||'Geral'}</td><td style="border:1px solid #ddd; padding:8px;">${due.toLocaleDateString('pt-BR', { timeZone: TIMEZONE })}</tr>`;
+                        return `<tr><td style="border:1px solid #ddd; padding:8px;">${exp.descricao}</td><td style="border:1px solid #ddd; padding:8px;">${formatMoney(partner1+partner2)}</td><td style="border:1px solid #ddd; padding:8px;">${exp.categoria||'Geral'}</td><td style="border:1px solid #ddd; padding:8px;">${due.toLocaleDateString('pt-BR', { timeZone: TIMEZONE })}<\/td><\/tr>`;
                     }).join('')}</tbody>
                     </table>
                     <hr><p><small>Relatório gerado em ${new Date().toLocaleString('pt-BR', { timeZone: TIMEZONE })} pelo aplicativo CASH CASAL.</small></p>
