@@ -68,7 +68,7 @@
             min-height: 36px;
         }
 
-        /* ========== BARRA DE NAVEGAÇÃO ESTILO D (CORRIGIDA - 5x5 COM ROLAGEM) ========== */
+        /* ========== BARRA DE NAVEGAÇÃO ========== */
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -176,9 +176,71 @@
         /* Demais estilos */
         input, select, textarea { font-size: 0.9rem; padding: 10px 14px; border-radius: 40px; min-height: 42px; background: #1a1a1a; border: 1px solid var(--primary-color); color: #ffffff; width: 100%; }
         body.light-theme input, body.light-theme select, body.light-theme textarea { background: #ffffff; color: #1a1a1a; }
-        .login-container { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: #000000; position: fixed; top: 0; left: 0; width: 100%; z-index: 1000; padding: 20px; }
-        .login-card { background: #111111; backdrop-filter: blur(20px); border-radius: 48px; padding: 2rem 1.5rem; width: 100%; max-width: 450px; border: 1px solid var(--primary-color); box-shadow: 0 12px 30px rgba(233,30,99,0.2); }
-        .login-card h2 { font-size: 1.6rem; text-align: center; background: linear-gradient(135deg, var(--primary-color), var(--primary-light)); -webkit-background-clip: text; background-clip: text; color: transparent; margin-bottom: 1.5rem; }
+        
+        /* ========== TELA DE LOGIN COM MOEDAS CAINDO ========== */
+        .login-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #0a0a0a;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        #coins-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+        .login-card {
+            background: rgba(17, 17, 17, 0.85);
+            backdrop-filter: blur(12px);
+            border-radius: 48px;
+            padding: 2rem 1.5rem;
+            width: 100%;
+            max-width: 450px;
+            border: 1px solid var(--primary-color);
+            box-shadow: 0 12px 30px rgba(233,30,99,0.3);
+            position: relative;
+            z-index: 2;
+            animation: fadeInUp 0.6s ease-out;
+        }
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        body.light-theme .login-card {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(12px);
+        }
+        .login-card h2 {
+            font-size: 1.6rem;
+            text-align: center;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 1.5rem;
+        }
+        .login-card input, .login-card select {
+            margin-bottom: 12px;
+        }
         .app-container { display: none; width: 100%; min-height: 100vh; background: #000000; flex-direction: column; }
         .app-header { display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; background: rgba(0, 0, 0, 0.9); backdrop-filter: blur(12px); border-bottom: 1px solid var(--primary-color); position: sticky; top: 0; z-index: 100; flex-wrap: wrap; gap: 8px; }
         .logo-area { display: flex; align-items: center; gap: 6px; }
@@ -332,11 +394,93 @@
                 justify-content: space-between;
             }
         }
+
+        /* Estilo do alerta de fechamento mensal */
+        .monthly-closure-alert {
+            background: linear-gradient(135deg, #ff9800, #e65100);
+            border-radius: 20px;
+            padding: 16px;
+            margin-bottom: 16px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            border: 1px solid #ffb74d;
+        }
+        .monthly-closure-alert .alert-content {
+            flex: 2;
+        }
+        .monthly-closure-alert .alert-content strong {
+            font-size: 1.1rem;
+            display: block;
+            margin-bottom: 4px;
+        }
+        .monthly-closure-alert .alert-content span {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+        .monthly-closure-alert .alert-button button {
+            background: white;
+            color: #e65100;
+            border: none;
+            font-weight: bold;
+            box-shadow: none;
+        }
+        .monthly-closure-alert .alert-button button:active {
+            transform: scale(0.96);
+        }
+        body.light-theme .monthly-closure-alert {
+            background: linear-gradient(135deg, #ff9800, #e65100);
+            color: white;
+        }
+        body.light-theme .monthly-closure-alert .alert-button button {
+            color: #e65100;
+        }
+
+        /* Estilo para as faturas */
+        .invoice-item {
+            background: rgba(233,30,99,0.08);
+            border-radius: 20px;
+            padding: 12px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            border-left: 4px solid var(--primary-color);
+        }
+        .invoice-info {
+            flex: 2;
+        }
+        .invoice-month {
+            font-weight: 700;
+            font-size: 1rem;
+        }
+        .invoice-total {
+            font-weight: 800;
+            color: var(--primary-color);
+        }
+        .invoice-date {
+            font-size: 0.7rem;
+            opacity: 0.7;
+        }
+        .invoice-status {
+            background: #4caf50;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
     </style>
 </head>
 <body>
 
 <div id="login-container" class="login-container">
+    <canvas id="coins-canvas"></canvas>
     <div class="login-card">
         <h2><i class="fas fa-hand-holding-heart"></i> CASH CASAL</h2>
         <p style="text-align: center; margin-bottom: 16px; font-size: 0.9rem;">Gestão Financeira para Dois</p>
@@ -374,6 +518,7 @@
     <div class="swipe-container" id="swipeContainer">
         <!-- Página 0: Dashboard -->
         <div class="swipe-page" data-page="0">
+            <div id="monthly-closure-alert-container"></div>
             <div class="card">
                 <div class="card-title"><i class="fas fa-chart-line"></i> Resumo do Mês <span style="font-size:0.7rem;">(gastos normais pendentes)</span></div>
                 <div class="dashboard-row">
@@ -500,6 +645,15 @@
                 <div class="info-message">📊 Valores consideram todas as despesas (pendentes e quitadas) do período de fatura selecionado.</div>
             </div>
         </div>
+        <!-- Página 11: Faturas do Mês -->
+        <div class="swipe-page" data-page="11">
+            <div class="card">
+                <div class="card-title"><i class="fas fa-file-invoice-dollar"></i> Faturas do Mês</div>
+                <div id="invoices-list" style="margin-top: 8px;">
+                    <div style="text-align:center; padding:16px;">Carregando faturas...</div>
+                </div>
+            </div>
+        </div>
     </div>
     <div class="page-indicators" id="pageIndicators"></div>
 </div>
@@ -516,6 +670,7 @@
     <button class="nav-btn" data-page="8"><i class="fas fa-bullseye"></i><span>Metas</span></button>
     <button class="nav-btn" data-page="9"><i class="fas fa-calendar-check"></i><span>Parcelas</span></button>
     <button class="nav-btn" data-page="10"><i class="fas fa-file-invoice-dollar"></i><span>Fechamento</span></button>
+    <button class="nav-btn" data-page="11"><i class="fas fa-receipt"></i><span>Faturas</span></button>
 </div>
 
 <div class="concierge-container"><div class="concierge-bubble" id="conciergeBubble" style="display: none;"><span id="conciergeMessage"></span></div><div class="concierge-avatar" id="conciergeAvatar"><i class="fas fa-robot"></i></div></div>
@@ -548,12 +703,103 @@
     const categoriesRef = db.collection(`shared/${COUPLE_ID}/categories`);
     const limitsRef = db.collection(`shared/${COUPLE_ID}/settings`).doc("limits");
     const themeRef = db.collection(`shared/${COUPLE_ID}/settings`).doc("theme");
+    const invoicesRef = db.collection(`shared/${COUPLE_ID}/invoices`);
 
+    // ==================== ANIMAÇÃO DE MOEDAS CAINDO ====================
+    const canvas = document.getElementById('coins-canvas');
+    let ctx = canvas ? canvas.getContext('2d') : null;
+    let coins = [];
+    let coinCount = 40;
+    let animationId = null;
+    
+    function resizeCanvas() {
+        const container = document.getElementById('login-container');
+        if (!container || !canvas) return;
+        canvas.width = container.clientWidth;
+        canvas.height = container.clientHeight;
+    }
+    
+    function initCoins() {
+        if (!canvas) return;
+        coins = [];
+        for (let i = 0; i < coinCount; i++) {
+            coins.push({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                radius: 8 + Math.random() * 8,
+                speed: 1 + Math.random() * 3,
+                rotation: Math.random() * Math.PI * 2,
+                rotSpeed: (Math.random() - 0.5) * 0.02,
+                opacity: 0.6 + Math.random() * 0.4,
+                color: `hsl(${45 + Math.random() * 20}, 80%, 55%)`
+            });
+        }
+    }
+    
+    function drawCoin(coin) {
+        if (!ctx) return;
+        ctx.save();
+        ctx.translate(coin.x, coin.y);
+        ctx.rotate(coin.rotation);
+        ctx.beginPath();
+        ctx.arc(0, 0, coin.radius, 0, Math.PI * 2);
+        ctx.fillStyle = coin.color;
+        ctx.shadowBlur = 6;
+        ctx.shadowColor = "rgba(0,0,0,0.3)";
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(0, 0, coin.radius * 0.7, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255, 215, 0, 0.8)`;
+        ctx.fill();
+        ctx.font = `${coin.radius * 1.2}px "Font Awesome 6 Free"`;
+        ctx.fillStyle = "#b8860b";
+        ctx.shadowBlur = 2;
+        ctx.fillText("$", -coin.radius * 0.4, coin.radius * 0.4);
+        ctx.restore();
+    }
+    
+    function updateCoins() {
+        if (!canvas) return;
+        for (let coin of coins) {
+            coin.y += coin.speed;
+            coin.rotation += coin.rotSpeed;
+            if (coin.y - coin.radius > canvas.height) {
+                coin.y = -coin.radius;
+                coin.x = Math.random() * canvas.width;
+            }
+        }
+    }
+    
+    function animateCoins() {
+        if (!ctx || !canvas || canvas.width === 0) return;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        for (let coin of coins) {
+            drawCoin(coin);
+        }
+        updateCoins();
+        animationId = requestAnimationFrame(animateCoins);
+    }
+    
+    function startCoinAnimation() {
+        if (animationId) cancelAnimationFrame(animationId);
+        if (!canvas) return;
+        resizeCanvas();
+        initCoins();
+        animateCoins();
+        window.addEventListener('resize', () => {
+            resizeCanvas();
+            initCoins();
+        });
+    }
+    
+    if (document.getElementById('login-container') && canvas) {
+        startCoinAnimation();
+    }
+    
     // ==================== AJUSTE DE FUSO HORÁRIO (RECIFE) ====================
     const TIMEZONE = "America/Recife";
     
     function getCurrentDateRecife() {
-        // Retorna a data atual no fuso de Recife no formato YYYY-MM-DD
         const now = new Date();
         const formatter = new Intl.DateTimeFormat('pt-BR', {
             timeZone: TIMEZONE,
@@ -566,7 +812,6 @@
     }
     
     function parseLocalDateToDate(dateStr) {
-        // Converte string YYYY-MM-DD para objeto Date considerando o fuso Recife
         const [year, month, day] = dateStr.split('-').map(Number);
         return new Date(year, month - 1, day);
     }
@@ -631,7 +876,6 @@
         return parseLocalDateToDate(dueDateStr);
     }
     
-    // Substituir chamadas antigas
     const getLocalDateString = getCurrentDateRecife;
     
     let currentPartnerId = "", partner1Name = "", partner2Name = "";
@@ -649,10 +893,10 @@
     let updateTimeout = null;
     let firstLoad = true;
     let lastChartData = { evolutionHash: "", categoryHash: "", compareHash: "" };
-
+    
     const formatMoney = (val) => val.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
     const escapeHtml = (str) => str?.replace(/[&<>]/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[m])) || '';
-
+    
     function goToPage(pageIndex) {
         const container = document.getElementById('swipeContainer');
         if (container) {
@@ -672,7 +916,7 @@
         if (nav1) nav1.innerText = partner1Name || 'P1';
         if (nav2) nav2.innerText = partner2Name || 'P2';
     }
-
+    
     function calculateMonthlyShare(exp) {
         const parcelaValor = exp.valorTotal / exp.parcelas;
         let valorAposTerceiros = parcelaValor;
@@ -686,7 +930,7 @@
         else { p1=p2=valorAposTerceiros/2; }
         return { partner1: p1, partner2: p2 };
     }
-
+    
     async function quitarDespesa(id) {
         try {
             const docSnap = await expensesRef.doc(id).get();
@@ -711,14 +955,14 @@
             Swal.fire('Erro', 'Não foi possível quitar a despesa.', 'error');
         }
     }
-
+    
     function updateEvolutionChart(labels, dataP1, dataP2) {
         const hash = JSON.stringify({ labels, dataP1, dataP2 });
         if (hash === lastChartData.evolutionHash) return;
         lastChartData.evolutionHash = hash;
         if (evolutionChart) evolutionChart.destroy();
-        const ctx = document.getElementById('evolutionChart').getContext('2d');
-        evolutionChart = new Chart(ctx, {
+        const ctxChart = document.getElementById('evolutionChart').getContext('2d');
+        evolutionChart = new Chart(ctxChart, {
             type: 'line',
             data: { labels, datasets: [
                 { label: partner1Name, data: dataP1, borderColor: 'var(--primary-color)', backgroundColor: 'rgba(233,30,99,0.1)', tension: 0.2, fill: false },
@@ -731,18 +975,18 @@
         if (hash === lastChartData.categoryHash) return;
         lastChartData.categoryHash = hash;
         if (categoryChart) categoryChart.destroy();
-        const ctx = document.getElementById('categoryChart').getContext('2d');
-        categoryChart = new Chart(ctx, { type: 'pie', data: { labels, datasets: [{ data, backgroundColor: ['var(--primary-color)','#ff6b9d','#c2185b','#f48fb1','#f06292','#ec407a'] }] } });
+        const ctxChart = document.getElementById('categoryChart').getContext('2d');
+        categoryChart = new Chart(ctxChart, { type: 'pie', data: { labels, datasets: [{ data, backgroundColor: ['var(--primary-color)','#ff6b9d','#c2185b','#f48fb1','#f06292','#ec407a'] }] } });
     }
     function updateCompareChart(partner1Value, partner2Value) {
         const hash = JSON.stringify({ partner1Value, partner2Value });
         if (hash === lastChartData.compareHash) return;
         lastChartData.compareHash = hash;
         if (compareChart) compareChart.destroy();
-        const ctx = document.getElementById('compareChart').getContext('2d');
-        compareChart = new Chart(ctx, { type: 'bar', data: { labels: [partner1Name, partner2Name], datasets: [{ data: [partner1Value, partner2Value], backgroundColor: ['var(--primary-color)', '#ffb74d'] }] } });
+        const ctxChart = document.getElementById('compareChart').getContext('2d');
+        compareChart = new Chart(ctxChart, { type: 'bar', data: { labels: [partner1Name, partner2Name], datasets: [{ data: [partner1Value, partner2Value], backgroundColor: ['var(--primary-color)', '#ffb74d'] }] } });
     }
-
+    
     function showLoading(show) {
         const overlay = document.getElementById('loading-overlay');
         if (overlay) overlay.style.display = show ? 'flex' : 'none';
@@ -751,7 +995,7 @@
         if (updateTimeout) clearTimeout(updateTimeout);
         updateTimeout = setTimeout(() => updateDashboard(), 100);
     }
-
+    
     async function deleteExpenseById(id) {
         try {
             const docSnap = await expensesRef.doc(id).get();
@@ -800,7 +1044,7 @@
             Swal.fire('Erro', 'Não foi possível excluir a despesa.', 'error');
         }
     }
-
+    
     async function saveExpense() {
         const descricao = document.getElementById('descricao').value.trim();
         const valorTotal = parseFloat(document.getElementById('valor-total').value);
@@ -864,7 +1108,7 @@
         Swal.fire('Despesa salva!', '', 'success');
         debouncedUpdateDashboard();
     }
-
+    
     async function generateRecurringForMonth(targetMonth) {
         if (!recurringTemplates.length) return;
         for (const template of recurringTemplates) {
@@ -902,7 +1146,7 @@
             }).catch(err => console.warn("Erro na transação de recorrente:", err));
         }
     }
-
+    
     async function deleteAllRecurringExpenses() {
         const result = await Swal.fire({
             title: '⚠️ Atenção!',
@@ -935,7 +1179,7 @@
             showLoading(false);
         }
     }
-
+    
     async function loadLimits() {
         const doc = await limitsRef.get();
         if (doc.exists) limits = doc.data();
@@ -963,11 +1207,10 @@
         if (alert1) alert1.style.display = (limits.partner1 > 0 && totalP1 >= limits.partner1) ? 'flex' : 'none';
         if (alert2) alert2.style.display = (limits.partner2 > 0 && totalP2 >= limits.partner2) ? 'flex' : 'none';
     }
-
+    
     function verificarNotificacaoParcelasProximas() {
         const targetMonth = `${selectedYear}-${String(selectedMonth+1).padStart(2,'0')}`;
         const monthExpenses = allExpenses.filter(exp => exp.installmentMonths?.includes(targetMonth) && !exp.quitado);
-        const hoje = new Date();
         const hojeRecifeStr = getCurrentDateRecife();
         const hojeRecife = parseLocalDateToDate(hojeRecifeStr);
         const tresDias = new Date(hojeRecife);
@@ -991,7 +1234,7 @@
             Swal.fire({ title: '⚠️ Parcelas próximas do vencimento', text: msg, icon: 'warning', confirmButtonColor: '#e91e63', confirmButtonText: 'Ok' });
         }
     }
-
+    
     async function loadCategories() {
         const snapshot = await categoriesRef.get();
         if (snapshot.empty) {
@@ -1027,7 +1270,7 @@
                 await categoriesRef.doc(btn.dataset.id).delete();
         }));
     }
-
+    
     function applyPrimaryColor(color) {
         document.documentElement.style.setProperty('--primary-color', color);
         document.documentElement.style.setProperty('--primary-gradient', `linear-gradient(135deg, ${color}, #c2185b)`);
@@ -1057,7 +1300,7 @@
         applyPrimaryColor('#e91e63');
         Swal.fire('Cor restaurada!', 'A cor padrão (rosa) foi restaurada.', 'success');
     }
-
+    
     function setupFormDirtyTracking() {
         const form = document.getElementById('expense-form');
         if (!form) return;
@@ -1076,7 +1319,7 @@
             }
         });
     }
-
+    
     function updateUIWithNames() {
         document.getElementById('gasto-partner1-label').innerHTML = `🧑 Gasto de ${partner1Name}`;
         document.getElementById('gasto-partner2-label').innerHTML = `👩 Gasto de ${partner2Name}`;
@@ -1099,19 +1342,147 @@
         const filterPayer = document.getElementById('filter-payer');
         if(filterPayer && filterPayer.options.length>=2) { filterPayer.options[1].text = partner1Name; filterPayer.options[2].text = partner2Name; }
     }
-
-    // ==================== FUNÇÃO RENDER PARTNER EXPENSES (ATUALIZADA) ====================
+    
+    // ==================== ALERTA DE FECHAMENTO MENSAL ====================
+    async function invoiceExists(monthKey) {
+        const doc = await invoicesRef.doc(monthKey).get();
+        return doc.exists;
+    }
+    
+    async function saveInvoice(monthKey, total, ano, mes) {
+        const docRef = invoicesRef.doc(monthKey);
+        const existing = await docRef.get();
+        if (existing.exists) return; // já salvo
+        await docRef.set({
+            monthKey,
+            total,
+            confirmedAt: firebase.firestore.FieldValue.serverTimestamp(),
+            status: 'paid',
+            year: ano,
+            month: mes
+        });
+    }
+    
+    function calcularTotalPendenteMes(ano, mes) {
+        const mesStr = `${ano}-${String(mes + 1).padStart(2, '0')}`;
+        let total = 0;
+        for (const exp of allExpenses) {
+            if (exp.quitado) continue;
+            if (exp.installmentMonths && exp.installmentMonths.includes(mesStr)) {
+                const { partner1, partner2 } = calculateMonthlyShare(exp);
+                total += partner1 + partner2;
+            }
+        }
+        return total;
+    }
+    
+    function shouldShowClosureAlert() {
+        const hojeRecifeStr = getCurrentDateRecife();
+        const hoje = parseLocalDateToDate(hojeRecifeStr);
+        const dia = hoje.getDate();
+        const mesAtual = hoje.getMonth();
+        const anoAtual = hoje.getFullYear();
+        if (dia >= 2 && dia <= 8) {
+            let mesCobranca = mesAtual - 1;
+            let anoCobranca = anoAtual;
+            if (mesCobranca < 0) {
+                mesCobranca = 11;
+                anoCobranca--;
+            }
+            const monthKey = `${anoCobranca}-${String(mesCobranca + 1).padStart(2, '0')}`;
+            return { show: true, monthKey, ano: anoCobranca, mes: mesCobranca };
+        }
+        return { show: false, monthKey: null };
+    }
+    
+    async function updateMonthlyClosureAlert() {
+        const container = document.getElementById('monthly-closure-alert-container');
+        if (!container) return;
+        const { show, monthKey, ano, mes } = shouldShowClosureAlert();
+        if (!show || !monthKey) {
+            container.innerHTML = '';
+            return;
+        }
+        const alreadyPaid = await invoiceExists(monthKey);
+        if (alreadyPaid) {
+            container.innerHTML = '';
+            return;
+        }
+        const total = calcularTotalPendenteMes(ano, mes);
+        if (total === 0) {
+            container.innerHTML = '';
+            return;
+        }
+        const nomeMes = new Date(ano, mes, 1).toLocaleDateString('pt-BR', { month: 'long', timeZone: TIMEZONE });
+        container.innerHTML = `
+            <div class="monthly-closure-alert">
+                <div class="alert-content">
+                    <strong>💸 Fechamento de ${nomeMes}/${ano}</strong>
+                    <span>Total de gastos pendentes do casal: ${formatMoney(total)}</span>
+                </div>
+                <div class="alert-button">
+                    <button id="confirm-closure-btn" class="btn-small" style="background:white; color:#e65100;">✅ Confirmar pagamento</button>
+                </div>
+            </div>
+        `;
+        const btn = document.getElementById('confirm-closure-btn');
+        if (btn) {
+            btn.addEventListener('click', async () => {
+                await saveInvoice(monthKey, total, ano, mes);
+                Swal.fire('Pagamento confirmado!', `A fatura de ${nomeMes}/${ano} foi registrada como paga.`, 'success');
+                updateMonthlyClosureAlert();
+                renderInvoices(); // atualiza lista de faturas
+            });
+        }
+    }
+    
+    // ==================== PÁGINA DE FATURAS ====================
+    async function renderInvoices() {
+        const container = document.getElementById('invoices-list');
+        if (!container) return;
+        try {
+            const snapshot = await invoicesRef.orderBy('confirmedAt', 'desc').get();
+            if (snapshot.empty) {
+                container.innerHTML = '<div class="info-message" style="text-align:center;">Nenhuma fatura registrada ainda.</div>';
+                return;
+            }
+            let html = '';
+            for (const doc of snapshot.docs) {
+                const data = doc.data();
+                const ano = data.year;
+                const mes = data.month;
+                const nomeMes = new Date(ano, mes, 1).toLocaleDateString('pt-BR', { month: 'long', year: 'numeric', timeZone: TIMEZONE });
+                const dataConfirmacao = data.confirmedAt?.toDate() || new Date();
+                html += `
+                    <div class="invoice-item">
+                        <div class="invoice-info">
+                            <div class="invoice-month">📆 ${nomeMes}</div>
+                            <div class="invoice-total">${formatMoney(data.total)}</div>
+                            <div class="invoice-date">Pago em: ${dataConfirmacao.toLocaleDateString('pt-BR', { timeZone: TIMEZONE })}</div>
+                        </div>
+                        <div class="invoice-status">Pago</div>
+                    </div>
+                `;
+            }
+            container.innerHTML = html;
+        } catch (err) {
+            console.error(err);
+            container.innerHTML = '<div class="info-message" style="text-align:center;">Erro ao carregar faturas.</div>';
+        }
+    }
+    
+    // ==================== FUNÇÃO RENDER PARTNER EXPENSES ====================
     async function renderPartnerExpensesWithPaid(partnerKey, containerId, containerPaidId, monthYear) {
         const container = document.getElementById(containerId);
         const containerPaid = document.getElementById(containerPaidId);
         if (!container || !containerPaid) return;
-
+    
         let filtered = allExpenses.filter(exp => exp.installmentMonths?.includes(monthYear));
         const targetPartner = partnerKey === 'partner1' ? 'partner1' : 'partner2';
-
+    
         let pending = [];
         let paid = [];
-
+    
         for (const exp of filtered) {
             const { partner1, partner2 } = calculateMonthlyShare(exp);
             const valor = targetPartner === 'partner1' ? partner1 : partner2;
@@ -1133,12 +1504,12 @@
                 pending.push(item);
             }
         }
-
+    
         pending.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
         const normais = pending.filter(i => !i.recorrente);
         const recorrentes = pending.filter(i => i.recorrente);
         paid.sort((a, b) => (b.data || 0) - (a.data || 0));
-
+    
         let htmlNormais = '';
         if (normais.length === 0) {
             htmlNormais = '<div style="text-align:center; padding:8px;">Nenhum gasto normal pendente.</div>';
@@ -1160,7 +1531,7 @@
                 </div>
             `).join('');
         }
-
+    
         let htmlRecorrentes = '';
         if (recorrentes.length === 0) {
             htmlRecorrentes = '<div style="text-align:center; padding:8px;">Nenhum gasto recorrente pendente.</div>';
@@ -1182,7 +1553,7 @@
                 </div>
             `).join('');
         }
-
+    
         let htmlPaid = '';
         if (paid.length === 0) {
             htmlPaid = '<div style="text-align:center; padding:8px;">Nenhum gasto quitado neste mês.</div>';
@@ -1198,7 +1569,7 @@
                 </div>
             `).join('');
         }
-
+    
         container.innerHTML = `
             <div style="margin-bottom: 16px;">
                 <div style="font-weight: 600; margin-bottom: 8px;"><i class="fas fa-clock"></i> Gastos normais pendentes</div>
@@ -1215,7 +1586,7 @@
                 ${htmlPaid}
             </div>
         `;
-
+    
         document.querySelectorAll('.btn-quitar').forEach(btn => btn.addEventListener('click', async (e) => {
             e.stopPropagation();
             await quitarDespesa(btn.dataset.id);
@@ -1225,37 +1596,37 @@
             await deleteExpenseById(btn.dataset.id);
         }));
     }
-
+    
     // ==================== FUNÇÃO RENDER DEBTORS AGRUPADA ====================
     function renderDebtors() {
         const container = document.getElementById('debtors-list');
         if (!container) return;
-
+    
         if (debtors.length === 0) {
             container.innerHTML = '<div style="text-align:center; padding:16px;">Nenhum devedor cadastrado.</div>';
             document.getElementById('total-a-receber').innerText = formatMoney(0);
             document.getElementById('debtors-count').innerHTML = `0 devedor(es)`;
             return;
         }
-
+    
         const groups = new Map();
         for (const debtor of debtors) {
             const name = debtor.nome.trim();
             if (!groups.has(name)) groups.set(name, []);
             groups.get(name).push(debtor);
         }
-
+    
         const totalGeral = debtors.reduce((sum, d) => sum + d.valor, 0);
         document.getElementById('total-a-receber').innerText = formatMoney(totalGeral);
         document.getElementById('debtors-count').innerHTML = `${groups.size} devedor(es)`;
-
+    
         const sortedGroups = Array.from(groups.entries()).sort((a, b) => a[0].localeCompare(b[0]));
-
+    
         let html = '';
         for (const [name, debts] of sortedGroups) {
             const sortedDebts = [...debts].sort((a, b) => new Date(a.data) - new Date(b.data));
             const totalGroup = debts.reduce((sum, d) => sum + d.valor, 0);
-
+    
             html += `
                 <div class="debtor-group" data-name="${escapeHtml(name)}">
                     <div class="debtor-group-header">
@@ -1288,7 +1659,7 @@
             `;
         }
         container.innerHTML = html;
-
+    
         document.querySelectorAll('.btn-quitar').forEach(btn => {
             btn.addEventListener('click', async (e) => {
                 e.stopPropagation();
@@ -1309,7 +1680,7 @@
                 }
             });
         });
-
+    
         document.querySelectorAll('.delete-debtor-entry').forEach(btn => {
             btn.addEventListener('click', async (e) => {
                 e.stopPropagation();
@@ -1329,7 +1700,7 @@
                 }
             });
         });
-
+    
         document.querySelectorAll('.add-debt-to-group').forEach(btn => {
             btn.addEventListener('click', async (e) => {
                 e.stopPropagation();
@@ -1366,7 +1737,7 @@
             });
         });
     }
-
+    
     async function addDebtor() {
         const nome = document.getElementById('new-debtor-name').value.trim();
         const valor = parseFloat(document.getElementById('new-debtor-value').value);
@@ -1379,7 +1750,7 @@
         document.getElementById('new-debtor-date').value = '';
         Swal.fire('Adicionado!','','success');
     }
-
+    
     async function saveIncomes() {
         const i1 = parseFloat(document.getElementById('income1').value)||0, i2 = parseFloat(document.getElementById('income2').value)||0;
         await incomesRef.set({ income1: i1, income2: i2 });
@@ -1389,7 +1760,7 @@
         Swal.fire('Rendas salvas!','','success');
         debouncedUpdateDashboard();
     }
-
+    
     function renderThirdParties() {
         const container = document.getElementById('third-parties-list');
         if (!container) return;
@@ -1418,7 +1789,7 @@
         preview += `💑 Casal paga: ${formatMoney(valorAposTerceiros)}<br>🧑 ${partner1Name}: ${formatMoney(p1)} | 👩 ${partner2Name}: ${formatMoney(p2)}`;
         document.getElementById('preview-division').innerHTML = preview;
     }
-
+    
     function renderRecurringAnalysis() {
         const summaryDiv = document.getElementById('recurring-summary');
         const listDiv = document.getElementById('recurring-list');
@@ -1463,7 +1834,7 @@
             ${proximosMeses.map(p => `<div class="recurring-item"><span>${p.mes}</span><span>${formatMoney(p.total)}</span></div>`).join('')}
             <div class="info-message" style="margin-top: 8px;">🔄 Valores estimados com base nas despesas recorrentes atuais.</div>`;
     }
-
+    
     function renderBudgetSummary() {
         const container = document.getElementById('budget-summary-list');
         if (!container) return;
@@ -1491,14 +1862,14 @@
             container.appendChild(div);
         }
     }
-
+    
     function getPayerText(exp) {
         if (exp.paidBy === 'partner1') return partner1Name;
         if (exp.paidBy === 'partner2') return partner2Name;
         if (exp.paidBy === 'both') return 'Casal';
         return 'Desconhecido';
     }
-
+    
     function renderFinalInstallments() {
         const container = document.getElementById('final-installments-list');
         if (!container) return;
@@ -1541,7 +1912,7 @@
                     </div><div class="final-installment-status ${statusClass}">${statusText}</div></div>`;
         }).join('');
     }
-
+    
     function sortHistoryItems(items, sortType) {
         const copy = [...items];
         switch(sortType) {
@@ -1554,7 +1925,7 @@
             default: return copy.sort((a,b)=>a.dueDate - b.dueDate);
         }
     }
-
+    
     function renderHistory() {
         const tbody = document.getElementById('tabela-historico');
         if (!tbody) return;
@@ -1571,7 +1942,7 @@
         if (sortSelect && sortSelect.value !== 'date_asc') {
             items = sortHistoryItems(items, sortSelect.value);
         }
-        if (items.length === 0) { tbody.innerHTML = '<tr><td colspan="7" style="text-align:center">Nenhuma despesa</td></tr>'; return; }
+        if (items.length === 0) { tbody.innerHTML = '<tr><td colspan="7" style="text-align:center">Nenhuma despesa</td></td>'; return; }
         tbody.innerHTML = items.map(exp => {
             const parcelaValor = exp.valorTotal / exp.parcelas;
             const primeiraParcela = getFirstInstallmentDate(exp);
@@ -1590,8 +1961,9 @@
                         ${!exp.quitado ? `<button class="btn-small btn-quitar" data-id="${exp.id}" title="Quitar"><i class="fas fa-check-circle"></i></button>` : ''}
                         <button class="edit-expense btn-small" data-id="${exp.id}" title="Editar"><i class="fas fa-edit"></i></button>
                         <button class="delete-expense btn-small btn-danger" data-id="${exp.id}" title="Excluir"><i class="fas fa-trash-alt"></i></button>
+                    </div>
                     </td>
-                   </tr>`;
+                </tr>`;
         }).join('');
         document.querySelectorAll('.expense-checkbox').forEach(cb => cb.addEventListener('change', (e) => { if(e.target.checked) selectedExpenses.add(e.target.dataset.id); else selectedExpenses.delete(e.target.dataset.id); updateSelectionBar(); updateHeaderCheckbox(); }));
         document.querySelectorAll('.btn-quitar').forEach(btn => btn.addEventListener('click', async (e) => { e.stopPropagation(); await quitarDespesa(btn.dataset.id); }));
@@ -1791,15 +2163,16 @@
             7: `💬 Mural compartilhado.`,
             8: `🎯 Metas de economia do casal.`,
             9: `📅 Acompanhe quando cada compra parcelada será totalmente quitada.`,
-            10: `📆 Fechamento mensal: veja os gastos totais por parceiro no período de fatura.`
+            10: `📆 Fechamento mensal: veja os gastos totais por parceiro no período de fatura.`,
+            11: `📑 Histórico de todas as faturas mensais pagas.`
         };
         return msgs[page] || `Página ${page+1}`;
     }
     function showConciergeMessage(msg, dur=6000) { const b = document.getElementById('conciergeBubble'); if(!b) return; document.getElementById('conciergeMessage').innerText = msg; b.style.display='block'; if(conciergeTimeout) clearTimeout(conciergeTimeout); conciergeTimeout = setTimeout(()=>b.style.display='none', dur); }
     function updateConciergeForPage(page) { showConciergeMessage(getConciergeMessage(page), 5000); }
-
+    
     async function exportAllData() {
-        const collections = ['expenses', 'budgets', 'recurring', 'recurring_control', 'debtors', 'messages', 'goals', 'individualGoals', 'categories'];
+        const collections = ['expenses', 'budgets', 'recurring', 'recurring_control', 'debtors', 'messages', 'goals', 'individualGoals', 'categories', 'invoices'];
         const settingsDocs = ['savingsGoal', 'names', 'incomes', 'limits', 'theme'];
         const data = {};
         for (const col of collections) {
@@ -1877,8 +2250,8 @@
             tempDiv.style.color = '#000';
             tempDiv.innerHTML = htmlContent;
             document.body.appendChild(tempDiv);
-            const canvas = await html2canvas(tempDiv, { scale: 2, backgroundColor: '#ffffff' });
-            const imgData = canvas.toDataURL('image/png');
+            const canvasImg = await html2canvas(tempDiv, { scale: 2, backgroundColor: '#ffffff' });
+            const imgData = canvasImg.toDataURL('image/png');
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF('p', 'mm', 'a4');
             doc.addImage(imgData, 'PNG', 10, 10, 190, 0);
@@ -1890,7 +2263,7 @@
             console.error(e);
         }
     }
-
+    
     function updateClosingSummary() {
         const year = parseInt(document.getElementById('closing-year').value);
         const month = parseInt(document.getElementById('closing-month').value);
@@ -1929,7 +2302,7 @@
         yearSelect.value = selectedYear;
         updateClosingSummary();
     }
-
+    
     async function updateDashboard() {
         if (!currentPartnerId) return;
         const targetMonth = `${selectedYear}-${String(selectedMonth+1).padStart(2,'0')}`;
@@ -1959,7 +2332,7 @@
         document.getElementById('meta-progress').innerText = `${Math.round(progresso)}%`;
         document.getElementById('meta-fill').style.width = `${progresso}%`;
         checkLimitsAndAlert();
-
+    
         const last6Months = [], last6P1 = [], last6P2 = [];
         for (let i = 5; i >= 0; i--) {
             let d = new Date(selectedYear, selectedMonth - i, 1);
@@ -1998,7 +2371,7 @@
         renderBudgetSummary();
         renderRecurringAnalysis();
         renderFinalInstallments();
-
+    
         const upcomingContainer = document.getElementById('upcoming-installments');
         if (upcomingContainer) {
             upcomingContainer.innerHTML = '';
@@ -2027,15 +2400,17 @@
         updatePartnerPages();
         verificarNotificacaoParcelasProximas();
         updateClosingSummary();
+        await updateMonthlyClosureAlert();
+        await renderInvoices(); // atualiza faturas quando os dados mudam
         if (firstLoad) { showLoading(false); firstLoad = false; }
     }
-
+    
     function updatePartnerPages() {
         const targetMonth = `${selectedYear}-${String(selectedMonth+1).padStart(2,'0')}`;
         const format = (ym) => { const [y,m]=ym.split('-'); return new Date(parseInt(y), parseInt(m)-1,1).toLocaleDateString('pt-BR', { timeZone: TIMEZONE, month: 'long', year: 'numeric' }); };
         document.getElementById('global-month-display').innerText = format(targetMonth);
     }
-
+    
     function setupFirestoreListeners() {
         expensesRef.onSnapshot(s => { allExpenses = s.docs.map(d=> ({ id: d.id, ...d.data() })); debouncedUpdateDashboard(); });
         budgetsRef.onSnapshot(s => { categoriesBudget = {}; s.forEach(d=>{ categoriesBudget[d.id]=d.data().limit; }); debouncedUpdateDashboard(); });
@@ -2050,8 +2425,9 @@
         categoriesRef.onSnapshot(() => loadCategories());
         limitsRef.onSnapshot(d => { if(d.exists) { limits = d.data(); document.getElementById('limit1').value = limits.partner1 || 0; document.getElementById('limit2').value = limits.partner2 || 0; checkLimitsAndAlert(); } });
         themeRef.onSnapshot(d => { if(d.exists && d.data().primaryColor) applyPrimaryColor(d.data().primaryColor); });
+        invoicesRef.onSnapshot(() => renderInvoices());
     }
-
+    
     function setupSwipe() {
         const container = document.getElementById('swipeContainer');
         const indicators = document.getElementById('pageIndicators');
@@ -2072,7 +2448,7 @@
         container.addEventListener('scroll', update);
         setTimeout(update, 100);
     }
-
+    
     async function initApp() {
         const n1 = document.getElementById('name1').value.trim();
         const n2 = document.getElementById('name2').value.trim();
@@ -2087,6 +2463,7 @@
         updateUIWithNames();
         document.getElementById('login-container').style.display = 'none';
         document.getElementById('app-container').style.display = 'flex';
+        if (animationId) cancelAnimationFrame(animationId);
         showLoading(true);
         setupFirestoreListeners();
         await loadCategories();
@@ -2151,7 +2528,7 @@
             }
         });
     }
-
+    
     document.getElementById('enter-app-btn').addEventListener('click', initApp);
     document.getElementById('logoutBtn').addEventListener('click', logout);
     document.getElementById('add-expense-btn').addEventListener('click', saveExpense);
@@ -2200,7 +2577,6 @@
     document.getElementById('save-limit1-btn').addEventListener('click', () => { const val = parseFloat(document.getElementById('limit1').value); if (!isNaN(val) && val >= 0) saveLimit('partner1', val); else Swal.fire('Erro', 'Valor inválido', 'error'); });
     document.getElementById('save-limit2-btn').addEventListener('click', () => { const val = parseFloat(document.getElementById('limit2').value); if (!isNaN(val) && val >= 0) saveLimit('partner2', val); else Swal.fire('Erro', 'Valor inválido', 'error'); });
     document.getElementById('update-closing-btn').addEventListener('click', updateClosingSummary);
-    // Botão adicionar categoria (corrigido)
     document.getElementById('add-category-btn')?.addEventListener('click', async () => {
         const newCat = document.getElementById('new-category-name').value.trim();
         if (!newCat) {
