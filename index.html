@@ -2828,21 +2828,32 @@
         };
         reader.readAsText(file);
     }
+    
+    // ==================== EXPORT PDF CORRIGIDA ====================
     async function exportPDF() {
-        Swal.fire({ title: 'Gerando PDF...', text: 'Aguarde...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+        Swal.fire({
+            title: 'Gerando PDF...',
+            text: 'Aguarde, processando os dados...',
+            allowOutsideClick: false,
+            didOpen: () => Swal.showLoading()
+        });
+
         try {
-            const targetMonth = `${selectedYear}-${String(selectedMonth+1).padStart(2,'0')}`;
+            const targetMonth = `${selectedYear}-${String(selectedMonth + 1).padStart(2, '0')}`;
             const monthExpenses = allExpenses.filter(exp => exp.installmentMonths?.includes(targetMonth) && !exp.quitado);
-            let totalP1=0, totalP2=0;
+
+            let totalP1 = 0, totalP2 = 0;
             monthExpenses.forEach(exp => {
                 const { partner1, partner2 } = calculateMonthlyShare(exp);
-                totalP1 += partner1; totalP2 += partner2;
+                totalP1 += partner1;
+                totalP2 += partner2;
             });
-            const totalGeral = totalP1+totalP2;
+            const totalGeral = totalP1 + totalP2;
+
             const htmlContent = `
-                <div style="font-family: 'Inter', sans-serif; padding: 20px;">
-                    <h1 style="color: var(--primary-color, #e91e63);">CASH CASAL - Relatório Mensal</h1>
-                    <h2>${new Date(selectedYear, selectedMonth).toLocaleDateString('pt-BR', { timeZone: TIMEZONE, month: 'long', year: 'numeric' })}</h2>
+                <div style="font-family: 'Inter', sans-serif; padding: 20px; background: white; color: black; width: 800px;">
+                    <h1 style="color: #e91e63;">CASH CASAL - Relatório Mensal</h1>
+                    <h2>${new Date(selectedYear, selectedMonth).toLocaleDateString('pt-BR', { month: 'long', year: 'numeric', timeZone: TIMEZONE })}</h2>
                     <hr>
                     <h3>Resumo de Gastos Pendentes</h3>
                     <p><strong>${partner1Name}:</strong> ${formatMoney(totalP1)}</p>
@@ -2851,37 +2862,60 @@
                     <p><strong>Meta de economia:</strong> ${formatMoney(savingsGoal)} (${totalGeral > 0 ? Math.round((savingsGoal - totalGeral) / savingsGoal * 100) : 0}% restante)</p>
                     <hr>
                     <h3>Despesas do mês</h3>
-                    <table style="width:100%; border-collapse: collapse;"><thead><tr><th style="border:1px solid #ddd; padding:8px;">Descrição</th><th style="border:1px solid #ddd; padding:8px;">Valor</th><th style="border:1px solid #ddd; padding:8px;">Categoria</th><th style="border:1px solid #ddd; padding:8px;">Data parcela</th></tr></thead>
-                    <tbody>${monthExpenses.map(exp => {
-                        const due = getInstallmentDateForMonth(exp, targetMonth);
-                        if (!due) return '';
-                        const { partner1, partner2 } = calculateMonthlyShare(exp);
-                        return `<tr><td style="border:1px solid #ddd; padding:8px;">${exp.descricao}</td><td style="border:1px solid #ddd; padding:8px;">${formatMoney(partner1+partner2)}</td><td style="border:1px solid #ddd; padding:8px;">${exp.categoria||'Geral'}</td><td style="border:1px solid #ddd; padding:8px;">${due.toLocaleDateString('pt-BR', { timeZone: TIMEZONE })}<\/td><\/tr>`;
-                    }).join('')}</tbody>
+                    <table style="width:100%; border-collapse: collapse;">
+                        <thead>
+                            <tr><th style="border:1px solid #ddd; padding:8px;">Descrição</th><th style="border:1px solid #ddd; padding:8px;">Valor</th><th style="border:1px solid #ddd; padding:8px;">Categoria</th><th style="border:1px solid #ddd; padding:8px;">Data parcela</th></tr>
+                        </thead>
+                        <tbody>
+                            ${monthExpenses.map(exp => {
+                                const due = getInstallmentDateForMonth(exp, targetMonth);
+                                if (!due) return '';
+                                const { partner1, partner2 } = calculateMonthlyShare(exp);
+                                return `<tr><td style="border:1px solid #ddd; padding:8px;">${exp.descricao}<\/td><td style="border:1px solid #ddd; padding:8px;">${formatMoney(partner1 + partner2)}<\/td><td style="border:1px solid #ddd; padding:8px;">${exp.categoria || 'Geral'}<\/td><td style="border:1px solid #ddd; padding:8px;">${due.toLocaleDateString('pt-BR', { timeZone: TIMEZONE })}<\/td><\/tr>`;
+                            }).join('')}
+                        </tbody>
                     </table>
-                    <hr><p><small>Relatório gerado em ${new Date().toLocaleString('pt-BR', { timeZone: TIMEZONE })} pelo aplicativo CASH CASAL.</small></p>
+                    <hr>
+                    <p><small>Relatório gerado em ${new Date().toLocaleString('pt-BR', { timeZone: TIMEZONE })} pelo aplicativo CASH CASAL.</small></p>
                 </div>
             `;
+
             const tempDiv = document.createElement('div');
             tempDiv.style.position = 'absolute';
             tempDiv.style.left = '-9999px';
+            tempDiv.style.top = '-9999px';
             tempDiv.style.width = '800px';
             tempDiv.style.background = '#fff';
             tempDiv.style.color = '#000';
             tempDiv.innerHTML = htmlContent;
             document.body.appendChild(tempDiv);
-            const canvasImg = await html2canvas(tempDiv, { scale: 2, backgroundColor: '#ffffff' });
-            const imgData = canvasImg.toDataURL('image/png');
+
+            await new Promise(resolve => setTimeout(resolve, 100));
+
+            const canvas = await html2canvas(tempDiv, {
+                scale: 2,
+                backgroundColor: '#ffffff',
+                logging: false,
+                useCORS: false
+            });
+
+            const imgData = canvas.toDataURL('image/png');
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF('p', 'mm', 'a4');
-            doc.addImage(imgData, 'PNG', 10, 10, 190, 0);
-            doc.save(`relatorio_${selectedYear}_${selectedMonth+1}.pdf`);
+            const imgWidth = 190;
+            const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+            doc.addImage(imgData, 'PNG', 10, 10, imgWidth, imgHeight);
+            const fileName = `relatorio_${selectedYear}_${selectedMonth + 1}.pdf`;
+            doc.save(fileName);
+
             document.body.removeChild(tempDiv);
+
             await addNotification('export_pdf', `exportou relatório mensal em PDF`);
             Swal.fire('PDF gerado!', 'O relatório foi salvo com sucesso.', 'success');
-        } catch(e) {
-            Swal.fire('Erro', 'Não foi possível gerar o PDF. Tente novamente.', 'error');
-            console.error(e);
+        } catch (error) {
+            console.error('Erro ao gerar PDF:', error);
+            Swal.fire('Erro', 'Não foi possível gerar o PDF. Verifique o console para mais detalhes.', 'error');
         }
     }
     
