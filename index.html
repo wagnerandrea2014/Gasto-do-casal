@@ -711,6 +711,46 @@
         .limit-alert-global button:active {
             transform: scale(0.96);
         }
+
+        /* Estilo do card Projeção Futura */
+        .projection-card {
+            background: rgba(233,30,99,0.08);
+            border-radius: 20px;
+            padding: 12px;
+            margin-bottom: 10px;
+        }
+        .projection-header {
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--primary-color);
+            border-left: 3px solid var(--primary-color);
+            padding-left: 8px;
+        }
+        .projection-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 8px;
+        }
+        .projection-total {
+            font-weight: 800;
+            font-size: 1.1rem;
+        }
+        .projection-list {
+            margin-top: 8px;
+            font-size: 0.75rem;
+            max-height: 150px;
+            overflow-y: auto;
+            padding-right: 4px;
+        }
+        .projection-item {
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px dashed rgba(233,30,99,0.3);
+            padding: 4px 0;
+        }
     </style>
 </head>
 <body>
@@ -788,7 +828,11 @@
             <div class="card"><div class="card-title"><i class="fas fa-chart-pie"></i> Gráficos</div><canvas id="categoryChart" style="max-height: 200px;"></canvas><canvas id="compareChart" style="max-height: 150px; margin-top: 16px;"></canvas></div>
             <div class="card"><div class="card-title"><i class="fas fa-chart-line"></i> Análise de Recorrentes</div><div id="recurring-summary"></div><div id="recurring-list"></div></div>
             <div class="card"><div class="card-title"><i class="fas fa-chart-simple"></i> Resumo de Orçamentos</div><div id="budget-summary-list"></div></div>
-            <div class="card"><div class="card-title"><i class="fas fa-calendar-alt"></i> Próximas parcelas</div><ul id="upcoming-installments" style="list-style: none; padding: 0; display: flex; flex-direction: column; gap: 6px;"></ul></div>
+            <!-- NOVO CARD: PROJEÇÃO FUTURA -->
+            <div class="card">
+                <div class="card-title"><i class="fas fa-calendar-week"></i> Projeção Futura</div>
+                <div id="projecao-futura-container"></div>
+            </div>
         </div>
         <!-- Página 1: Gastos Parceiro 1 -->
         <div class="swipe-page" data-page="1" id="page-partner1">
@@ -851,7 +895,16 @@
             <div class="card"><div class="card-title"><i class="fas fa-database"></i> Backup / Restauração</div><button id="export-all-btn" class="btn btn-secondary" style="width:100%; margin-bottom:8px;">📥 Exportar dados (JSON)</button><button id="import-all-btn" class="btn btn-secondary" style="width:100%;">📤 Importar dados (JSON)</button><input type="file" id="import-file" accept=".json" style="display:none;"></div>
             <div class="card"><div class="card-title"><i class="fas fa-file-pdf"></i> Relatório mensal</div><button id="export-pdf-btn" class="btn btn-primary" style="width:100%;">📄 Exportar relatório em PDF</button></div>
             <div class="card"><div class="card-title"><i class="fas fa-palette"></i> Personalizar tema</div><div class="form-row"><div class="input-group"><label>Cor principal</label><input type="color" id="primary-color-picker" value="#e91e63"></div><div class="input-group"><label>Visualização</label><div class="color-preview" id="color-preview" style="background-color:#e91e63;"></div></div></div><button id="reset-color-btn" class="btn btn-secondary" style="width:100%; margin-top:8px;">🔄 Restaurar cor padrão (rosa)</button></div>
-            <div class="card"><div class="card-title"><i class="fas fa-trash-alt"></i> Limpar dados recorrentes</div><button id="clear-recurring-btn" class="btn btn-danger" style="width:100%;"><i class="fas fa-sync-alt"></i> Remover todas as despesas recorrentes</button></div>
+            <!-- Limpar dados recorrentes com opções por parceiro -->
+            <div class="card">
+                <div class="card-title"><i class="fas fa-trash-alt"></i> Limpar dados recorrentes</div>
+                <div style="display: flex; gap: 12px; flex-wrap: wrap; justify-content: space-between; margin-bottom: 8px;">
+                    <button id="clear-recurring-partner1" class="btn btn-danger" style="flex:1;">👤 Parceiro 1</button>
+                    <button id="clear-recurring-partner2" class="btn btn-danger" style="flex:1;">👤 Parceiro 2</button>
+                    <button id="clear-recurring-all" class="btn btn-danger" style="flex:1; background: #c62828;">⚠️ Todos</button>
+                </div>
+                <div class="info-message" style="font-size:0.7rem;">⚠️ Atenção: removerá os templates e todas as despesas recorrentes geradas (apenas do parceiro selecionado). Ação irreversível.</div>
+            </div>
             <!-- Backup Automático -->
             <div class="card">
                 <div class="card-title"><i class="fas fa-cloud-upload-alt"></i> Backup Automático</div>
@@ -1368,6 +1421,85 @@
         }
     }
     
+    // ==================== FUNÇÃO PROJEÇÃO FUTURA ====================
+    function renderProjecaoFutura() {
+        const container = document.getElementById('projecao-futura-container');
+        if (!container) return;
+        
+        // Calcular próximo mês
+        let nextMonth = selectedMonth + 1;
+        let nextYear = selectedYear;
+        if (nextMonth > 11) {
+            nextMonth = 0;
+            nextYear++;
+        }
+        const targetMonthStr = `${nextYear}-${String(nextMonth+1).padStart(2,'0')}`;
+        
+        // Filtrar despesas que terão parcela no próximo mês e que não estão quitadas
+        const futureExpenses = allExpenses.filter(exp => exp.installmentMonths?.includes(targetMonthStr) && !exp.quitado);
+        
+        if (futureExpenses.length === 0) {
+            container.innerHTML = '<div class="info-message" style="text-align:center;">Nenhum gasto programado para o próximo mês.</div>';
+            return;
+        }
+        
+        // Acumular totais por parceiro e lista de itens
+        let totalP1 = 0, totalP2 = 0;
+        const itemsP1 = [];
+        const itemsP2 = [];
+        
+        for (const exp of futureExpenses) {
+            const { partner1, partner2 } = calculateMonthlyShare(exp);
+            const dueDate = getInstallmentDateForMonth(exp, targetMonthStr);
+            const dateStr = dueDate ? dueDate.toLocaleDateString('pt-BR', { timeZone: TIMEZONE }) : 'Data?';
+            if (partner1 > 0) {
+                totalP1 += partner1;
+                itemsP1.push({ desc: exp.descricao, valor: partner1, data: dateStr, categoria: exp.categoria });
+            }
+            if (partner2 > 0) {
+                totalP2 += partner2;
+                itemsP2.push({ desc: exp.descricao, valor: partner2, data: dateStr, categoria: exp.categoria });
+            }
+        }
+        
+        // Ordenar itens por data (mais próxima primeiro)
+        const sortByDate = (a,b) => new Date(a.data.split('/').reverse().join('-')) - new Date(b.data.split('/').reverse().join('-'));
+        itemsP1.sort(sortByDate);
+        itemsP2.sort(sortByDate);
+        
+        const monthName = new Date(nextYear, nextMonth, 1).toLocaleDateString('pt-BR', { month: 'long', year: 'numeric', timeZone: TIMEZONE });
+        
+        const html = `
+            <div style="margin-bottom: 8px; font-size:0.8rem; opacity:0.8;">📅 Previsão para ${monthName}</div>
+            <div class="dashboard-row" style="margin-bottom: 12px;">
+                <div class="dashboard-card" style="background: rgba(233,30,99,0.15);">
+                    <h4>🧑 ${partner1Name}</h4>
+                    <div class="value">${formatMoney(totalP1)}</div>
+                </div>
+                <div class="dashboard-card" style="background: rgba(233,30,99,0.15);">
+                    <h4>👩 ${partner2Name}</h4>
+                    <div class="value">${formatMoney(totalP2)}</div>
+                </div>
+                <div class="dashboard-card" style="background: rgba(233,30,99,0.15);">
+                    <h4>💑 Total do casal</h4>
+                    <div class="value">${formatMoney(totalP1 + totalP2)}</div>
+                </div>
+            </div>
+            <div class="projection-row">
+                <div class="projection-card" style="flex:1; margin-right:8px;">
+                    <div class="projection-header">📋 Gastos de ${partner1Name}</div>
+                    ${itemsP1.length ? `<div class="projection-list">${itemsP1.map(i => `<div class="projection-item"><span>${escapeHtml(i.desc)}${i.categoria ? ` (${i.categoria})` : ''}</span><span>${formatMoney(i.valor)}</span></div>`).join('')}</div>` : '<div class="info-message">Nenhum gasto</div>'}
+                </div>
+                <div class="projection-card" style="flex:1;">
+                    <div class="projection-header">📋 Gastos de ${partner2Name}</div>
+                    ${itemsP2.length ? `<div class="projection-list">${itemsP2.map(i => `<div class="projection-item"><span>${escapeHtml(i.desc)}${i.categoria ? ` (${i.categoria})` : ''}</span><span>${formatMoney(i.valor)}</span></div>`).join('')}</div>` : '<div class="info-message">Nenhum gasto</div>'}
+                </div>
+            </div>
+        `;
+        
+        container.innerHTML = html;
+    }
+    
     // ==================== FUNÇÕES EXISTENTES (resumidas) ====================
     function goToPage(pageIndex) {
         const container = document.getElementById('swipeContainer');
@@ -1623,31 +1755,52 @@
         }
     }
     
-    async function deleteAllRecurringExpenses() {
+    async function deleteRecurringByPartner(partnerKey) {
+        let filterPaidBy = null;
+        if (partnerKey === 'partner1') filterPaidBy = 'partner1';
+        else if (partnerKey === 'partner2') filterPaidBy = 'partner2';
+        
+        const confirmMsg = filterPaidBy 
+            ? `Tem certeza que deseja remover TODAS as despesas recorrentes (templates e controles) onde o pagador é ${filterPaidBy === 'partner1' ? partner1Name : partner2Name}? Esta ação é irreversível.`
+            : 'Tem certeza que deseja remover TODAS as despesas recorrentes (templates e controles) de TODOS os parceiros? Esta ação é irreversível.';
+        
         const result = await Swal.fire({
             title: '⚠️ Atenção!',
-            text: 'Tem certeza que deseja remover TODAS as despesas recorrentes (incluindo templates e controles)? Esta ação é irreversível.',
+            text: confirmMsg,
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#e91e63',
-            confirmButtonText: 'Sim, remover tudo',
+            confirmButtonText: 'Sim, remover',
             cancelButtonText: 'Cancelar'
         });
         if (!result.isConfirmed) return;
+        
         showLoading(true);
         try {
-            const expensesSnapshot = await expensesRef.where('recorrente', '==', 'monthly').get();
-            const expensesWithTemplate = await expensesRef.where('recurringTemplateId', '!=', null).get();
-            const templatesSnapshot = await recurringRef.get();
-            const controlSnapshot = await recurringControlRef.get();
-            const batch = db.batch();
-            expensesSnapshot.forEach(doc => batch.delete(doc.ref));
-            expensesWithTemplate.forEach(doc => batch.delete(doc.ref));
-            templatesSnapshot.forEach(doc => batch.delete(doc.ref));
-            controlSnapshot.forEach(doc => batch.delete(doc.ref));
-            await batch.commit();
-            await addNotification('recurring_cleared', 'removeu todas as despesas recorrentes');
-            Swal.fire('Removido!', 'Todas as despesas recorrentes, templates e controles foram excluídos.', 'success');
+            if (filterPaidBy) {
+                const templatesSnap = await recurringRef.where('paidBy', '==', filterPaidBy).get();
+                const templateIds = templatesSnap.docs.map(doc => doc.id);
+                const expensesSnap = await expensesRef.where('recurringTemplateId', 'in', templateIds.length ? templateIds : ['dummy']).get();
+                const controlSnap = await recurringControlRef.where('templateId', 'in', templateIds.length ? templateIds : ['dummy']).get();
+                const batch = db.batch();
+                templatesSnap.forEach(doc => batch.delete(doc.ref));
+                expensesSnap.forEach(doc => batch.delete(doc.ref));
+                controlSnap.forEach(doc => batch.delete(doc.ref));
+                await batch.commit();
+            } else {
+                const expensesSnapshot = await expensesRef.where('recorrente', '==', 'monthly').get();
+                const expensesWithTemplate = await expensesRef.where('recurringTemplateId', '!=', null).get();
+                const templatesSnapshot = await recurringRef.get();
+                const controlSnapshot = await recurringControlRef.get();
+                const batch = db.batch();
+                expensesSnapshot.forEach(doc => batch.delete(doc.ref));
+                expensesWithTemplate.forEach(doc => batch.delete(doc.ref));
+                templatesSnapshot.forEach(doc => batch.delete(doc.ref));
+                controlSnapshot.forEach(doc => batch.delete(doc.ref));
+                await batch.commit();
+            }
+            await addNotification('recurring_cleared', filterPaidBy ? `removeu despesas recorrentes de ${filterPaidBy === 'partner1' ? partner1Name : partner2Name}` : 'removeu todas as despesas recorrentes');
+            Swal.fire('Removido!', filterPaidBy ? `Despesas recorrentes do parceiro removidas.` : 'Todas as despesas recorrentes foram excluídas.', 'success');
             debouncedUpdateDashboard();
         } catch (error) {
             console.error(error);
@@ -2053,7 +2206,7 @@
         }
     }
     
-    // ==================== FUNÇÃO RENDER PARTNER EXPENSES ====================
+    // ==================== FUNÇÃO RENDER PARTNER EXPENSES (COM ORDENAÇÃO POR DATA DE COMPRA) ====================
     async function renderPartnerExpensesWithPaid(partnerKey, containerId, containerPaidId, monthYear) {
         const container = document.getElementById(containerId);
         const containerPaid = document.getElementById(containerPaidId);
@@ -2078,6 +2231,7 @@
                 categoria: exp.categoria,
                 observacao: exp.observacao,
                 recorrente: !!(exp.recurringTemplateId || exp.recorrente === 'monthly'),
+                startDate: exp.startDate,
                 createdAt: exp.createdAt ? exp.createdAt.toDate() : parseLocalDateToDate(exp.startDate)
             };
             if (exp.quitado) {
@@ -2087,7 +2241,12 @@
             }
         }
     
-        pending.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+        pending.sort((a, b) => {
+            if (a.startDate > b.startDate) return -1;
+            if (a.startDate < b.startDate) return 1;
+            return 0;
+        });
+    
         const normais = pending.filter(i => !i.recorrente);
         const recorrentes = pending.filter(i => i.recorrente);
         paid.sort((a, b) => (b.data || 0) - (a.data || 0));
@@ -2242,7 +2401,6 @@
         }
         container.innerHTML = html;
     
-        // Botão Quitar para devedores (classe exclusiva)
         document.querySelectorAll('.btn-quitar-debtor').forEach(btn => {
             btn.addEventListener('click', async (e) => {
                 e.stopPropagation();
@@ -2270,7 +2428,6 @@
             });
         });
     
-        // Botão Excluir (mesma classe, sem conflito)
         document.querySelectorAll('.delete-debtor-entry').forEach(btn => {
             btn.addEventListener('click', async (e) => {
                 e.stopPropagation();
@@ -2297,7 +2454,6 @@
             });
         });
     
-        // Botão "Nova dívida" dentro do grupo
         document.querySelectorAll('.add-debt-to-group').forEach(btn => {
             btn.addEventListener('click', async (e) => {
                 e.stopPropagation();
@@ -2906,8 +3062,18 @@
             const imgHeight = (canvas.height * imgWidth) / canvas.width;
 
             doc.addImage(imgData, 'PNG', 10, 10, imgWidth, imgHeight);
+            
+            const pdfBlob = doc.output('blob');
             const fileName = `relatorio_${selectedYear}_${selectedMonth + 1}.pdf`;
-            doc.save(fileName);
+            
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(pdfBlob);
+            link.href = url;
+            link.download = fileName;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
 
             document.body.removeChild(tempDiv);
 
@@ -3027,28 +3193,8 @@
         renderRecurringAnalysis();
         renderFinalInstallments();
     
-        const upcomingContainer = document.getElementById('upcoming-installments');
-        if (upcomingContainer) {
-            upcomingContainer.innerHTML = '';
-            const today = new Date();
-            const threeMonths = new Date(); threeMonths.setMonth(today.getMonth()+3);
-            const future = [];
-            pendingExpenses.forEach(exp => {
-                for (let i = exp.parcelasPagas||0; i < exp.parcelas; i++) {
-                    const due = parseLocalDateToDate(addMonthsToDateStr(exp.startDate, i));
-                    if (due > today && due <= threeMonths) {
-                        const { partner1, partner2 } = calculateMonthlyShare(exp);
-                        future.push({ desc: exp.descricao, date: due, value: partner1+partner2 });
-                    }
-                }
-            });
-            future.sort((a,b)=>a.date-b.date).slice(0,6).forEach(p => {
-                const li = document.createElement('li'); li.style.background = 'rgba(233,30,99,0.1)'; li.style.padding = '6px 10px'; li.style.borderRadius = '30px'; li.style.fontSize = '0.75rem';
-                li.textContent = `📌 ${p.desc} - ${formatMoney(p.value)} (${p.date.toLocaleDateString('pt-BR', { timeZone: TIMEZONE })})`;
-                upcomingContainer.appendChild(li);
-            });
-            if(future.length===0) upcomingContainer.innerHTML = '<li style="background:transparent">Nenhuma parcela futura</li>';
-        }
+        renderProjecaoFutura(); // NOVO: renderiza o card de projeção futura
+    
         renderHistory();
         await renderPartnerExpensesWithPaid('partner1', 'partner1-expenses-list', 'partner1-paid-list', targetMonth);
         await renderPartnerExpensesWithPaid('partner2', 'partner2-expenses-list', 'partner2-paid-list', targetMonth);
@@ -3140,6 +3286,9 @@
         loadBackupSettings();
         document.getElementById('save-backup-settings')?.addEventListener('click', saveBackupSettings);
         document.getElementById('force-backup-btn')?.addEventListener('click', forceBackup);
+        document.getElementById('clear-recurring-partner1')?.addEventListener('click', () => deleteRecurringByPartner('partner1'));
+        document.getElementById('clear-recurring-partner2')?.addEventListener('click', () => deleteRecurringByPartner('partner2'));
+        document.getElementById('clear-recurring-all')?.addEventListener('click', () => deleteRecurringByPartner(null));
         document.getElementById('bell-icon')?.addEventListener('click', async () => {
             await loadNotifications();
             await markAllAsRead();
@@ -3244,7 +3393,6 @@
     document.getElementById('export-pdf-btn').addEventListener('click', exportPDF);
     document.getElementById('primary-color-picker').addEventListener('change', (e) => savePrimaryColor(e.target.value));
     document.getElementById('reset-color-btn').addEventListener('click', resetPrimaryColor);
-    document.getElementById('clear-recurring-btn').addEventListener('click', deleteAllRecurringExpenses);
     document.getElementById('custom-split').style.display = 'none';
     document.getElementById('save-limit1-btn').addEventListener('click', () => { const val = parseFloat(document.getElementById('limit1').value); if (!isNaN(val) && val >= 0) saveLimit('partner1', val); else Swal.fire('Erro', 'Valor inválido', 'error'); });
     document.getElementById('save-limit2-btn').addEventListener('click', () => { const val = parseFloat(document.getElementById('limit2').value); if (!isNaN(val) && val >= 0) saveLimit('partner2', val); else Swal.fire('Erro', 'Valor inválido', 'error'); });
