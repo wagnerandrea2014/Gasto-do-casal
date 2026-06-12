@@ -814,7 +814,7 @@
                     <div class="dashboard-card"><h4 id="gasto-partner2-label">👩 Gasto de </h4><div class="value" id="gasto-partner2">R$ 0,00</div></div>
                     <div class="dashboard-card"><h4><i class="fas fa-hand-holding-usd"></i> Total a receber</h4><div class="value" id="total-a-receber">R$ 0,00</div><small id="debtors-count"></small></div>
                 </div>
-                <div style="margin-top: 12px;"><h4>🎯 Meta de economia do casal</h4><div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 6px;"><input type="number" id="meta-valor" step="100" value="500" style="flex:2;"><button class="btn btn-primary" id="set-meta-btn" style="flex:1;">Definir</button></div><div class="progress-bar"><div class="progress-fill" id="meta-fill"></div></div><div id="meta-progress" style="text-align: center; margin-top: 4px;">0%</div></div>
+                <div style="margin-top: 12px;"><h4>🎯 Meta de economia do casal</h4><div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 6px;"><input type="text" id="meta-valor" step="100" value="500" style="flex:2;"><button class="btn btn-primary" id="set-meta-btn" style="flex:1;">Definir</button></div><div class="progress-bar"><div class="progress-fill" id="meta-fill"></div></div><div id="meta-progress" style="text-align: center; margin-top: 4px;">0%</div></div>
             </div>
             <div class="card">
                 <div class="card-title"><i class="fas fa-sync-alt"></i> Gastos Recorrentes Pendentes</div>
@@ -839,22 +839,22 @@
             <div id="limit-alert-partner1" class="limit-alert-container"></div>
             <div class="card"><div class="card-title"><i class="fas fa-clock"></i> Gastos pendentes de <span id="partner1-name-label"></span></div><div id="partner1-expenses-list"></div></div>
             <div class="card"><div class="card-title"><i class="fas fa-check-circle"></i> Gastos quitados de <span id="partner1-paid-label"></span></div><div id="partner1-paid-list"></div></div>
-            <div class="card"><div class="card-title"><i class="fas fa-bullseye"></i> Meta individual de <span id="goal-individual-name1"></span></div><input type="number" id="goal1-target" placeholder="Alvo R$"><input type="number" id="goal1-current" placeholder="Atual R$"><button id="save-goal1-btn" class="btn btn-primary">Salvar meta</button><div class="progress-bar"><div class="progress-fill" id="goal1-progress-fill"></div></div><div id="goal1-progress-text" style="text-align:center;">0%</div></div>
-            <div class="card"><div class="card-title"><i class="fas fa-chart-line"></i> Limite de gasto mensal</div><div class="form-row"><div class="input-group"><label>Valor limite (R$)</label><input type="number" id="limit1" step="50" placeholder="Ex: 1000"></div><button id="save-limit1-btn" class="btn btn-primary">Definir limite</button></div><div id="limit-alert1" class="alert-warning" style="display: none;"><i class="fas fa-exclamation-triangle"></i><span><strong>Atenção!</strong> Você já atingiu ou ultrapassou o limite de gastos definido para este mês.</span></div></div>
+            <div class="card"><div class="card-title"><i class="fas fa-bullseye"></i> Meta individual de <span id="goal-individual-name1"></span></div><input type="text" id="goal1-target" placeholder="Alvo R$"><input type="text" id="goal1-current" placeholder="Atual R$"><button id="save-goal1-btn" class="btn btn-primary">Salvar meta</button><div class="progress-bar"><div class="progress-fill" id="goal1-progress-fill"></div></div><div id="goal1-progress-text" style="text-align:center;">0%</div></div>
+            <div class="card"><div class="card-title"><i class="fas fa-chart-line"></i> Limite de gasto mensal</div><div class="form-row"><div class="input-group"><label>Valor limite (R$)</label><input type="text" id="limit1" step="50" placeholder="Ex: 1000"></div><button id="save-limit1-btn" class="btn btn-primary">Definir limite</button></div><div id="limit-alert1" class="alert-warning" style="display: none;"><i class="fas fa-exclamation-triangle"></i><span><strong>Atenção!</strong> Você já atingiu ou ultrapassou o limite de gastos definido para este mês.</span></div></div>
         </div>
         <!-- Página 2: Gastos Parceiro 2 -->
         <div class="swipe-page" data-page="2" id="page-partner2">
             <div id="limit-alert-partner2" class="limit-alert-container"></div>
             <div class="card"><div class="card-title"><i class="fas fa-clock"></i> Gastos pendentes de <span id="partner2-name-label"></span></div><div id="partner2-expenses-list"></div></div>
             <div class="card"><div class="card-title"><i class="fas fa-check-circle"></i> Gastos quitados de <span id="partner2-paid-label"></span></div><div id="partner2-paid-list"></div></div>
-            <div class="card"><div class="card-title"><i class="fas fa-bullseye"></i> Meta individual de <span id="goal-individual-name2"></span></div><input type="number" id="goal2-target" placeholder="Alvo R$"><input type="number" id="goal2-current" placeholder="Atual R$"><button id="save-goal2-btn" class="btn btn-primary">Salvar meta</button><div class="progress-bar"><div class="progress-fill" id="goal2-progress-fill"></div></div><div id="goal2-progress-text" style="text-align:center;">0%</div></div>
-            <div class="card"><div class="card-title"><i class="fas fa-chart-line"></i> Limite de gasto mensal</div><div class="form-row"><div class="input-group"><label>Valor limite (R$)</label><input type="number" id="limit2" step="50" placeholder="Ex: 1000"></div><button id="save-limit2-btn" class="btn btn-primary">Definir limite</button></div><div id="limit-alert2" class="alert-warning" style="display: none;"><i class="fas fa-exclamation-triangle"></i><span><strong>Atenção!</strong> Você já atingiu ou ultrapassou o limite de gastos definido para este mês.</span></div></div>
+            <div class="card"><div class="card-title"><i class="fas fa-bullseye"></i> Meta individual de <span id="goal-individual-name2"></span></div><input type="text" id="goal2-target" placeholder="Alvo R$"><input type="text" id="goal2-current" placeholder="Atual R$"><button id="save-goal2-btn" class="btn btn-primary">Salvar meta</button><div class="progress-bar"><div class="progress-fill" id="goal2-progress-fill"></div></div><div id="goal2-progress-text" style="text-align:center;">0%</div></div>
+            <div class="card"><div class="card-title"><i class="fas fa-chart-line"></i> Limite de gasto mensal</div><div class="form-row"><div class="input-group"><label>Valor limite (R$)</label><input type="text" id="limit2" step="50" placeholder="Ex: 1000"></div><button id="save-limit2-btn" class="btn btn-primary">Definir limite</button></div><div id="limit-alert2" class="alert-warning" style="display: none;"><i class="fas fa-exclamation-triangle"></i><span><strong>Atenção!</strong> Você já atingiu ou ultrapassou o limite de gastos definido para este mês.</span></div></div>
         </div>
         <!-- Página 3: Nova despesa -->
         <div class="swipe-page" data-page="3">
             <div class="card"><div class="card-title"><i class="fas fa-plus-circle"></i> Nova despesa</div>
                 <form id="expense-form">
-                    <div class="form-row"><div class="input-group"><label>Descrição</label><input type="text" id="descricao" required placeholder="Ex: Supermercado"></div><div class="input-group"><label>Valor total (R$)</label><input type="number" id="valor-total" step="0.01" required placeholder="0,00"></div></div>
+                    <div class="form-row"><div class="input-group"><label>Descrição</label><input type="text" id="descricao" required placeholder="Ex: Supermercado"></div><div class="input-group"><label>Valor total (R$)</label><input type="text" id="valor-total" required placeholder="0,00"></div></div>
                     <div class="form-row"><div class="input-group"><label>Total parcelas</label><input type="number" id="parcelas" value="1" min="1" required></div><div class="input-group"><label>Parcelas já pagas</label><input type="number" id="parcelasPagas" value="0" min="0"></div></div>
                     <div class="form-row"><div class="input-group"><label>Data da compra</label><input type="date" id="start-date" required></div><div class="input-group"><label>Categoria</label><select id="categoria"></select></div></div>
                     <div class="form-row"><div class="input-group"><label>Quem pagou?</label><select id="paid-by"><option value="partner1">Parceiro 1</option><option value="partner2">Parceiro 2</option><option value="both">Dividido</option></select></div>
@@ -889,8 +889,8 @@
         </div>
         <!-- Página 5: Configurações -->
         <div class="swipe-page" data-page="5">
-            <div class="card"><div class="card-title"><i class="fas fa-chart-line"></i> Renda compartilhada</div><div class="income-row"><span>💰 <span id="income-name1"></span>:</span><input type="number" id="income1" step="100" value="0" style="flex:2;"></div><div class="income-row"><span>💰 <span id="income-name2"></span>:</span><input type="number" id="income2" step="100" value="0" style="flex:2;"></div><div id="income-summary" class="info-message"></div><button id="save-income-btn" class="btn btn-primary">Salvar rendas</button></div>
-            <div class="card"><div class="card-title"><i class="fas fa-tasks"></i> Orçamento por categoria</div><div id="budget-list"></div><div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px;"><input type="text" id="new-budget-cat" placeholder="Categoria" list="categoryList" style="flex:2;"><input type="number" id="new-budget-value" placeholder="Limite R$" style="flex:1;"><button id="add-budget-btn" class="btn btn-primary">Definir</button></div></div>
+            <div class="card"><div class="card-title"><i class="fas fa-chart-line"></i> Renda compartilhada</div><div class="income-row"><span>💰 <span id="income-name1"></span>:</span><input type="text" id="income1" step="100" value="0" style="flex:2;"></div><div class="income-row"><span>💰 <span id="income-name2"></span>:</span><input type="text" id="income2" step="100" value="0" style="flex:2;"></div><div id="income-summary" class="info-message"></div><button id="save-income-btn" class="btn btn-primary">Salvar rendas</button></div>
+            <div class="card"><div class="card-title"><i class="fas fa-tasks"></i> Orçamento por categoria</div><div id="budget-list"></div><div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px;"><input type="text" id="new-budget-cat" placeholder="Categoria" list="categoryList" style="flex:2;"><input type="text" id="new-budget-value" placeholder="Limite R$" style="flex:1;"><button id="add-budget-btn" class="btn btn-primary">Definir</button></div></div>
             <div class="card"><div class="card-title"><i class="fas fa-tags"></i> Gerenciar categorias</div><div id="categories-list"></div><div style="display: flex; gap: 8px; margin-top: 12px;"><input type="text" id="new-category-name" placeholder="Nova categoria" style="flex:2;"><button id="add-category-btn" class="btn btn-primary">Adicionar</button></div></div>
             <div class="card"><div class="card-title"><i class="fas fa-database"></i> Backup / Restauração</div><button id="export-all-btn" class="btn btn-secondary" style="width:100%; margin-bottom:8px;">📥 Exportar dados (JSON)</button><button id="import-all-btn" class="btn btn-secondary" style="width:100%;">📤 Importar dados (JSON)</button><input type="file" id="import-file" accept=".json" style="display:none;"></div>
             <div class="card"><div class="card-title"><i class="fas fa-file-pdf"></i> Relatório mensal</div><button id="export-pdf-btn" class="btn btn-primary" style="width:100%;">📄 Exportar relatório em PDF</button></div>
@@ -938,7 +938,7 @@
                 <div id="debtors-list"></div>
                 <div class="debtor-form-group">
                     <div style="flex:2;"><label>Nome do devedor</label><input type="text" id="new-debtor-name" placeholder="Ex: João"></div>
-                    <div style="flex:1;"><label>Valor (R$)</label><input type="number" id="new-debtor-value" placeholder="0,00" step="0.01"></div>
+                    <div style="flex:1;"><label>Valor (R$)</label><input type="text" id="new-debtor-value" placeholder="0,00" step="0.01"></div>
                     <div style="flex:1;"><label>Data</label><input type="date" id="new-debtor-date"></div>
                     <div style="flex:0 0 auto;"><button id="add-debtor-btn" class="btn btn-success">Adicionar</button></div>
                 </div>
@@ -950,7 +950,7 @@
         </div>
         <!-- Página 8: Metas do casal -->
         <div class="swipe-page" data-page="8">
-            <div class="card"><div class="card-title"><i class="fas fa-bullseye"></i> Metas de Economia do Casal</div><div id="goals-list"></div><div class="goal-add-form"><div class="input-group"><label>Nome da meta</label><input type="text" id="new-goal-name" placeholder="Ex: Viagem"></div><div class="input-group"><label>Alvo (R$)</label><input type="number" id="new-goal-target" step="100" placeholder="0,00"></div><div class="input-group"><label>Atual (R$)</label><input type="number" id="new-goal-current" step="100" placeholder="0,00" value="0"></div><div class="input-group"><label>Prazo</label><input type="date" id="new-goal-deadline"></div><button id="add-goal-btn" class="btn btn-primary">Adicionar</button></div></div>
+            <div class="card"><div class="card-title"><i class="fas fa-bullseye"></i> Metas de Economia do Casal</div><div id="goals-list"></div><div class="goal-add-form"><div class="input-group"><label>Nome da meta</label><input type="text" id="new-goal-name" placeholder="Ex: Viagem"></div><div class="input-group"><label>Alvo (R$)</label><input type="text" id="new-goal-target" step="100" placeholder="0,00"></div><div class="input-group"><label>Atual (R$)</label><input type="text" id="new-goal-current" step="100" placeholder="0,00" value="0"></div><div class="input-group"><label>Prazo</label><input type="date" id="new-goal-deadline"></div><button id="add-goal-btn" class="btn btn-primary">Adicionar</button></div></div>
         </div>
         <!-- Página 9: Parcelas Finais -->
         <div class="swipe-page" data-page="9">
@@ -1047,6 +1047,57 @@
     const themeRef = db.collection(`shared/${COUPLE_ID}/settings`).doc("theme");
     const invoicesRef = db.collection(`shared/${COUPLE_ID}/invoices`);
     const notificationsRef = db.collection(`shared/${COUPLE_ID}/notifications`);
+
+    // ==================== FUNÇÕES DE MÁSCARA DE MOEDA ====================
+    function parseMoneyString(str) {
+        if (!str) return 0;
+        let cleaned = str.replace(/[^\d,]/g, '');
+        cleaned = cleaned.replace(',', '.');
+        let num = parseFloat(cleaned);
+        return isNaN(num) ? 0 : num;
+    }
+
+    function formatMoneyInput(value) {
+        if (isNaN(value)) value = 0;
+        value = Math.round(value * 100) / 100;
+        return value.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+    function applyCurrencyMask(inputElement) {
+        if (!inputElement) return;
+        const handleInput = function(e) {
+            let raw = this.value.replace(/\D/g, '');
+            if (raw === '') {
+                this.value = '';
+                return;
+            }
+            let number = parseInt(raw, 10);
+            let amount = number / 100;
+            this.value = formatMoneyInput(amount);
+        };
+        inputElement.addEventListener('input', handleInput);
+        if (inputElement.value) {
+            let raw = inputElement.value.replace(/\D/g, '');
+            if (raw) {
+                let number = parseInt(raw, 10);
+                let amount = number / 100;
+                inputElement.value = formatMoneyInput(amount);
+            }
+        }
+    }
+
+    function setupAllCurrencyInputs() {
+        const selectors = [
+            '#valor-total', '#new-debtor-value', '#meta-valor',
+            '#goal1-target', '#goal1-current', '#goal2-target', '#goal2-current',
+            '#limit1', '#limit2', '#income1', '#income2', '#new-budget-value',
+            '#new-goal-target', '#new-goal-current'
+        ];
+        selectors.forEach(sel => {
+            const el = document.querySelector(sel);
+            if (el) applyCurrencyMask(el);
+        });
+    }
 
     // ==================== ANIMAÇÃO DE MOEDAS CAINDO ====================
     const canvas = document.getElementById('coins-canvas');
@@ -1653,7 +1704,7 @@
     
     async function saveExpense() {
         const descricao = document.getElementById('descricao').value.trim();
-        const valorTotal = parseFloat(document.getElementById('valor-total').value);
+        const valorTotal = parseMoneyString(document.getElementById('valor-total').value);
         const parcelas = parseInt(document.getElementById('parcelas').value);
         const parcelasPagas = parseInt(document.getElementById('parcelasPagas').value) || 0;
         const startDateStr = document.getElementById('start-date').value;
@@ -1814,8 +1865,8 @@
         const doc = await limitsRef.get();
         if (doc.exists) limits = doc.data();
         else { limits = { partner1: 0, partner2: 0 }; await limitsRef.set(limits); }
-        document.getElementById('limit1').value = limits.partner1 || 0;
-        document.getElementById('limit2').value = limits.partner2 || 0;
+        document.getElementById('limit1').value = formatMoneyInput(limits.partner1 || 0);
+        document.getElementById('limit2').value = formatMoneyInput(limits.partner2 || 0);
         checkLimitsAndAlert();
     }
     async function saveLimit(partner, value) {
@@ -2461,12 +2512,16 @@
                 const { value: form } = await Swal.fire({
                     title: `Nova dívida para ${debtorName}`,
                     html: `
-                        <input id="swal-value" type="number" step="0.01" placeholder="Valor (R$)" class="swal2-input" required>
+                        <input id="swal-value" type="text" placeholder="Valor (R$)" class="swal2-input" required>
                         <input id="swal-date" type="date" value="${getCurrentDateRecife()}" class="swal2-input" required>
                     `,
                     focusConfirm: false,
+                    didOpen: () => {
+                        const valInput = document.getElementById('swal-value');
+                        if (valInput) applyCurrencyMask(valInput);
+                    },
                     preConfirm: () => {
-                        const valor = parseFloat(document.getElementById('swal-value').value);
+                        const valor = parseMoneyString(document.getElementById('swal-value').value);
                         const data = document.getElementById('swal-date').value;
                         if (isNaN(valor) || valor <= 0) {
                             Swal.showValidationMessage('Valor inválido');
@@ -2499,7 +2554,7 @@
     
     async function addDebtor() {
         const nome = document.getElementById('new-debtor-name').value.trim();
-        const valor = parseFloat(document.getElementById('new-debtor-value').value);
+        const valor = parseMoneyString(document.getElementById('new-debtor-value').value);
         let data = document.getElementById('new-debtor-date').value;
         if (!nome || isNaN(valor) || valor<=0) { Swal.fire('Erro','Preencha nome e valor válido.','error'); return; }
         if (!data) data = getCurrentDateRecife();
@@ -2512,7 +2567,8 @@
     }
     
     async function saveIncomes() {
-        const i1 = parseFloat(document.getElementById('income1').value)||0, i2 = parseFloat(document.getElementById('income2').value)||0;
+        const i1 = parseMoneyString(document.getElementById('income1').value);
+        const i2 = parseMoneyString(document.getElementById('income2').value);
         await incomesRef.set({ income1: i1, income2: i2 });
         incomes.partner1 = i1; incomes.partner2 = i2;
         const total = i1+i2, p1 = total>0?(i1/total*100).toFixed(1):50, p2 = total>0?(i2/total*100).toFixed(1):50;
@@ -2526,13 +2582,16 @@
         const container = document.getElementById('third-parties-list');
         if (!container) return;
         if (thirdParties.length === 0) { container.innerHTML = '<div style="text-align:center; padding:8px;">Nenhum terceiro adicionado</div>'; return; }
-        container.innerHTML = thirdParties.map((tp, idx) => `<div class="third-party-item"><div><strong>${escapeHtml(tp.nome)}</strong><button type="button" class="btn-small remove-third-party" data-idx="${idx}" style="float:right;">🗑️</button></div><div><input type="number" class="third-party-value" data-idx="${idx}" value="${tp.valor}" step="0.01" style="width:100%; margin-top:4px;"></div></div>`).join('');
+        container.innerHTML = thirdParties.map((tp, idx) => `<div class="third-party-item"><div><strong>${escapeHtml(tp.nome)}</strong><button type="button" class="btn-small remove-third-party" data-idx="${idx}" style="float:right;">🗑️</button></div><div><input type="text" class="third-party-value" data-idx="${idx}" value="${formatMoneyInput(tp.valor)}" step="0.01" style="width:100%; margin-top:4px;"></div></div>`).join('');
         document.querySelectorAll('.remove-third-party').forEach(btn => btn.addEventListener('click', () => { thirdParties.splice(parseInt(btn.dataset.idx), 1); renderThirdParties(); updatePreviewDivision(); }));
-        document.querySelectorAll('.third-party-value').forEach(input => input.addEventListener('change', () => { thirdParties[parseInt(input.dataset.idx)].valor = parseFloat(input.value) || 0; updatePreviewDivision(); }));
+        document.querySelectorAll('.third-party-value').forEach(input => {
+            applyCurrencyMask(input);
+            input.addEventListener('change', () => { thirdParties[parseInt(input.dataset.idx)].valor = parseMoneyString(input.value); updatePreviewDivision(); });
+        });
     }
     function addThirdParty() { thirdParties.push({ nome: `Amigo ${thirdParties.length+1}`, valor: 0 }); renderThirdParties(); updatePreviewDivision(); }
     function updatePreviewDivision() {
-        const valorTotal = parseFloat(document.getElementById('valor-total').value) || 0;
+        const valorTotal = parseMoneyString(document.getElementById('valor-total').value);
         const parcelas = parseInt(document.getElementById('parcelas').value) || 1;
         const parcelaValor = valorTotal / parcelas;
         const totalTerceiros = thirdParties.reduce((s,t)=>s+(t.valor||0),0);
@@ -2780,7 +2839,7 @@
         if (!exp) return;
         editingDocId = id;
         document.getElementById('descricao').value = exp.descricao;
-        document.getElementById('valor-total').value = exp.valorTotal;
+        document.getElementById('valor-total').value = formatMoneyInput(exp.valorTotal);
         document.getElementById('parcelas').value = exp.parcelas;
         document.getElementById('parcelasPagas').value = exp.parcelasPagas || 0;
         document.getElementById('start-date').value = exp.startDate.slice(0,10);
@@ -2822,11 +2881,24 @@
     async function quickExpense() {
         const { value: fv } = await Swal.fire({
             title: 'Despesa rápida',
-            html: '<input id="swal-desc" placeholder="Descrição" class="swal2-input"><input id="swal-valor" type="number" step="0.01" placeholder="Valor total" class="swal2-input"><select id="swal-cat" class="swal2-select"><option>Alimentação</option><option>Lazer</option><option>Moradia</option></select>',
+            html: '<input id="swal-desc" placeholder="Descrição" class="swal2-input"><input id="swal-valor" type="text" placeholder="Valor total" class="swal2-input"><select id="swal-cat" class="swal2-select"><option>Alimentação</option><option>Lazer</option><option>Moradia</option></select>',
             focusConfirm: false,
-            preConfirm: () => ({ desc: document.getElementById('swal-desc').value, valor: parseFloat(document.getElementById('swal-valor').value), cat: document.getElementById('swal-cat').value })
+            didOpen: () => {
+                const valInput = document.getElementById('swal-valor');
+                if (valInput) applyCurrencyMask(valInput);
+            },
+            preConfirm: () => {
+                const desc = document.getElementById('swal-desc').value;
+                const valor = parseMoneyString(document.getElementById('swal-valor').value);
+                const cat = document.getElementById('swal-cat').value;
+                if (!desc || isNaN(valor) || valor <= 0) {
+                    Swal.showValidationMessage('Descrição e valor válido são obrigatórios.');
+                    return false;
+                }
+                return { desc, valor, cat };
+            }
         });
-        if (fv && fv.desc && !isNaN(fv.valor)) {
+        if (fv) {
             const startDate = new Date(selectedYear, selectedMonth, 1);
             const startDateStr = `${startDate.getFullYear()}-${String(startDate.getMonth()+1).padStart(2,'0')}-01`;
             const installmentMonths = generateInstallmentMonths(startDateStr, 1, 0);
@@ -2855,7 +2927,7 @@
         }).join('');
         document.querySelectorAll('.edit-goal').forEach(btn => btn.addEventListener('click', async () => {
             const goal = goals.find(g=>g.id===btn.dataset.id);
-            const { value: form } = await Swal.fire({ title: 'Editar meta', html: `<input id="goal-current" type="number" value="${goal.current}" class="swal2-input"><input id="goal-deadline" type="date" value="${goal.deadline||''}" class="swal2-input">`, preConfirm: () => ({ current: parseFloat(document.getElementById('goal-current').value)||0, deadline: document.getElementById('goal-deadline').value }) });
+            const { value: form } = await Swal.fire({ title: 'Editar meta', html: `<input id="goal-current" type="text" value="${formatMoneyInput(goal.current)}" class="swal2-input"><input id="goal-deadline" type="date" value="${goal.deadline||''}" class="swal2-input">`, didOpen: () => applyCurrencyMask(document.getElementById('goal-current')), preConfirm: () => ({ current: parseMoneyString(document.getElementById('goal-current').value), deadline: document.getElementById('goal-deadline').value }) });
             if (form) {
                 await goalsRef.doc(goal.id).update({ current: form.current, deadline: form.deadline });
                 await addNotification('goal_updated', `editou a meta "${goal.name}"`);
@@ -2869,8 +2941,8 @@
     }
     async function addGoal() {
         const name = document.getElementById('new-goal-name').value.trim();
-        const target = parseFloat(document.getElementById('new-goal-target').value);
-        const current = parseFloat(document.getElementById('new-goal-current').value)||0;
+        const target = parseMoneyString(document.getElementById('new-goal-target').value);
+        const current = parseMoneyString(document.getElementById('new-goal-current').value);
         const deadline = document.getElementById('new-goal-deadline').value;
         if (!name || isNaN(target) || target<=0) { Swal.fire('Erro','Preencha nome e alvo.','error'); return; }
         await goalsRef.add({ name, target, current, deadline, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
@@ -2882,15 +2954,17 @@
         const t1 = individualGoal1.target||0, c1 = individualGoal1.current||0, p1 = t1>0?(c1/t1*100):0;
         document.getElementById('goal1-progress-fill').style.width = `${Math.min(p1,100)}%`;
         document.getElementById('goal1-progress-text').innerText = `${Math.round(p1)}% (${formatMoney(c1)} de ${formatMoney(t1)})`;
-        document.getElementById('goal1-target').value = t1; document.getElementById('goal1-current').value = c1;
+        document.getElementById('goal1-target').value = formatMoneyInput(t1);
+        document.getElementById('goal1-current').value = formatMoneyInput(c1);
         const t2 = individualGoal2.target||0, c2 = individualGoal2.current||0, p2 = t2>0?(c2/t2*100):0;
         document.getElementById('goal2-progress-fill').style.width = `${Math.min(p2,100)}%`;
         document.getElementById('goal2-progress-text').innerText = `${Math.round(p2)}% (${formatMoney(c2)} de ${formatMoney(t2)})`;
-        document.getElementById('goal2-target').value = t2; document.getElementById('goal2-current').value = c2;
+        document.getElementById('goal2-target').value = formatMoneyInput(t2);
+        document.getElementById('goal2-current').value = formatMoneyInput(c2);
     }
     async function saveIndividualGoal(partner) {
-        const target = parseFloat(document.getElementById(partner==='partner1'?'goal1-target':'goal2-target').value)||0;
-        const current = parseFloat(document.getElementById(partner==='partner1'?'goal1-current':'goal2-current').value)||0;
+        const target = parseMoneyString(document.getElementById(partner==='partner1'?'goal1-target':'goal2-target').value);
+        const current = parseMoneyString(document.getElementById(partner==='partner1'?'goal1-current':'goal2-current').value);
         await individualGoalsRef.doc(partner).set({ target, current });
         await addNotification('individual_goal_updated', `atualizou meta individual de ${partner === 'partner1' ? partner1Name : partner2Name}`);
         Swal.fire('Meta salva!', '', 'success');
@@ -3217,15 +3291,15 @@
         expensesRef.onSnapshot(s => { allExpenses = s.docs.map(d=> ({ id: d.id, ...d.data() })); debouncedUpdateDashboard(); });
         budgetsRef.onSnapshot(s => { categoriesBudget = {}; s.forEach(d=>{ categoriesBudget[d.id]=d.data().limit; }); debouncedUpdateDashboard(); });
         recurringRef.onSnapshot(s => { recurringTemplates = s.docs.map(d=> ({ id: d.id, ...d.data() })); });
-        metaRef.onSnapshot(d => { savingsGoal = d.exists ? d.data().value : 500; document.getElementById('meta-valor').value = savingsGoal; debouncedUpdateDashboard(); });
+        metaRef.onSnapshot(d => { savingsGoal = d.exists ? d.data().value : 500; document.getElementById('meta-valor').value = formatMoneyInput(savingsGoal); debouncedUpdateDashboard(); });
         namesRef.onSnapshot(d => { if(d.exists){ partner1Name = d.data().name1 || 'P1'; partner2Name = d.data().name2 || 'P2'; } updateUIWithNames(); debouncedUpdateDashboard(); });
         debtorsRef.onSnapshot(s => { debtors = s.docs.map(d=> ({ id: d.id, ...d.data() })); renderDebtors(); });
         messagesRef.orderBy('createdAt','desc').onSnapshot(s => { messages = s.docs.map(d=> ({ id: d.id, ...d.data() })); renderMessages(); });
-        incomesRef.onSnapshot(d => { if(d.exists){ incomes.partner1 = d.data().income1||0; incomes.partner2 = d.data().income2||0; } document.getElementById('income1').value = incomes.partner1; document.getElementById('income2').value = incomes.partner2; debouncedUpdateDashboard(); });
+        incomesRef.onSnapshot(d => { if(d.exists){ incomes.partner1 = d.data().income1||0; incomes.partner2 = d.data().income2||0; } document.getElementById('income1').value = formatMoneyInput(incomes.partner1); document.getElementById('income2').value = formatMoneyInput(incomes.partner2); debouncedUpdateDashboard(); });
         goalsRef.onSnapshot(s => { goals = s.docs.map(d=> ({ id: d.id, ...d.data() })); renderGoals(); });
         individualGoalsRef.onSnapshot(s => { s.forEach(d=>{ if(d.id==='partner1') individualGoal1 = d.data(); if(d.id==='partner2') individualGoal2 = d.data(); }); updateIndividualGoalUI(); });
         categoriesRef.onSnapshot(() => loadCategories());
-        limitsRef.onSnapshot(d => { if(d.exists) { limits = d.data(); document.getElementById('limit1').value = limits.partner1 || 0; document.getElementById('limit2').value = limits.partner2 || 0; checkLimitsAndAlert(); renderLimitAlerts(); } });
+        limitsRef.onSnapshot(d => { if(d.exists) { limits = d.data(); document.getElementById('limit1').value = formatMoneyInput(limits.partner1 || 0); document.getElementById('limit2').value = formatMoneyInput(limits.partner2 || 0); checkLimitsAndAlert(); renderLimitAlerts(); } });
         themeRef.onSnapshot(d => { if(d.exists && d.data().primaryColor) applyPrimaryColor(d.data().primaryColor); });
         invoicesRef.onSnapshot(() => { renderInvoices(); renderLimitAlerts(); });
         notificationsRef.onSnapshot(() => updateBellBadge());
@@ -3301,6 +3375,7 @@
             const modal = document.getElementById('notifications-modal');
             if (event.target === modal) modal.style.display = 'none';
         };
+        setupAllCurrencyInputs();
         showLoading(false);
         firstLoad = false;
     }
@@ -3363,7 +3438,7 @@
         document.getElementById('start-date').value = getLocalDateString();
     });
     document.getElementById('calendar-btn').addEventListener('click', openCalendarPicker);
-    document.getElementById('set-meta-btn').addEventListener('click', async () => { let v = parseFloat(document.getElementById('meta-valor').value); if(isNaN(v)||v<=0) v=500; await setSavingsGoal(v); await addNotification('savings_goal', `definiu meta de economia para ${formatMoney(v)}`); });
+    document.getElementById('set-meta-btn').addEventListener('click', async () => { let v = parseMoneyString(document.getElementById('meta-valor').value); if(isNaN(v)||v<=0) v=500; await setSavingsGoal(v); await addNotification('savings_goal', `definiu meta de economia para ${formatMoney(v)}`); });
     document.getElementById('add-debtor-btn').addEventListener('click', addDebtor);
     document.getElementById('save-income-btn').addEventListener('click', saveIncomes);
     document.getElementById('add-goal-btn').addEventListener('click', addGoal);
@@ -3374,7 +3449,7 @@
     document.getElementById('export-all-btn').addEventListener('click', exportAllData);
     document.getElementById('import-all-btn').addEventListener('click', () => document.getElementById('import-file').click());
     document.getElementById('import-file').addEventListener('change', (e) => { if(e.target.files[0]) importAllData(e.target.files[0]); });
-    document.getElementById('add-budget-btn').addEventListener('click', async () => { const cat = document.getElementById('new-budget-cat').value.trim(); const lim = parseFloat(document.getElementById('new-budget-value').value); if(cat && !isNaN(lim)) { await budgetsRef.doc(cat).set({ limit: lim }); await addNotification('budget_set', `definiu orçamento para ${cat}: ${formatMoney(lim)}`); } });
+    document.getElementById('add-budget-btn').addEventListener('click', async () => { const cat = document.getElementById('new-budget-cat').value.trim(); const lim = parseMoneyString(document.getElementById('new-budget-value').value); if(cat && !isNaN(lim) && lim>0) { await budgetsRef.doc(cat).set({ limit: lim }); await addNotification('budget_set', `definiu orçamento para ${cat}: ${formatMoney(lim)}`); } });
     document.getElementById('quick-expense-btn').addEventListener('click', quickExpense);
     document.getElementById('theme-icon-header').addEventListener('click', toggleTheme);
     document.getElementById('clear-filters').addEventListener('click', () => { document.getElementById('filter-desc').value = ''; document.getElementById('filter-category').value = ''; document.getElementById('filter-payer').value = ''; applyFilters(); });
@@ -3394,8 +3469,8 @@
     document.getElementById('primary-color-picker').addEventListener('change', (e) => savePrimaryColor(e.target.value));
     document.getElementById('reset-color-btn').addEventListener('click', resetPrimaryColor);
     document.getElementById('custom-split').style.display = 'none';
-    document.getElementById('save-limit1-btn').addEventListener('click', () => { const val = parseFloat(document.getElementById('limit1').value); if (!isNaN(val) && val >= 0) saveLimit('partner1', val); else Swal.fire('Erro', 'Valor inválido', 'error'); });
-    document.getElementById('save-limit2-btn').addEventListener('click', () => { const val = parseFloat(document.getElementById('limit2').value); if (!isNaN(val) && val >= 0) saveLimit('partner2', val); else Swal.fire('Erro', 'Valor inválido', 'error'); });
+    document.getElementById('save-limit1-btn').addEventListener('click', () => { const val = parseMoneyString(document.getElementById('limit1').value); if (!isNaN(val) && val >= 0) saveLimit('partner1', val); else Swal.fire('Erro', 'Valor inválido', 'error'); });
+    document.getElementById('save-limit2-btn').addEventListener('click', () => { const val = parseMoneyString(document.getElementById('limit2').value); if (!isNaN(val) && val >= 0) saveLimit('partner2', val); else Swal.fire('Erro', 'Valor inválido', 'error'); });
     document.getElementById('update-closing-btn').addEventListener('click', updateClosingSummary);
     document.getElementById('add-category-btn')?.addEventListener('click', async () => {
         const newCat = document.getElementById('new-category-name').value.trim();
