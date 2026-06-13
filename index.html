@@ -243,7 +243,7 @@
         }
         .app-container { display: none; width: 100%; min-height: 100vh; background: #000000; flex-direction: column; }
         
-        /* HEADER REFORMULADO - DUAS LINHAS */
+        /* HEADER REFORMULADO - DUAS LINHAS (COM BADGE CORRIGIDO) */
         .app-header {
             background: rgba(0, 0, 0, 0.9);
             backdrop-filter: blur(12px);
@@ -335,8 +335,11 @@
             display: flex;
             align-items: center;
             gap: 8px;
+            position: relative;
         }
         .theme-icon, .bell-icon {
+            position: relative;
+            overflow: visible !important;
             background: none;
             border: none;
             font-size: 1.3rem;
@@ -349,22 +352,27 @@
             justify-content: center;
             border-radius: 50%;
             transition: 0.2s;
-            position: relative;
         }
+        /* CORREÇÃO DO BADGE - TOTALMENTE VISÍVEL */
         .bell-icon .badge {
             position: absolute;
-            top: 0;
-            right: 0;
+            top: -8px;
+            right: -8px;
             background: #f44336;
             color: white;
-            font-size: 0.6rem;
-            border-radius: 50%;
-            width: 16px;
-            height: 16px;
+            font-size: 0.65rem;
+            font-weight: bold;
+            min-width: 18px;
+            height: 18px;
+            padding: 0 5px;
+            border-radius: 20px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: bold;
+            white-space: nowrap;
+            line-height: 1;
+            box-shadow: 0 0 2px rgba(0,0,0,0.3);
+            z-index: 200;
         }
         .logout-btn {
             background: none;
@@ -380,7 +388,7 @@
             border-radius: 50%;
             transition: 0.2s;
         }
-        /* Fim do header reformulado */
+        /* Fim do header corrigido */
 
         .swipe-container { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth; width: 100%; flex: 1; -webkit-overflow-scrolling: touch; scrollbar-width: none; will-change: transform; transform: translateZ(0); }
         .swipe-container::-webkit-scrollbar { display: none; }
@@ -776,7 +784,7 @@
 </div>
 
 <div id="app-container" class="app-container">
-    <!-- HEADER REFORMULADO -->
+    <!-- HEADER CORRIGIDO -->
     <div class="app-header">
         <div class="header-top">
             <div class="logo-area">
@@ -800,7 +808,7 @@
             </div>
         </div>
     </div>
-    <!-- Fim do HEADER REFORMULADO -->
+    <!-- Fim do HEADER CORRIGIDO -->
 
     <div class="swipe-container" id="swipeContainer">
         <!-- Página 0: Dashboard -->
@@ -828,7 +836,6 @@
             <div class="card"><div class="card-title"><i class="fas fa-chart-pie"></i> Gráficos</div><canvas id="categoryChart" style="max-height: 200px;"></canvas><canvas id="compareChart" style="max-height: 150px; margin-top: 16px;"></canvas></div>
             <div class="card"><div class="card-title"><i class="fas fa-chart-line"></i> Análise de Recorrentes</div><div id="recurring-summary"></div><div id="recurring-list"></div></div>
             <div class="card"><div class="card-title"><i class="fas fa-chart-simple"></i> Resumo de Orçamentos</div><div id="budget-summary-list"></div></div>
-            <!-- NOVO CARD: PROJEÇÃO FUTURA -->
             <div class="card">
                 <div class="card-title"><i class="fas fa-calendar-week"></i> Projeção Futura</div>
                 <div id="projecao-futura-container"></div>
@@ -895,7 +902,6 @@
             <div class="card"><div class="card-title"><i class="fas fa-database"></i> Backup / Restauração</div><button id="export-all-btn" class="btn btn-secondary" style="width:100%; margin-bottom:8px;">📥 Exportar dados (JSON)</button><button id="import-all-btn" class="btn btn-secondary" style="width:100%;">📤 Importar dados (JSON)</button><input type="file" id="import-file" accept=".json" style="display:none;"></div>
             <div class="card"><div class="card-title"><i class="fas fa-file-pdf"></i> Relatório mensal</div><button id="export-pdf-btn" class="btn btn-primary" style="width:100%;">📄 Exportar relatório em PDF</button></div>
             <div class="card"><div class="card-title"><i class="fas fa-palette"></i> Personalizar tema</div><div class="form-row"><div class="input-group"><label>Cor principal</label><input type="color" id="primary-color-picker" value="#e91e63"></div><div class="input-group"><label>Visualização</label><div class="color-preview" id="color-preview" style="background-color:#e91e63;"></div></div></div><button id="reset-color-btn" class="btn btn-secondary" style="width:100%; margin-top:8px;">🔄 Restaurar cor padrão (rosa)</button></div>
-            <!-- Limpar dados recorrentes com opções por parceiro -->
             <div class="card">
                 <div class="card-title"><i class="fas fa-trash-alt"></i> Limpar dados recorrentes</div>
                 <div style="display: flex; gap: 12px; flex-wrap: wrap; justify-content: space-between; margin-bottom: 8px;">
@@ -905,7 +911,6 @@
                 </div>
                 <div class="info-message" style="font-size:0.7rem;">⚠️ Atenção: removerá os templates e todas as despesas recorrentes geradas (apenas do parceiro selecionado). Ação irreversível.</div>
             </div>
-            <!-- Backup Automático -->
             <div class="card">
                 <div class="card-title"><i class="fas fa-cloud-upload-alt"></i> Backup Automático</div>
                 <div class="form-row">
@@ -1477,7 +1482,6 @@
         const container = document.getElementById('projecao-futura-container');
         if (!container) return;
         
-        // Calcular próximo mês
         let nextMonth = selectedMonth + 1;
         let nextYear = selectedYear;
         if (nextMonth > 11) {
@@ -1486,7 +1490,6 @@
         }
         const targetMonthStr = `${nextYear}-${String(nextMonth+1).padStart(2,'0')}`;
         
-        // Filtrar despesas que terão parcela no próximo mês e que não estão quitadas
         const futureExpenses = allExpenses.filter(exp => exp.installmentMonths?.includes(targetMonthStr) && !exp.quitado);
         
         if (futureExpenses.length === 0) {
@@ -1494,7 +1497,6 @@
             return;
         }
         
-        // Acumular totais por parceiro e lista de itens
         let totalP1 = 0, totalP2 = 0;
         const itemsP1 = [];
         const itemsP2 = [];
@@ -1513,7 +1515,6 @@
             }
         }
         
-        // Ordenar itens por data (mais próxima primeiro)
         const sortByDate = (a,b) => new Date(a.data.split('/').reverse().join('-')) - new Date(b.data.split('/').reverse().join('-'));
         itemsP1.sort(sortByDate);
         itemsP2.sort(sortByDate);
@@ -3059,7 +3060,7 @@
         reader.readAsText(file);
     }
     
-    // ==================== EXPORT PDF CORRIGIDA ====================
+    // ==================== EXPORT PDF ====================
     async function exportPDF() {
         Swal.fire({
             title: 'Gerando PDF...',
@@ -3267,7 +3268,7 @@
         renderRecurringAnalysis();
         renderFinalInstallments();
     
-        renderProjecaoFutura(); // NOVO: renderiza o card de projeção futura
+        renderProjecaoFutura();
     
         renderHistory();
         await renderPartnerExpensesWithPaid('partner1', 'partner1-expenses-list', 'partner1-paid-list', targetMonth);
