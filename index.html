@@ -3059,7 +3059,6 @@
             return;
         }
         const currentName = currentPartnerId === 'partner1' ? partner1Name : partner2Name;
-        // Ordenação decrescente: mais recente primeiro
         const sorted = [...messages].sort((a, b) => (b.createdAt?.toDate?.() || 0) - (a.createdAt?.toDate?.() || 0));
         container.innerHTML = sorted.map(msg => {
             const isOwn = msg.author === currentName;
@@ -3103,7 +3102,7 @@
     // ==================== CONCIERGE ====================
     function getConciergeMessage(page) {
         const msgs = {
-            0: `💡 Dica: agora você pode quitar despesas (botão verde). Gastos quitados saem do resumo mensal e vão para o painel de quitados. Cartão Atacadão mostra apenas pendentes.`,
+            0: `💡 Cartão Atacadão separado do resumo mensal. Apenas pendentes aparecem no painel específico.`,
             1: `📊 Gastos pendentes e quitados de ${partner1Name}.`,
             2: `📊 Gastos pendentes e quitados de ${partner2Name}. Cartão Atacadão no topo.`,
             3: `➕ Adicione despesas com categoria "Cartão Atacadão 💳" e veja no painel.`,
@@ -3302,33 +3301,46 @@
         updateClosingSummary();
     }
     
-    // ==================== DASHBOARD PRINCIPAL (COM CARTÃO ATACADÃO - APENAS PENDENTES) ====================
+    // ==================== DASHBOARD PRINCIPAL (CARTÃO ATACADÃO EXCLUÍDO DO RESUMO) ====================
     async function updateDashboard() {
         if (!currentPartnerId) return;
         const targetMonth = `${selectedYear}-${String(selectedMonth+1).padStart(2,'0')}`;
         await generateRecurringForMonth(targetMonth);
         const monthExpenses = allExpenses.filter(exp => exp.installmentMonths?.includes(targetMonth));
         const pendingExpenses = monthExpenses.filter(exp => !exp.quitado);
-        const normalExpenses = pendingExpenses.filter(exp => !exp.recurringTemplateId && exp.recorrente !== 'monthly');
+        
+        // ----- RESUMO DO MÊS (normais, excluindo recorrentes E Cartão Atacadão) -----
+        const normalExpenses = pendingExpenses.filter(exp => 
+            !exp.recurringTemplateId && 
+            exp.recorrente !== 'monthly' && 
+            exp.categoria !== 'Cartão Atacadão 💳'
+        );
+        // ------------------------------------------------------------------------
+        
         const recurringExpenses = pendingExpenses.filter(exp => exp.recurringTemplateId || exp.recorrente === 'monthly');
+        
         let totalP1Normal = 0, totalP2Normal = 0;
         normalExpenses.forEach(exp => {
             const { partner1, partner2 } = calculateMonthlyShare(exp);
             totalP1Normal += partner1; totalP2Normal += partner2;
         });
+        
         let totalP1Rec = 0, totalP2Rec = 0;
         recurringExpenses.forEach(exp => {
             const { partner1, partner2 } = calculateMonthlyShare(exp);
             totalP1Rec += partner1; totalP2Rec += partner2;
         });
+        
         document.getElementById('gasto-partner1').innerText = formatMoney(totalP1Normal);
         document.getElementById('gasto-partner2').innerText = formatMoney(totalP2Normal);
         document.getElementById('recurring-partner1').innerText = formatMoney(totalP1Rec);
         document.getElementById('recurring-partner2').innerText = formatMoney(totalP2Rec);
         document.getElementById('total-recurring').innerText = formatMoney(totalP1Rec + totalP2Rec);
-        const totalGastoNormal = totalP1Normal+totalP2Normal;
-        let progresso = Math.max(0, (savingsGoal - totalGastoNormal)/savingsGoal*100);
-        progresso = Math.min(100,progresso);
+        
+        // Meta de economia baseada nos gastos normais (excluindo recorrentes e Atacadão)
+        const totalGastoNormal = totalP1Normal + totalP2Normal;
+        let progresso = Math.max(0, (savingsGoal - totalGastoNormal) / savingsGoal * 100);
+        progresso = Math.min(100, progresso);
         document.getElementById('meta-progress').innerText = `${Math.round(progresso)}%`;
         document.getElementById('meta-fill').style.width = `${progresso}%`;
         checkLimitsAndAlert();
@@ -3351,6 +3363,10 @@
             let p1=0, p2=0;
             allExpenses.forEach(exp => {
                 if (exp.installmentMonths?.includes(ym) && !exp.quitado) {
+                    // Filtra normal (exclui recorrente e Atacadão) para os gráficos? 
+                    // Melhor manter igual ao comportamento antigo: apenas pendentes.
+                    // Mas para manter a coerência com o resumo, poderíamos filtrar também.
+                    // Vou manter igual ao antigo (todos pendentes) para não mudar os gráficos.
                     const { partner1, partner2 } = calculateMonthlyShare(exp);
                     p1 += partner1; p2 += partner2;
                 }
@@ -3360,12 +3376,13 @@
             last6P2.push(p2);
         }
         updateEvolutionChart(last6Months, last6P1, last6P2);
+        // Gráfico de pizza também usa todos pendentes (incluindo Atacadão), pois é um gráfico geral.
         const catMap = new Map();
         pendingExpenses.forEach(exp => {
             const { partner1, partner2 } = calculateMonthlyShare(exp);
-            const total = partner1+partner2;
+            const total = partner1 + partner2;
             const cat = exp.categoria || "Outros";
-            catMap.set(cat, (catMap.get(cat)||0)+total);
+            catMap.set(cat, (catMap.get(cat) || 0) + total);
         });
         updateCategoryChart([...catMap.keys()], [...catMap.values()]);
         updateCompareChart(totalP1Normal, totalP2Normal);
@@ -3373,9 +3390,12 @@
         if (budgetDiv) {
             budgetDiv.innerHTML = '';
             for (let [cat, limit] of Object.entries(categoriesBudget)) {
-                const gasto = pendingExpenses.filter(e=>e.categoria===cat).reduce((acc,e)=>{ const {partner1,partner2}=calculateMonthlyShare(e); return acc+partner1+partner2; },0);
-                const percent = (gasto/limit)*100;
-                budgetDiv.innerHTML += `<div class="budget-item"><div>${cat}: ${formatMoney(gasto)} / ${formatMoney(limit)}</div><div class="progress-bar"><div class="progress-fill" style="width:${Math.min(percent,100)}%; background:${gasto>limit?'#c62828':'var(--primary-color)'}"></div></div><button class="delete-budget" data-cat="${cat}">❌</button></div>`;
+                const gasto = pendingExpenses.filter(e => e.categoria === cat).reduce((acc, e) => {
+                    const { partner1, partner2 } = calculateMonthlyShare(e);
+                    return acc + partner1 + partner2;
+                }, 0);
+                const percent = (gasto / limit) * 100;
+                budgetDiv.innerHTML += `<div class="budget-item"><div>${cat}: ${formatMoney(gasto)} / ${formatMoney(limit)}</div><div class="progress-bar"><div class="progress-fill" style="width:${Math.min(percent,100)}%; background:${gasto > limit ? '#c62828' : 'var(--primary-color)'}"></div></div><button class="delete-budget" data-cat="${cat}">❌</button></div>`;
             }
             document.querySelectorAll('.delete-budget').forEach(btn => btn.addEventListener('click', async () => await budgetsRef.doc(btn.dataset.cat).delete()));
         }
