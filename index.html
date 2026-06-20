@@ -814,6 +814,17 @@
                 </div>
                 <div style="margin-top: 12px;"><h4>🎯 Meta de economia do casal</h4><div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 6px;"><input type="text" id="meta-valor" step="100" value="500" style="flex:2;"><button class="btn btn-primary" id="set-meta-btn" style="flex:1;">Definir</button></div><div class="progress-bar"><div class="progress-fill" id="meta-fill"></div></div><div id="meta-progress" style="text-align: center; margin-top: 4px;">0%</div></div>
             </div>
+            <!-- ===== PAINEL CARTÃO ATACADÃO (DASHBOARD) ===== -->
+            <div class="card" id="cartao-atacadao-dashboard">
+                <div class="card-title"><i class="fas fa-credit-card"></i> Cartão Atacadão</div>
+                <div class="dashboard-row">
+                    <div class="dashboard-card">
+                        <h4>Total pendente no mês</h4>
+                        <div class="value" id="cartao-atacadao-total">R$ 0,00</div>
+                    </div>
+                </div>
+            </div>
+            <!-- Fim do painel -->
             <div class="card">
                 <div class="card-title"><i class="fas fa-sync-alt"></i> Gastos Recorrentes Pendentes</div>
                 <div class="dashboard-row">
@@ -839,9 +850,20 @@
             <div class="card"><div class="card-title"><i class="fas fa-bullseye"></i> Meta individual de <span id="goal-individual-name1"></span></div><input type="text" id="goal1-target" placeholder="Alvo R$"><input type="text" id="goal1-current" placeholder="Atual R$"><button id="save-goal1-btn" class="btn btn-primary">Salvar meta</button><div class="progress-bar"><div class="progress-fill" id="goal1-progress-fill"></div></div><div id="goal1-progress-text" style="text-align:center;">0%</div></div>
             <div class="card"><div class="card-title"><i class="fas fa-chart-line"></i> Limite de gasto mensal</div><div class="form-row"><div class="input-group"><label>Valor limite (R$)</label><input type="text" id="limit1" step="50" placeholder="Ex: 1000"></div><button id="save-limit1-btn" class="btn btn-primary">Definir limite</button></div><div id="limit-alert1" class="alert-warning" style="display: none;"><i class="fas fa-exclamation-triangle"></i><span><strong>Atenção!</strong> Você já atingiu ou ultrapassou o limite de gastos definido para este mês.</span></div></div>
         </div>
-        <!-- Página 2: Gastos Parceiro 2 -->
+        <!-- Página 2: Gastos Parceiro 2 (com painel no topo) -->
         <div class="swipe-page" data-page="2" id="page-partner2">
             <div id="limit-alert-partner2" class="limit-alert-container"></div>
+            <!-- ===== PAINEL CARTÃO ATACADÃO (PÁGINA 2) ===== -->
+            <div class="card" id="cartao-atacadao-partner2">
+                <div class="card-title"><i class="fas fa-credit-card"></i> Cartão Atacadão</div>
+                <div class="dashboard-row">
+                    <div class="dashboard-card">
+                        <h4>Total pendente no mês</h4>
+                        <div class="value" id="cartao-atacadao-total-p2">R$ 0,00</div>
+                    </div>
+                </div>
+            </div>
+            <!-- Fim do painel -->
             <div class="card"><div class="card-title"><i class="fas fa-clock"></i> Gastos pendentes de <span id="partner2-name-label"></span></div><div id="partner2-expenses-list"></div></div>
             <div class="card"><div class="card-title"><i class="fas fa-check-circle"></i> Gastos quitados de <span id="partner2-paid-label"></span></div><div id="partner2-paid-list"></div></div>
             <div class="card"><div class="card-title"><i class="fas fa-bullseye"></i> Meta individual de <span id="goal-individual-name2"></span></div><input type="text" id="goal2-target" placeholder="Alvo R$"><input type="text" id="goal2-current" placeholder="Atual R$"><button id="save-goal2-btn" class="btn btn-primary">Salvar meta</button><div class="progress-bar"><div class="progress-fill" id="goal2-progress-fill"></div></div><div id="goal2-progress-text" style="text-align:center;">0%</div></div>
@@ -3028,7 +3050,7 @@
         Swal.fire('Meta salva!', '', 'success');
     }
     
-    // ==================== MURAL (CORRIGIDO: MAIS RECENTES NO TOPO) ====================
+    // ==================== MURAL ====================
     function renderMessages() {
         const container = document.getElementById('messages-container');
         if (!container) return;
@@ -3049,7 +3071,6 @@
                         ${isOwn ? `<div style="margin-top:6px;"><button class="btn-small delete-message" data-id="${msg.id}">🗑️</button></div>` : ''}
                     </div>`;
         }).join('');
-        // Rolagem para o topo (mostra as mais recentes)
         container.scrollTop = 0;
         
         document.querySelectorAll('.delete-message').forEach(btn => {
@@ -3082,10 +3103,10 @@
     // ==================== CONCIERGE ====================
     function getConciergeMessage(page) {
         const msgs = {
-            0: `💡 Dica: agora você pode quitar despesas (botão verde). Gastos quitados saem do resumo mensal e vão para o painel de quitados.`,
+            0: `💡 Dica: agora você pode quitar despesas (botão verde). Gastos quitados saem do resumo mensal e vão para o painel de quitados. Cartão Atacadão mostra apenas pendentes.`,
             1: `📊 Gastos pendentes e quitados de ${partner1Name}.`,
-            2: `📊 Gastos pendentes e quitados de ${partner2Name}.`,
-            3: `➕ Adicione despesas parceladas ou com divisão personalizada.`,
+            2: `📊 Gastos pendentes e quitados de ${partner2Name}. Cartão Atacadão no topo.`,
+            3: `➕ Adicione despesas com categoria "Cartão Atacadão 💳" e veja no painel.`,
             4: `📋 Histórico mostra todas as despesas (pendentes e quitadas).`,
             5: `⚙️ Configure rendas, orçamentos, categorias, cor do tema, backup automático e exporte PDF.`,
             6: `💰 Devedores agrupados por nome. Adicione novas dívidas diretamente ao grupo.`,
@@ -3281,7 +3302,7 @@
         updateClosingSummary();
     }
     
-    // ==================== DASHBOARD PRINCIPAL ====================
+    // ==================== DASHBOARD PRINCIPAL (COM CARTÃO ATACADÃO - APENAS PENDENTES) ====================
     async function updateDashboard() {
         if (!currentPartnerId) return;
         const targetMonth = `${selectedYear}-${String(selectedMonth+1).padStart(2,'0')}`;
@@ -3311,6 +3332,17 @@
         document.getElementById('meta-progress').innerText = `${Math.round(progresso)}%`;
         document.getElementById('meta-fill').style.width = `${progresso}%`;
         checkLimitsAndAlert();
+    
+        // ===== CÁLCULO DO CARTÃO ATACADÃO (APENAS PENDENTES) =====
+        const cartaoAtacadaoTotal = pendingExpenses
+            .filter(exp => exp.categoria === 'Cartão Atacadão 💳')
+            .reduce((acc, exp) => {
+                const { partner1, partner2 } = calculateMonthlyShare(exp);
+                return acc + partner1 + partner2;
+            }, 0);
+        document.getElementById('cartao-atacadao-total').innerText = formatMoney(cartaoAtacadaoTotal);
+        document.getElementById('cartao-atacadao-total-p2').innerText = formatMoney(cartaoAtacadaoTotal);
+        // Fim do cálculo
     
         const last6Months = [], last6P1 = [], last6P2 = [];
         for (let i = 5; i >= 0; i--) {
