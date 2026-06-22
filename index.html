@@ -749,27 +749,6 @@
             border-bottom: 1px dashed rgba(233,30,99,0.3);
             padding: 4px 0;
         }
-
-        /* Estilos extras para o histórico de dívidas */
-        .paid-debtor-item {
-            background: rgba(76,175,80,0.1);
-            border-left: 4px solid #4caf50;
-            padding: 8px 12px;
-            border-radius: 12px;
-            margin-bottom: 8px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 8px;
-        }
-        .paid-debtor-item .debtor-entry-info {
-            flex: 2;
-        }
-        .clear-history-btn {
-            margin-top: 12px;
-            width: 100%;
-        }
     </style>
 </head>
 <body>
@@ -835,6 +814,7 @@
                 </div>
                 <div style="margin-top: 12px;"><h4>🎯 Meta de economia do casal</h4><div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 6px;"><input type="text" id="meta-valor" step="100" value="500" style="flex:2;"><button class="btn btn-primary" id="set-meta-btn" style="flex:1;">Definir</button></div><div class="progress-bar"><div class="progress-fill" id="meta-fill"></div></div><div id="meta-progress" style="text-align: center; margin-top: 4px;">0%</div></div>
             </div>
+            <!-- ===== PAINEL CARTÃO ATACADÃO (DASHBOARD) ===== -->
             <div class="card" id="cartao-atacadao-dashboard">
                 <div class="card-title"><i class="fas fa-credit-card"></i> Cartão Atacadão</div>
                 <div class="dashboard-row">
@@ -844,6 +824,7 @@
                     </div>
                 </div>
             </div>
+            <!-- Fim do painel -->
             <div class="card">
                 <div class="card-title"><i class="fas fa-sync-alt"></i> Gastos Recorrentes Pendentes</div>
                 <div class="dashboard-row">
@@ -872,6 +853,7 @@
         <!-- Página 2: Gastos Parceiro 2 (com painel no topo) -->
         <div class="swipe-page" data-page="2" id="page-partner2">
             <div id="limit-alert-partner2" class="limit-alert-container"></div>
+            <!-- ===== PAINEL CARTÃO ATACADÃO (PÁGINA 2) ===== -->
             <div class="card" id="cartao-atacadao-partner2">
                 <div class="card-title"><i class="fas fa-credit-card"></i> Cartão Atacadão</div>
                 <div class="dashboard-row">
@@ -881,6 +863,7 @@
                     </div>
                 </div>
             </div>
+            <!-- Fim do painel -->
             <div class="card"><div class="card-title"><i class="fas fa-clock"></i> Gastos pendentes de <span id="partner2-name-label"></span></div><div id="partner2-expenses-list"></div></div>
             <div class="card"><div class="card-title"><i class="fas fa-check-circle"></i> Gastos quitados de <span id="partner2-paid-label"></span></div><div id="partner2-paid-list"></div></div>
             <div class="card"><div class="card-title"><i class="fas fa-bullseye"></i> Meta individual de <span id="goal-individual-name2"></span></div><input type="text" id="goal2-target" placeholder="Alvo R$"><input type="text" id="goal2-current" placeholder="Atual R$"><button id="save-goal2-btn" class="btn btn-primary">Salvar meta</button><div class="progress-bar"><div class="progress-fill" id="goal2-progress-fill"></div></div><div id="goal2-progress-text" style="text-align:center;">0%</div></div>
@@ -968,19 +951,43 @@
         </div>
         <!-- Página 6: Devedores (AGRUPADO) -->
         <div class="swipe-page" data-page="6">
-            <div class="card"><div class="card-title"><i class="fas fa-hand-holding-usd"></i> Devedores (terceiros)</div>
-                <div id="debtors-list"></div>
-                <div id="debtors-history-list"></div>
-                <button id="clear-debtors-history-btn" class="btn btn-danger clear-history-btn">🗑️ Limpar Histórico de Quitadas</button>
+            <div class="card">
+                <div class="card-title"><i class="fas fa-hand-holding-usd"></i> Devedores (terceiros)</div>
+                
+                <!-- Formulário de nova dívida -->
                 <div class="debtor-form-group">
                     <div style="flex:2;">
                         <label>Nome do devedor</label>
                         <input type="text" id="new-debtor-name" placeholder="Ex: João" list="debtor-names-list">
                         <datalist id="debtor-names-list"></datalist>
                     </div>
-                    <div style="flex:1;"><label>Valor (R$)</label><input type="text" id="new-debtor-value" placeholder="0,00" step="0.01"></div>
-                    <div style="flex:1;"><label>Data</label><input type="date" id="new-debtor-date"></div>
-                    <div style="flex:0 0 auto;"><button id="add-debtor-btn" class="btn btn-success">Adicionar</button></div>
+                    <div style="flex:1;">
+                        <label>Valor (R$)</label>
+                        <input type="text" id="new-debtor-value" placeholder="0,00" step="0.01">
+                    </div>
+                    <div style="flex:1;">
+                        <label>Data</label>
+                        <input type="date" id="new-debtor-date">
+                    </div>
+                    <div style="flex:2;">
+                        <label>Observação (opcional)</label>
+                        <input type="text" id="new-debtor-obs" placeholder="Motivo da dívida">
+                    </div>
+                    <div style="flex:0 0 auto;">
+                        <button id="add-debtor-btn" class="btn btn-success">Adicionar</button>
+                    </div>
+                </div>
+
+                <!-- Lista de dívidas pendentes agrupadas -->
+                <div id="debtors-list"></div>
+
+                <!-- Histórico de dívidas quitadas -->
+                <div style="margin-top: 24px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; margin-bottom: 12px;">
+                        <h4 style="margin:0; color: var(--primary-color);"><i class="fas fa-history"></i> Histórico de dívidas quitadas</h4>
+                        <button id="clear-history-debtors" class="btn btn-danger btn-small">🗑️ Limpar histórico</button>
+                    </div>
+                    <div id="debtors-history-list"></div>
                 </div>
             </div>
         </div>
@@ -2482,33 +2489,37 @@
         }));
     }
     
-    // ==================== RENDER DEBTORS (MODIFICADO - COM HISTÓRICO) ====================
+    // ==================== RENDER DEBTORS (AGRUPADO + HISTÓRICO) ====================
     function renderDebtors() {
         const container = document.getElementById('debtors-list');
         const historyContainer = document.getElementById('debtors-history-list');
-        if (!container || !historyContainer) return;
+        const datalist = document.getElementById('debtor-names-list');
+        if (!container || !historyContainer || !datalist) return;
     
-        // Filtra pendentes (quitado != true) e quitados (quitado == true)
-        const pendingDebtors = debtors.filter(d => !d.quitado);
-        const paidDebtors = debtors.filter(d => d.quitado === true);
+        // Atualizar datalist com todos os nomes (pendentes e quitados)
+        const allNames = [...new Set(debtors.map(d => d.nome.trim()).filter(n => n))];
+        datalist.innerHTML = allNames.map(n => `<option value="${escapeHtml(n)}">`).join('');
     
-        // Atualiza total a receber (apenas pendentes)
-        const totalGeral = pendingDebtors.reduce((sum, d) => sum + d.valor, 0);
-        document.getElementById('total-a-receber').innerText = formatMoney(totalGeral);
-        // Contagem de devedores únicos com pendências
-        const uniquePending = new Set(pendingDebtors.map(d => d.nome.trim()));
-        document.getElementById('debtors-count').innerHTML = `${uniquePending.size} devedor(es)`;
+        // Separar pendentes e quitados
+        const pending = debtors.filter(d => !d.quitado);
+        const history = debtors.filter(d => d.quitado === true);
     
-        // ---- RENDER PENDENTES (AGRUPADO) ----
-        if (pendingDebtors.length === 0) {
-            container.innerHTML = '<div style="text-align:center; padding:16px;">Nenhuma dívida pendente.</div>';
+        // ----- PENDENTES AGRUPADOS -----
+        if (pending.length === 0) {
+            container.innerHTML = '<div class="info-message" style="text-align:center;">Nenhuma dívida pendente.</div>';
+            document.getElementById('total-a-receber').innerText = formatMoney(0);
+            document.getElementById('debtors-count').innerHTML = `0 devedor(es)`;
         } else {
             const groups = new Map();
-            for (const debtor of pendingDebtors) {
+            for (const debtor of pending) {
                 const name = debtor.nome.trim();
                 if (!groups.has(name)) groups.set(name, []);
                 groups.get(name).push(debtor);
             }
+            const totalGeral = pending.reduce((sum, d) => sum + d.valor, 0);
+            document.getElementById('total-a-receber').innerText = formatMoney(totalGeral);
+            document.getElementById('debtors-count').innerHTML = `${groups.size} devedor(es)`;
+    
             const sortedGroups = Array.from(groups.entries()).sort((a, b) => a[0].localeCompare(b[0]));
             let html = '';
             for (const [name, debts] of sortedGroups) {
@@ -2527,15 +2538,17 @@
                 `;
                 for (const debt of sortedDebts) {
                     const dateFormatted = debt.data ? parseLocalDateToDate(debt.data).toLocaleDateString('pt-BR', { timeZone: TIMEZONE }) : 'Data não informada';
+                    const obsHtml = debt.observacao ? `<br><span style="font-size:0.7rem; opacity:0.8;">📝 ${escapeHtml(debt.observacao)}</span>` : '';
                     html += `
                         <div class="debtor-entry" data-id="${debt.id}">
                             <div class="debtor-entry-info">
                                 <span class="debtor-entry-date"><i class="fas fa-calendar-alt"></i> ${dateFormatted}</span>
                                 <span class="debtor-entry-value">${formatMoney(debt.valor)}</span>
+                                ${obsHtml}
                             </div>
                             <div class="debtor-entry-buttons">
-                                <button class="btn-small btn-quitar-debtor" data-id="${debt.id}" data-name="${escapeHtml(name)}" data-val="${debt.valor}" title="Receber este valor"><i class="fas fa-hand-holding-usd"></i> Quitar</button>
-                                <button class="btn-small btn-danger delete-debtor-entry" data-id="${debt.id}" data-name="${escapeHtml(name)}" title="Excluir esta dívida"><i class="fas fa-trash-alt"></i> Excluir</button>
+                                <button class="btn-small btn-quitar-debtor" data-id="${debt.id}" data-name="${escapeHtml(name)}" data-val="${debt.valor}" title="Receber este valor"><i class="fas fa-hand-holding-usd"></i> Receber</button>
+                                <button class="btn-small btn-danger delete-debtor-entry" data-id="${debt.id}" data-name="${escapeHtml(name)}" title="Excluir esta dívida"><i class="fas fa-trash-alt"></i></button>
                             </div>
                         </div>
                     `;
@@ -2548,62 +2561,35 @@
             container.innerHTML = html;
         }
     
-        // ---- RENDER HISTÓRICO (QUITADAS) ----
-        if (paidDebtors.length === 0) {
-            historyContainer.innerHTML = '<div style="text-align:center; padding:12px; color: #4caf50;">Nenhuma dívida quitada no histórico.</div>';
+        // ----- HISTÓRICO (QUITADAS) -----
+        if (history.length === 0) {
+            historyContainer.innerHTML = '<div class="info-message" style="text-align:center; font-size:0.8rem;">Nenhuma dívida quitada registrada.</div>';
         } else {
-            const historyHtml = paidDebtors.map(debt => {
+            // Ordenar por data da mais recente para a mais antiga
+            const sortedHistory = [...history].sort((a, b) => new Date(b.data) - new Date(a.data));
+            let html = '';
+            for (const debt of sortedHistory) {
                 const dateFormatted = debt.data ? parseLocalDateToDate(debt.data).toLocaleDateString('pt-BR', { timeZone: TIMEZONE }) : 'Data não informada';
-                return `
-                    <div class="paid-debtor-item">
-                        <div class="debtor-entry-info">
+                const obsHtml = debt.observacao ? `<span style="font-size:0.7rem; opacity:0.8;">📝 ${escapeHtml(debt.observacao)}</span>` : '';
+                html += `
+                    <div class="debtor-entry" style="border-left: 3px solid #4caf50; padding-left: 10px; background: rgba(76,175,80,0.05); border-radius: 12px; margin-bottom: 6px;">
+                        <div class="debtor-entry-info" style="flex: 2;">
                             <span><strong>${escapeHtml(debt.nome)}</strong></span>
-                            <span>💰 ${formatMoney(debt.valor)}</span>
-                            <span style="font-size:0.7rem; opacity:0.7;"><i class="fas fa-calendar-alt"></i> ${dateFormatted}</span>
+                            <span class="debtor-entry-date"><i class="fas fa-calendar-alt"></i> ${dateFormatted}</span>
+                            <span class="debtor-entry-value" style="color: #4caf50;">${formatMoney(debt.valor)}</span>
+                            ${obsHtml}
                         </div>
                         <div>
-                            <button class="btn-small btn-danger delete-paid-debtor" data-id="${debt.id}" title="Remover do histórico"><i class="fas fa-trash-alt"></i></button>
+                            <button class="btn-small btn-danger delete-debtor-entry" data-id="${debt.id}" data-name="${escapeHtml(debt.nome)}" title="Remover do histórico" style="background: #c62828;"><i class="fas fa-trash-alt"></i></button>
                         </div>
                     </div>
                 `;
-            }).join('');
-            historyContainer.innerHTML = `
-                <div style="margin-top: 16px; border-top: 2px solid #4caf50; padding-top: 12px;">
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 8px;">
-                        <h4 style="color:#4caf50;"><i class="fas fa-check-circle"></i> Histórico de Quitadas</h4>
-                        <span style="font-size:0.8rem;">${paidDebtors.length} registro(s)</span>
-                    </div>
-                    ${historyHtml}
-                </div>
-            `;
-            // Eventos para excluir do histórico (excluir permanentemente)
-            document.querySelectorAll('.delete-paid-debtor').forEach(btn => {
-                btn.addEventListener('click', async (e) => {
-                    e.stopPropagation();
-                    const id = btn.dataset.id;
-                    const result = await Swal.fire({
-                        title: 'Excluir do histórico',
-                        text: 'Remover esta dívida quitada permanentemente?',
-                        icon: 'warning',
-                        showCancelButton: true,
-                        confirmButtonColor: '#e91e63',
-                        confirmButtonText: 'Sim, excluir'
-                    });
-                    if (result.isConfirmed) {
-                        try {
-                            await debtorsRef.doc(id).delete();
-                            await addNotification('debt_paid_deleted', 'removeu uma dívida quitada do histórico');
-                            Swal.fire('Removida!', 'Dívida excluída do histórico.', 'success');
-                        } catch (err) {
-                            console.error(err);
-                            Swal.fire('Erro', 'Não foi possível excluir.', 'error');
-                        }
-                    }
-                });
-            });
+            }
+            historyContainer.innerHTML = html;
         }
     
-        // ---- REATRIBUI EVENTOS PARA OS BOTÕES (pendentes) ----
+        // ----- EVENTOS -----
+        // Quitar (pendente -> quitado)
         document.querySelectorAll('.btn-quitar-debtor').forEach(btn => {
             btn.addEventListener('click', async (e) => {
                 e.stopPropagation();
@@ -2620,26 +2606,28 @@
                 });
                 if (result.isConfirmed) {
                     try {
-                        // Em vez de deletar, marcar como quitado
                         await debtorsRef.doc(id).update({ quitado: true });
                         await addNotification('debt_received', `recebeu dívida de ${formatMoney(valor)} de ${name}`);
                         Swal.fire('Recebido!', `Dívida de ${formatMoney(valor)} quitada.`, 'success');
                     } catch (err) {
                         console.error(err);
-                        Swal.fire('Erro', 'Não foi possível quitar a dívida. Tente novamente.', 'error');
+                        Swal.fire('Erro', 'Não foi possível quitar a dívida.', 'error');
                     }
                 }
             });
         });
     
+        // Excluir (permanente, tanto pendente quanto histórico)
         document.querySelectorAll('.delete-debtor-entry').forEach(btn => {
             btn.addEventListener('click', async (e) => {
                 e.stopPropagation();
                 const id = btn.dataset.id;
                 const name = btn.dataset.name;
+                const isHistory = !debtors.find(d => d.id === id)?.quitado; // se não estiver nos pendentes, provavelmente é histórico
+                const msg = isHistory ? 'Remover esta dívida do histórico permanentemente?' : 'Remover esta dívida permanentemente?';
                 const result = await Swal.fire({
                     title: 'Excluir dívida',
-                    text: `Remover esta dívida de ${name} permanentemente?`,
+                    text: msg,
                     icon: 'warning',
                     showCancelButton: true,
                     confirmButtonColor: '#e91e63',
@@ -2658,6 +2646,7 @@
             });
         });
     
+        // Nova dívida para um grupo (pendente)
         document.querySelectorAll('.add-debt-to-group').forEach(btn => {
             btn.addEventListener('click', async (e) => {
                 e.stopPropagation();
@@ -2667,6 +2656,7 @@
                     html: `
                         <input id="swal-value" type="text" placeholder="Valor (R$)" class="swal2-input" required>
                         <input id="swal-date" type="date" value="${getCurrentDateRecife()}" class="swal2-input" required>
+                        <input id="swal-obs" type="text" placeholder="Observação (opcional)" class="swal2-input">
                     `,
                     focusConfirm: false,
                     didOpen: () => {
@@ -2676,6 +2666,7 @@
                     preConfirm: () => {
                         const valor = parseMoneyString(document.getElementById('swal-value').value);
                         const data = document.getElementById('swal-date').value;
+                        const observacao = document.getElementById('swal-obs').value;
                         if (isNaN(valor) || valor <= 0) {
                             Swal.showValidationMessage('Valor inválido');
                             return false;
@@ -2684,7 +2675,7 @@
                             Swal.showValidationMessage('Data inválida');
                             return false;
                         }
-                        return { valor, data };
+                        return { valor, data, observacao };
                     }
                 });
                 if (form) {
@@ -2693,7 +2684,8 @@
                             nome: debtorName,
                             valor: form.valor,
                             data: form.data,
-                            quitado: false // nova dívida começa pendente
+                            observacao: form.observacao || '',
+                            quitado: false
                         });
                         await addNotification('debt_added', `adicionou dívida de ${formatMoney(form.valor)} para ${debtorName}`);
                         Swal.fire('Adicionado!', `Nova dívida de ${formatMoney(form.valor)} para ${debtorName}.`, 'success');
@@ -2704,65 +2696,65 @@
                 }
             });
         });
-    
-        // Atualiza a lista de sugestões de nomes (datalist)
-        updateDebtorNameSuggestions();
     }
     
-    // ==================== ATUALIZAR SUGESTÕES DE NOMES ====================
-    function updateDebtorNameSuggestions() {
-        const datalist = document.getElementById('debtor-names-list');
-        if (!datalist) return;
-        // Pega todos os nomes únicos (pendentes e quitados)
-        const names = new Set();
-        debtors.forEach(d => {
-            if (d.nome) names.add(d.nome.trim());
-        });
-        datalist.innerHTML = Array.from(names).sort().map(n => `<option value="${escapeHtml(n)}">`).join('');
-    }
-    
-    // ==================== ADICIONAR DEVEDOR (MODIFICADO) ====================
+    // ==================== ADICIONAR DEVEDOR (FORMULÁRIO PRINCIPAL) ====================
     async function addDebtor() {
         const nome = document.getElementById('new-debtor-name').value.trim();
         const valor = parseMoneyString(document.getElementById('new-debtor-value').value);
         let data = document.getElementById('new-debtor-date').value;
-        if (!nome || isNaN(valor) || valor<=0) { Swal.fire('Erro','Preencha nome e valor válido.','error'); return; }
+        const observacao = document.getElementById('new-debtor-obs').value.trim();
+        if (!nome || isNaN(valor) || valor <= 0) {
+            Swal.fire('Erro', 'Preencha nome e valor válido.', 'error');
+            return;
+        }
         if (!data) data = getCurrentDateRecife();
-        await debtorsRef.add({ 
-            nome, 
-            valor, 
-            data, 
-            quitado: false  // nova dívida começa pendente
-        });
-        await addNotification('debt_added', `adicionou dívida de ${formatMoney(valor)} para ${nome}`);
-        document.getElementById('new-debtor-name').value = '';
-        document.getElementById('new-debtor-value').value = '';
-        document.getElementById('new-debtor-date').value = '';
-        Swal.fire('Adicionado!','','success');
-    }
-    
-    // ==================== LIMPAR HISTÓRICO DE DÍVIDAS QUITADAS ====================
-    async function clearDebtorsHistory() {
-        const result = await Swal.fire({
-            title: 'Limpar histórico de dívidas quitadas?',
-            text: 'Isso removerá permanentemente todas as dívidas quitadas. Essa ação não pode ser desfeita.',
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#e91e63',
-            confirmButtonText: 'Sim, limpar',
-            cancelButtonText: 'Cancelar'
-        });
-        if (!result.isConfirmed) return;
         try {
-            const snapshot = await debtorsRef.where('quitado', '==', true).get();
-            const batch = db.batch();
-            snapshot.forEach(doc => batch.delete(doc.ref));
-            await batch.commit();
-            await addNotification('debt_history_cleared', 'limpou o histórico de dívidas quitadas');
-            Swal.fire('Histórico limpo!', 'Todas as dívidas quitadas foram removidas.', 'success');
+            await debtorsRef.add({
+                nome,
+                valor,
+                data,
+                observacao: observacao || '',
+                quitado: false
+            });
+            await addNotification('debt_added', `adicionou dívida de ${formatMoney(valor)} para ${nome}`);
+            document.getElementById('new-debtor-name').value = '';
+            document.getElementById('new-debtor-value').value = '';
+            document.getElementById('new-debtor-date').value = '';
+            document.getElementById('new-debtor-obs').value = '';
+            Swal.fire('Adicionado!', '', 'success');
         } catch (err) {
             console.error(err);
-            Swal.fire('Erro', 'Não foi possível limpar o histórico.', 'error');
+            Swal.fire('Erro', 'Não foi possível adicionar a dívida.', 'error');
+        }
+    }
+    
+    // ==================== LIMPAR HISTÓRICO DE DEVEDORES (QUITADOS) ====================
+    async function limparHistoricoDebtors() {
+        const history = debtors.filter(d => d.quitado === true);
+        if (history.length === 0) {
+            Swal.fire('Aviso', 'Não há dívidas quitadas para limpar.', 'info');
+            return;
+        }
+        const result = await Swal.fire({
+            title: 'Limpar histórico',
+            text: `Remover permanentemente ${history.length} dívida(s) quitada(s)? Esta ação é irreversível.`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#c62828',
+            confirmButtonText: 'Sim, limpar tudo'
+        });
+        if (result.isConfirmed) {
+            try {
+                const batch = db.batch();
+                history.forEach(d => batch.delete(debtorsRef.doc(d.id)));
+                await batch.commit();
+                await addNotification('history_debtors_cleared', `limpou histórico de ${history.length} dívidas quitadas`);
+                Swal.fire('Histórico limpo!', 'Todas as dívidas quitadas foram removidas.', 'success');
+            } catch (err) {
+                console.error(err);
+                Swal.fire('Erro', 'Não foi possível limpar o histórico.', 'error');
+            }
         }
     }
     
@@ -3237,7 +3229,7 @@
             3: `➕ Adicione despesas com categoria "Cartão Atacadão 💳" e veja no painel.`,
             4: `📋 Histórico mostra todas as despesas (pendentes e quitadas).`,
             5: `⚙️ Configure rendas, orçamentos, categorias, cor do tema, backup automático e exporte PDF.`,
-            6: `💰 Devedores: histórico de quitadas e sugestão de nomes.`,
+            6: `💰 Devedores: pendentes agrupados, histórico de quitados, observações e sugestão de nomes.`,
             7: `💬 Mural com mensagens mais recentes no topo.`,
             8: `🎯 Metas de economia do casal.`,
             9: `📅 Acompanhe quando cada compra parcelada será totalmente quitada.`,
@@ -3438,11 +3430,13 @@
         const monthExpenses = allExpenses.filter(exp => exp.installmentMonths?.includes(targetMonth));
         const pendingExpenses = monthExpenses.filter(exp => !exp.quitado);
         
+        // ----- RESUMO DO MÊS (normais, excluindo recorrentes E Cartão Atacadão) -----
         const normalExpenses = pendingExpenses.filter(exp => 
             !exp.recurringTemplateId && 
             exp.recorrente !== 'monthly' && 
             exp.categoria !== 'Cartão Atacadão 💳'
         );
+        // ------------------------------------------------------------------------
         
         const recurringExpenses = pendingExpenses.filter(exp => exp.recurringTemplateId || exp.recorrente === 'monthly');
         
@@ -3471,7 +3465,7 @@
         document.getElementById('meta-fill').style.width = `${progresso}%`;
         checkLimitsAndAlert();
     
-        // Cartão Atacadão (apenas pendentes)
+        // ===== CÁLCULO DO CARTÃO ATACADÃO (APENAS PENDENTES) =====
         const cartaoAtacadaoTotal = pendingExpenses
             .filter(exp => exp.categoria === 'Cartão Atacadão 💳')
             .reduce((acc, exp) => {
@@ -3480,6 +3474,7 @@
             }, 0);
         document.getElementById('cartao-atacadao-total').innerText = formatMoney(cartaoAtacadaoTotal);
         document.getElementById('cartao-atacadao-total-p2').innerText = formatMoney(cartaoAtacadaoTotal);
+        // Fim do cálculo
     
         const last6Months = [], last6P1 = [], last6P2 = [];
         for (let i = 5; i >= 0; i--) {
@@ -3712,7 +3707,7 @@
     document.getElementById('calendar-btn').addEventListener('click', openCalendarPicker);
     document.getElementById('set-meta-btn').addEventListener('click', async () => { let v = parseMoneyString(document.getElementById('meta-valor').value); if(isNaN(v)||v<=0) v=500; await setSavingsGoal(v); await addNotification('savings_goal', `definiu meta de economia para ${formatMoney(v)}`); });
     document.getElementById('add-debtor-btn').addEventListener('click', addDebtor);
-    document.getElementById('clear-debtors-history-btn').addEventListener('click', clearDebtorsHistory);
+    document.getElementById('clear-history-debtors').addEventListener('click', limparHistoricoDebtors);
     document.getElementById('save-income-btn').addEventListener('click', saveIncomes);
     document.getElementById('add-goal-btn').addEventListener('click', addGoal);
     document.getElementById('save-goal1-btn').addEventListener('click', () => saveIndividualGoal('partner1'));
