@@ -952,9 +952,20 @@
         <!-- Página 6: Devedores (AGRUPADO) -->
         <div class="swipe-page" data-page="6">
             <div class="card">
-                <div class="card-title"><i class="fas fa-hand-holding-usd"></i> Devedores (terceiros)</div>
-                
-                <!-- Formulário de nova dívida -->
+                <div class="card-title"><i class="fas fa-hand-holding-usd"></i> Devedores Pendentes</div>
+                <div id="debtors-list"></div>
+            </div>
+            <!-- Histórico de dívidas quitadas -->
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; margin-bottom: 12px;">
+                    <div class="card-title" style="margin-bottom:0;"><i class="fas fa-history"></i> Histórico de dívidas quitadas</div>
+                    <button id="clear-history-debtors" class="btn btn-danger btn-small">🗑️ Limpar histórico</button>
+                </div>
+                <div id="debtors-history-list"></div>
+            </div>
+            <!-- Formulário de nova dívida -->
+            <div class="card">
+                <div class="card-title"><i class="fas fa-plus-circle"></i> Adicionar nova dívida</div>
                 <div class="debtor-form-group">
                     <div style="flex:2;">
                         <label>Nome do devedor</label>
@@ -976,18 +987,6 @@
                     <div style="flex:0 0 auto;">
                         <button id="add-debtor-btn" class="btn btn-success">Adicionar</button>
                     </div>
-                </div>
-
-                <!-- Lista de dívidas pendentes agrupadas -->
-                <div id="debtors-list"></div>
-
-                <!-- Histórico de dívidas quitadas -->
-                <div style="margin-top: 24px;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; margin-bottom: 12px;">
-                        <h4 style="margin:0; color: var(--primary-color);"><i class="fas fa-history"></i> Histórico de dívidas quitadas</h4>
-                        <button id="clear-history-debtors" class="btn btn-danger btn-small">🗑️ Limpar histórico</button>
-                    </div>
-                    <div id="debtors-history-list"></div>
                 </div>
             </div>
         </div>
@@ -3229,7 +3228,7 @@
             3: `➕ Adicione despesas com categoria "Cartão Atacadão 💳" e veja no painel.`,
             4: `📋 Histórico mostra todas as despesas (pendentes e quitadas).`,
             5: `⚙️ Configure rendas, orçamentos, categorias, cor do tema, backup automático e exporte PDF.`,
-            6: `💰 Devedores: pendentes agrupados, histórico de quitados, observações e sugestão de nomes.`,
+            6: `💰 Devedores: pendentes agrupados, histórico de quitados, observações e sugestão de nomes. Formulário na parte inferior.`,
             7: `💬 Mural com mensagens mais recentes no topo.`,
             8: `🎯 Metas de economia do casal.`,
             9: `📅 Acompanhe quando cada compra parcelada será totalmente quitada.`,
