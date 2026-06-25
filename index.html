@@ -1462,18 +1462,21 @@
         return overrun;
     }
     
+    // ==================== RENDER LIMIT ALERTS (CORRIGIDO COM EXCEDIDO) ====================
     async function renderLimitAlerts() {
         const currentPartner = currentPartnerId;
         const shouldShow = await shouldShowLimitAlert(currentPartner);
         const globalContainer = document.getElementById('global-limit-alert-container');
         if (globalContainer && shouldShow) {
             const { total, limit } = checkLimitOverrun(currentPartner);
+            const excedido = total - limit;
+            const excedidoStr = excedido > 0 ? ` (Excedido em ${formatMoney(excedido)})` : '';
             globalContainer.innerHTML = `
                 <div class="limit-alert-global">
                     <div class="alert-text">
                         <i class="fas fa-exclamation-triangle"></i> 
                         <strong>${currentPartner === 'partner1' ? partner1Name : partner2Name}</strong> atingiu o limite de gastos mensal! 
-                        Total: ${formatMoney(total)} / Limite: ${formatMoney(limit)}
+                        Total: ${formatMoney(total)} / Limite: ${formatMoney(limit)}${excedidoStr}
                     </div>
                     <button id="dismiss-limit-global">OK</button>
                 </div>
@@ -1497,12 +1500,14 @@
             if (container) {
                 if (should) {
                     const { total, limit } = checkLimitOverrun(pk);
+                    const excedido = total - limit;
+                    const excedidoStr = excedido > 0 ? ` (Excedido em ${formatMoney(excedido)})` : '';
                     container.innerHTML = `
                         <div class="limit-alert-global">
                             <div class="alert-text">
                                 <i class="fas fa-exclamation-triangle"></i> 
                                 <strong>${pk === 'partner1' ? partner1Name : partner2Name}</strong> atingiu o limite de gastos mensal! 
-                                Total: ${formatMoney(total)} / Limite: ${formatMoney(limit)}
+                                Total: ${formatMoney(total)} / Limite: ${formatMoney(limit)}${excedidoStr}
                             </div>
                             <button id="dismiss-limit-${pk}">OK</button>
                         </div>
