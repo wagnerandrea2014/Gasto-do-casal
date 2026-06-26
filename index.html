@@ -749,6 +749,50 @@
             border-bottom: 1px dashed rgba(233,30,99,0.3);
             padding: 4px 0;
         }
+
+        /* ===== NOVO ESTILO PARA ALERTA DE NOVAS MENSAGENS ===== */
+        .new-messages-alert {
+            background: linear-gradient(135deg, #4caf50, #2e7d32);
+            border-radius: 20px;
+            padding: 16px;
+            margin-bottom: 16px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            border: 1px solid #66bb6a;
+        }
+        .new-messages-alert .alert-content {
+            flex: 2;
+        }
+        .new-messages-alert .alert-content strong {
+            font-size: 1.1rem;
+            display: block;
+            margin-bottom: 4px;
+        }
+        .new-messages-alert .alert-content span {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+        .new-messages-alert .alert-button button {
+            background: white;
+            color: #2e7d32;
+            border: none;
+            font-weight: bold;
+            box-shadow: none;
+        }
+        .new-messages-alert .alert-button button:active {
+            transform: scale(0.96);
+        }
+        body.light-theme .new-messages-alert {
+            background: linear-gradient(135deg, #4caf50, #2e7d32);
+            color: white;
+        }
+        body.light-theme .new-messages-alert .alert-button button {
+            color: #2e7d32;
+        }
     </style>
 </head>
 <body>
@@ -803,6 +847,9 @@
     <div class="swipe-container" id="swipeContainer">
         <!-- Página 0: Dashboard -->
         <div class="swipe-page" data-page="0">
+            <!-- ===== ALERTA DE NOVAS MENSAGENS (PÁGINA 0) ===== -->
+            <div id="new-messages-alert-container"></div>
+            <!-- ===== FIM ALERTA ===== -->
             <div id="monthly-closure-alert-container"></div>
             <div id="global-limit-alert-container"></div>
             <div class="card">
@@ -1351,6 +1398,11 @@
     let backupCheckInterval = null;
     let dismissedLimits = { partner1: false, partner2: false };
     
+    // ===== NOVAS VARIÁVEIS PARA ALERTA DE MENSAGENS =====
+    let hasNewMessages = false;
+    let lastMessageReadTimestamp = 0;
+    // ===== FIM =====
+    
     const formatMoney = (val) => val.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
     const escapeHtml = (str) => str?.replace(/[&<>]/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[m])) || '';
     
@@ -1462,7 +1514,6 @@
         return overrun;
     }
     
-    // ==================== RENDER LIMIT ALERTS (CORRIGIDO COM EXCEDIDO) ====================
     async function renderLimitAlerts() {
         const currentPartner = currentPartnerId;
         const shouldShow = await shouldShowLimitAlert(currentPartner);
@@ -1527,6 +1578,61 @@
                     container.innerHTML = '';
                 }
             }
+        }
+    }
+    
+    // ==================== FUNÇÃO PARA VERIFICAR NOVAS MENSAGENS ====================
+    function checkNewMessages() {
+        if (!currentPartnerId) return;
+        const storageKey = `lastMessageRead_${currentPartnerId}`;
+        const savedTimestamp = parseInt(localStorage.getItem(storageKey) || '0');
+        lastMessageReadTimestamp = savedTimestamp;
+        
+        // Verifica se há mensagens com createdAt > savedTimestamp
+        const hasNew = messages.some(msg => {
+            const msgDate = msg.createdAt?.toDate?.() || new Date(0);
+            return msgDate.getTime() > savedTimestamp;
+        });
+        hasNewMessages = hasNew;
+        renderNewMessagesAlert();
+    }
+    
+    function markMessagesAsRead() {
+        if (!currentPartnerId) return;
+        const storageKey = `lastMessageRead_${currentPartnerId}`;
+        const now = Date.now();
+        localStorage.setItem(storageKey, now.toString());
+        lastMessageReadTimestamp = now;
+        hasNewMessages = false;
+        renderNewMessagesAlert();
+    }
+    
+    function renderNewMessagesAlert() {
+        const container = document.getElementById('new-messages-alert-container');
+        if (!container) return;
+        if (hasNewMessages) {
+            container.innerHTML = `
+                <div class="new-messages-alert">
+                    <div class="alert-content">
+                        <strong>📩 Você tem novas mensagens no mural!</strong>
+                        <span>Clique em "OK" para confirmar a leitura ou acesse a página do mural para visualizá-las.</span>
+                    </div>
+                    <div class="alert-button">
+                        <button id="confirm-new-messages-btn" class="btn-small" style="background:white; color:#2e7d32;">OK</button>
+                    </div>
+                </div>
+            `;
+            const btn = document.getElementById('confirm-new-messages-btn');
+            if (btn) {
+                btn.addEventListener('click', () => {
+                    markMessagesAsRead();
+                    // Também marca como lidas no banco de dados (opcional, mas útil)
+                    // Não necessário, pois o controle é local.
+                    Swal.fire('Mensagens lidas!', 'O alerta de novas mensagens foi removido.', 'success');
+                });
+            }
+        } else {
+            container.innerHTML = '';
         }
     }
     
@@ -3204,6 +3310,10 @@
                 }
             });
         });
+        
+        // ===== MARCAR MENSAGENS COMO LIDAS AO ABRIR O MURAL =====
+        markMessagesAsRead();
+        // ========================================================
     }
     
     async function sendMessage() {
@@ -3234,7 +3344,7 @@
             4: `📋 Histórico mostra todas as despesas (pendentes e quitadas).`,
             5: `⚙️ Configure rendas, orçamentos, categorias, cor do tema, backup automático e exporte PDF.`,
             6: `💰 Devedores: pendentes agrupados, histórico de quitados, observações e sugestão de nomes. Formulário na parte inferior.`,
-            7: `💬 Mural com mensagens mais recentes no topo.`,
+            7: `💬 Mural com mensagens mais recentes no topo. Alertas de novas mensagens na página inicial.`,
             8: `🎯 Metas de economia do casal.`,
             9: `📅 Acompanhe quando cada compra parcelada será totalmente quitada.`,
             10: `📆 Fechamento mensal: veja os gastos totais por parceiro no período de fatura.`,
@@ -3530,6 +3640,9 @@
         await updateMonthlyClosureAlert();
         await renderInvoices();
         await renderLimitAlerts();
+        // ===== VERIFICAR NOVAS MENSAGENS =====
+        checkNewMessages();
+        // ===================================
         if (firstLoad) { showLoading(false); firstLoad = false; }
     }
     
@@ -3548,7 +3661,12 @@
         metaRef.onSnapshot(d => { savingsGoal = d.exists ? d.data().value : 500; document.getElementById('meta-valor').value = formatMoneyInput(savingsGoal); debouncedUpdateDashboard(); });
         namesRef.onSnapshot(d => { if(d.exists){ partner1Name = d.data().name1 || 'P1'; partner2Name = d.data().name2 || 'P2'; } updateUIWithNames(); debouncedUpdateDashboard(); });
         debtorsRef.onSnapshot(s => { debtors = s.docs.map(d=> ({ id: d.id, ...d.data() })); renderDebtors(); });
-        messagesRef.orderBy('createdAt','desc').onSnapshot(s => { messages = s.docs.map(d=> ({ id: d.id, ...d.data() })); renderMessages(); });
+        messagesRef.orderBy('createdAt','desc').onSnapshot(s => { 
+            messages = s.docs.map(d=> ({ id: d.id, ...d.data() })); 
+            renderMessages(); 
+            // Verifica novas mensagens sempre que a lista mudar
+            checkNewMessages();
+        });
         incomesRef.onSnapshot(d => { if(d.exists){ incomes.partner1 = d.data().income1||0; incomes.partner2 = d.data().income2||0; } document.getElementById('income1').value = formatMoneyInput(incomes.partner1); document.getElementById('income2').value = formatMoneyInput(incomes.partner2); debouncedUpdateDashboard(); });
         goalsRef.onSnapshot(s => { goals = s.docs.map(d=> ({ id: d.id, ...d.data() })); renderGoals(); });
         individualGoalsRef.onSnapshot(s => { s.forEach(d=>{ if(d.id==='partner1') individualGoal1 = d.data(); if(d.id==='partner2') individualGoal2 = d.data(); }); updateIndividualGoalUI(); });
