@@ -750,7 +750,29 @@
             padding: 4px 0;
         }
 
-        /* ===== NOVO ESTILO PARA ALERTA DE NOVAS MENSAGENS ===== */
+        /* ===== ESTILO PARA PÁGINA DE MELHORIAS ===== */
+        .improvement-item {
+            background: rgba(233,30,99,0.08);
+            border-radius: 16px;
+            padding: 12px 16px;
+            margin-bottom: 12px;
+            border-left: 4px solid var(--primary-color);
+        }
+        .improvement-version {
+            font-weight: 700;
+            color: var(--primary-color);
+            font-size: 0.9rem;
+        }
+        .improvement-date {
+            font-size: 0.7rem;
+            opacity: 0.7;
+            margin-left: 8px;
+        }
+        .improvement-desc {
+            margin-top: 4px;
+            font-size: 0.85rem;
+        }
+
         .new-messages-alert {
             background: linear-gradient(135deg, #4caf50, #2e7d32);
             border-radius: 20px;
@@ -847,9 +869,7 @@
     <div class="swipe-container" id="swipeContainer">
         <!-- Página 0: Dashboard -->
         <div class="swipe-page" data-page="0">
-            <!-- ===== ALERTA DE NOVAS MENSAGENS (PÁGINA 0) ===== -->
             <div id="new-messages-alert-container"></div>
-            <!-- ===== FIM ALERTA ===== -->
             <div id="monthly-closure-alert-container"></div>
             <div id="global-limit-alert-container"></div>
             <div class="card">
@@ -1083,6 +1103,16 @@
                 </div>
             </div>
         </div>
+        <!-- ===== NOVA PÁGINA 12: Últimas Melhorias ===== -->
+        <div class="swipe-page" data-page="12">
+            <div class="card">
+                <div class="card-title"><i class="fas fa-star"></i> Últimas Melhorias</div>
+                <div id="improvements-list"></div>
+                <div class="info-message" style="margin-top: 12px; text-align:center; font-size:0.8rem;">
+                    <i class="fas fa-code"></i> Mantenha seu app sempre atualizado!
+                </div>
+            </div>
+        </div>
     </div>
     <div class="page-indicators" id="pageIndicators"></div>
 </div>
@@ -1100,6 +1130,7 @@
     <button class="nav-btn" data-page="9"><i class="fas fa-calendar-check"></i><span>Parcelas</span></button>
     <button class="nav-btn" data-page="10"><i class="fas fa-file-invoice-dollar"></i><span>Fechamento</span></button>
     <button class="nav-btn" data-page="11"><i class="fas fa-receipt"></i><span>Faturas</span></button>
+    <button class="nav-btn" data-page="12"><i class="fas fa-star"></i><span>Melhorias</span></button>
 </div>
 
 <!-- Modal de Notificações -->
@@ -1118,6 +1149,66 @@
 <div class="concierge-container"><div class="concierge-bubble" id="conciergeBubble" style="display: none;"><span id="conciergeMessage"></span></div><div class="concierge-avatar" id="conciergeAvatar"><i class="fas fa-robot"></i></div></div>
 
 <script>
+    // ==================== LISTA DE MELHORIAS (atualize aqui) ====================
+    const appImprovements = [
+        {
+            version: "v2.0",
+            date: "26/06/2026",
+            description: "✅ Página 'Últimas Melhorias' adicionada para acompanhar as novidades do app."
+        },
+        {
+            version: "v1.9",
+            date: "26/06/2026",
+            description: "🔔 Alerta de novas mensagens no mural aparece na página inicial até confirmar leitura."
+        },
+        {
+            version: "v1.8",
+            date: "25/06/2026",
+            description: "📊 Alerta de limite excedido agora mostra o valor ultrapassado (ex: 'Excedido em R$ 212,91')."
+        },
+        {
+            version: "v1.7",
+            date: "22/06/2026",
+            description: "💰 Página de dívidas reorganizada: pendentes agrupadas, histórico de quitadas com observações, formulário de adição na parte inferior."
+        },
+        {
+            version: "v1.6",
+            date: "20/06/2026",
+            description: "💬 Mural do Casal ordenado com mensagens mais recentes no topo."
+        },
+        {
+            version: "v1.5",
+            date: "19/06/2026",
+            description: "💳 Adicionado painel 'Cartão Atacadão' com total pendente (separado do resumo mensal)."
+        },
+        {
+            version: "v1.4",
+            date: "13/06/2026",
+            description: "🔧 Correção da máscara de valores em todos os campos (padrão brasileiro com vírgula decimal)."
+        },
+        {
+            version: "v1.3",
+            date: "13/06/2026",
+            description: "🔔 Badge de notificações corrigido (agora visível com números >9 e '9+')."
+        },
+        {
+            version: "v1.2",
+            date: "10/06/2026",
+            description: "🔄 Recorrências mensais com controle para evitar duplicação."
+        },
+        {
+            version: "v1.1",
+            date: "08/06/2026",
+            description: "📄 Relatório mensal em PDF (exportação completa)."
+        },
+        {
+            version: "v1.0",
+            date: "01/06/2026",
+            description: "🚀 Lançamento oficial do CASH CASAL - Gestão Financeira para Casais."
+        }
+    ];
+    // ================================================================
+
     // ==================== FIREBASE CONFIG ====================
     const firebaseConfig = {
         apiKey: "AIzaSyD0P8GciuV_TvZXtkIQbZLOWtcq_EMKbXo",
@@ -1398,13 +1489,31 @@
     let backupCheckInterval = null;
     let dismissedLimits = { partner1: false, partner2: false };
     
-    // ===== NOVAS VARIÁVEIS PARA ALERTA DE MENSAGENS =====
     let hasNewMessages = false;
     let lastMessageReadTimestamp = 0;
-    // ===== FIM =====
     
     const formatMoney = (val) => val.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
     const escapeHtml = (str) => str?.replace(/[&<>]/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[m])) || '';
+    
+    // ==================== RENDER MELHORIAS ====================
+    function renderImprovements() {
+        const container = document.getElementById('improvements-list');
+        if (!container) return;
+        if (appImprovements.length === 0) {
+            container.innerHTML = '<div class="info-message" style="text-align:center;">Nenhuma melhoria registrada ainda.</div>';
+            return;
+        }
+        const html = appImprovements.map(item => `
+            <div class="improvement-item">
+                <div>
+                    <span class="improvement-version">${escapeHtml(item.version)}</span>
+                    <span class="improvement-date">📅 ${escapeHtml(item.date)}</span>
+                </div>
+                <div class="improvement-desc">${escapeHtml(item.description)}</div>
+            </div>
+        `).join('');
+        container.innerHTML = html;
+    }
     
     // ==================== FUNÇÃO DE NOTIFICAÇÃO ====================
     async function addNotification(action, description, partner = null) {
@@ -1588,7 +1697,6 @@
         const savedTimestamp = parseInt(localStorage.getItem(storageKey) || '0');
         lastMessageReadTimestamp = savedTimestamp;
         
-        // Verifica se há mensagens com createdAt > savedTimestamp
         const hasNew = messages.some(msg => {
             const msgDate = msg.createdAt?.toDate?.() || new Date(0);
             return msgDate.getTime() > savedTimestamp;
@@ -1626,8 +1734,6 @@
             if (btn) {
                 btn.addEventListener('click', () => {
                     markMessagesAsRead();
-                    // Também marca como lidas no banco de dados (opcional, mas útil)
-                    // Não necessário, pois o controle é local.
                     Swal.fire('Mensagens lidas!', 'O alerta de novas mensagens foi removido.', 'success');
                 });
             }
@@ -1926,7 +2032,6 @@
     async function generateRecurringForMonth(targetMonth) {
         if (!recurringTemplates.length) return;
     
-        // Não gera para meses passados
         const hoje = new Date();
         const anoAtual = hoje.getFullYear();
         const mesAtual = hoje.getMonth();
@@ -1936,7 +2041,6 @@
         }
     
         for (const template of recurringTemplates) {
-            // Verifica se o template ainda existe no Firestore
             const templateDoc = await recurringRef.doc(template.id).get();
             if (!templateDoc.exists) {
                 continue;
@@ -1949,14 +2053,12 @@
                 continue;
             }
     
-            // Cria o controle imediatamente
             await controlDoc.set({
                 processedAt: firebase.firestore.FieldValue.serverTimestamp(),
                 templateId: template.id,
                 month: targetMonth
             });
     
-            // Verifica se já existe despesa para este template/mês
             const q = await expensesRef
                 .where('recurringTemplateId', '==', template.id)
                 .where('installmentMonths', 'array-contains', targetMonth)
@@ -1966,7 +2068,6 @@
                 continue;
             }
     
-            // Cria nova despesa
             try {
                 const firstDay = new Date(selectedYear, selectedMonth, 1);
                 const firstDayStr = `${firstDay.getFullYear()}-${String(firstDay.getMonth()+1).padStart(2,'0')}-01`;
@@ -2013,14 +2114,10 @@
         showLoading(true);
         try {
             if (filterPaidBy) {
-                // 1. Remove templates do parceiro
                 const templatesSnap = await recurringRef.where('paidBy', '==', filterPaidBy).get();
                 const templateIds = templatesSnap.docs.map(doc => doc.id);
-                // 2. Remove controles desses templates
                 const controlSnap = await recurringControlRef.where('templateId', 'in', templateIds.length ? templateIds : ['dummy']).get();
-                // 3. Remove despesas que referenciam esses templates
                 const expensesWithTemplate = await expensesRef.where('recurringTemplateId', 'in', templateIds.length ? templateIds : ['dummy']).get();
-                // 4. Remove despesas que são recorrentes (sem template) mas com o pagador correto
                 const expensesRecurringOnly = await expensesRef
                     .where('recorrente', '==', 'monthly')
                     .where('paidBy', '==', filterPaidBy)
@@ -2033,7 +2130,6 @@
                 expensesRecurringOnly.forEach(doc => batch.delete(doc.ref));
                 await batch.commit();
             } else {
-                // Todos
                 const expensesSnapshot = await expensesRef.where('recorrente', '==', 'monthly').get();
                 const expensesWithTemplate = await expensesRef.where('recurringTemplateId', '!=', null).get();
                 const templatesSnapshot = await recurringRef.get();
@@ -2045,7 +2141,6 @@
                 controlSnapshot.forEach(doc => batch.delete(doc.ref));
                 await batch.commit();
             }
-            // Atualiza lista local de templates
             recurringTemplates = [];
             const snap = await recurringRef.get();
             recurringTemplates = snap.docs.map(d=> ({ id: d.id, ...d.data() }));
@@ -2599,22 +2694,19 @@
         }));
     }
     
-    // ==================== RENDER DEBTORS (AGRUPADO + HISTÓRICO) ====================
+    // ==================== RENDER DEBTORS ====================
     function renderDebtors() {
         const container = document.getElementById('debtors-list');
         const historyContainer = document.getElementById('debtors-history-list');
         const datalist = document.getElementById('debtor-names-list');
         if (!container || !historyContainer || !datalist) return;
     
-        // Atualizar datalist com todos os nomes (pendentes e quitados)
         const allNames = [...new Set(debtors.map(d => d.nome.trim()).filter(n => n))];
         datalist.innerHTML = allNames.map(n => `<option value="${escapeHtml(n)}">`).join('');
     
-        // Separar pendentes e quitados
         const pending = debtors.filter(d => !d.quitado);
         const history = debtors.filter(d => d.quitado === true);
     
-        // ----- PENDENTES AGRUPADOS -----
         if (pending.length === 0) {
             container.innerHTML = '<div class="info-message" style="text-align:center;">Nenhuma dívida pendente.</div>';
             document.getElementById('total-a-receber').innerText = formatMoney(0);
@@ -2671,11 +2763,9 @@
             container.innerHTML = html;
         }
     
-        // ----- HISTÓRICO (QUITADAS) -----
         if (history.length === 0) {
             historyContainer.innerHTML = '<div class="info-message" style="text-align:center; font-size:0.8rem;">Nenhuma dívida quitada registrada.</div>';
         } else {
-            // Ordenar por data da mais recente para a mais antiga
             const sortedHistory = [...history].sort((a, b) => new Date(b.data) - new Date(a.data));
             let html = '';
             for (const debt of sortedHistory) {
@@ -2698,8 +2788,6 @@
             historyContainer.innerHTML = html;
         }
     
-        // ----- EVENTOS -----
-        // Quitar (pendente -> quitado)
         document.querySelectorAll('.btn-quitar-debtor').forEach(btn => {
             btn.addEventListener('click', async (e) => {
                 e.stopPropagation();
@@ -2727,17 +2815,14 @@
             });
         });
     
-        // Excluir (permanente, tanto pendente quanto histórico)
         document.querySelectorAll('.delete-debtor-entry').forEach(btn => {
             btn.addEventListener('click', async (e) => {
                 e.stopPropagation();
                 const id = btn.dataset.id;
                 const name = btn.dataset.name;
-                const isHistory = !debtors.find(d => d.id === id)?.quitado; // se não estiver nos pendentes, provavelmente é histórico
-                const msg = isHistory ? 'Remover esta dívida do histórico permanentemente?' : 'Remover esta dívida permanentemente?';
                 const result = await Swal.fire({
                     title: 'Excluir dívida',
-                    text: msg,
+                    text: 'Remover esta dívida permanentemente?',
                     icon: 'warning',
                     showCancelButton: true,
                     confirmButtonColor: '#e91e63',
@@ -2756,7 +2841,6 @@
             });
         });
     
-        // Nova dívida para um grupo (pendente)
         document.querySelectorAll('.add-debt-to-group').forEach(btn => {
             btn.addEventListener('click', async (e) => {
                 e.stopPropagation();
@@ -2808,7 +2892,7 @@
         });
     }
     
-    // ==================== ADICIONAR DEVEDOR (FORMULÁRIO PRINCIPAL) ====================
+    // ==================== ADICIONAR DEVEDOR ====================
     async function addDebtor() {
         const nome = document.getElementById('new-debtor-name').value.trim();
         const valor = parseMoneyString(document.getElementById('new-debtor-value').value);
@@ -2839,7 +2923,7 @@
         }
     }
     
-    // ==================== LIMPAR HISTÓRICO DE DEVEDORES (QUITADOS) ====================
+    // ==================== LIMPAR HISTÓRICO ====================
     async function limparHistoricoDebtors() {
         const history = debtors.filter(d => d.quitado === true);
         if (history.length === 0) {
@@ -2881,7 +2965,7 @@
         debouncedUpdateDashboard();
     }
     
-    // ==================== TERCEIROS (DIVISÃO) ====================
+    // ==================== TERCEIROS ====================
     function renderThirdParties() {
         const container = document.getElementById('third-parties-list');
         if (!container) return;
@@ -3311,9 +3395,7 @@
             });
         });
         
-        // ===== MARCAR MENSAGENS COMO LIDAS AO ABRIR O MURAL =====
         markMessagesAsRead();
-        // ========================================================
     }
     
     async function sendMessage() {
@@ -3348,7 +3430,8 @@
             8: `🎯 Metas de economia do casal.`,
             9: `📅 Acompanhe quando cada compra parcelada será totalmente quitada.`,
             10: `📆 Fechamento mensal: veja os gastos totais por parceiro no período de fatura.`,
-            11: `📑 Histórico de todas as faturas mensais pagas.`
+            11: `📑 Histórico de todas as faturas mensais pagas.`,
+            12: `⭐ Últimas melhorias: veja as novidades do app.`
         };
         return msgs[page] || `Página ${page+1}`;
     }
@@ -3544,13 +3627,11 @@
         const monthExpenses = allExpenses.filter(exp => exp.installmentMonths?.includes(targetMonth));
         const pendingExpenses = monthExpenses.filter(exp => !exp.quitado);
         
-        // ----- RESUMO DO MÊS (normais, excluindo recorrentes E Cartão Atacadão) -----
         const normalExpenses = pendingExpenses.filter(exp => 
             !exp.recurringTemplateId && 
             exp.recorrente !== 'monthly' && 
             exp.categoria !== 'Cartão Atacadão 💳'
         );
-        // ------------------------------------------------------------------------
         
         const recurringExpenses = pendingExpenses.filter(exp => exp.recurringTemplateId || exp.recorrente === 'monthly');
         
@@ -3579,7 +3660,6 @@
         document.getElementById('meta-fill').style.width = `${progresso}%`;
         checkLimitsAndAlert();
     
-        // ===== CÁLCULO DO CARTÃO ATACADÃO (APENAS PENDENTES) =====
         const cartaoAtacadaoTotal = pendingExpenses
             .filter(exp => exp.categoria === 'Cartão Atacadão 💳')
             .reduce((acc, exp) => {
@@ -3588,7 +3668,6 @@
             }, 0);
         document.getElementById('cartao-atacadao-total').innerText = formatMoney(cartaoAtacadaoTotal);
         document.getElementById('cartao-atacadao-total-p2').innerText = formatMoney(cartaoAtacadaoTotal);
-        // Fim do cálculo
     
         const last6Months = [], last6P1 = [], last6P2 = [];
         for (let i = 5; i >= 0; i--) {
@@ -3640,9 +3719,7 @@
         await updateMonthlyClosureAlert();
         await renderInvoices();
         await renderLimitAlerts();
-        // ===== VERIFICAR NOVAS MENSAGENS =====
         checkNewMessages();
-        // ===================================
         if (firstLoad) { showLoading(false); firstLoad = false; }
     }
     
@@ -3664,7 +3741,6 @@
         messagesRef.orderBy('createdAt','desc').onSnapshot(s => { 
             messages = s.docs.map(d=> ({ id: d.id, ...d.data() })); 
             renderMessages(); 
-            // Verifica novas mensagens sempre que a lista mudar
             checkNewMessages();
         });
         incomesRef.onSnapshot(d => { if(d.exists){ incomes.partner1 = d.data().income1||0; incomes.partner2 = d.data().income2||0; } document.getElementById('income1').value = formatMoneyInput(incomes.partner1); document.getElementById('income2').value = formatMoneyInput(incomes.partner2); debouncedUpdateDashboard(); });
@@ -3763,6 +3839,7 @@
             if (event.target === modal) modal.style.display = 'none';
         };
         setupAllCurrencyInputs();
+        renderImprovements();
         showLoading(false);
         firstLoad = false;
     }
