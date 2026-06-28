@@ -19,7 +19,7 @@
         :root { --primary-color: #e91e63; --primary-gradient: linear-gradient(135deg, var(--primary-color), #c2185b); --primary-light: #ff6b9d; --primary-dark: #c2185b; }
         body { font-family: 'Inter', sans-serif; background: #000000; color: #ffffff; transition: background 0.2s, color 0.2s; overflow-x: hidden; font-size: 16px; padding-bottom: 70px; }
         body.light-theme { background: #ffe4e8; color: #1a1a1a; }
-        button, .btn, .btn-small, input, select, textarea, .profile-btn, .month-nav button, .concierge-avatar, .theme-icon, .bell-icon { touch-action: manipulation; }
+        button, .btn, .btn-small, input, select, textarea, .profile-btn, .month-nav button, .concierge-avatar, .theme-icon, .bell-icon, .settings-icon { touch-action: manipulation; }
 
         button, .btn, .btn-small {
             min-height: 44px;
@@ -263,6 +263,7 @@
             display: flex;
             align-items: center;
             gap: 6px;
+            cursor: pointer;
         }
         .logo-area i {
             font-size: 1.4rem;
@@ -306,6 +307,11 @@
             display: flex;
             align-items: center;
             gap: 8px;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+        .user-info:hover {
+            opacity: 0.8;
         }
         .profile-avatar {
             min-width: 32px;
@@ -335,7 +341,7 @@
             gap: 8px;
             position: relative;
         }
-        .theme-icon, .bell-icon {
+        .theme-icon, .bell-icon, .settings-icon {
             position: relative;
             overflow: visible !important;
             background: none;
@@ -399,7 +405,9 @@
         .dashboard-row { display: flex; flex-wrap: wrap; gap: 12px; justify-content: space-between; }
         .dashboard-card { flex: 1; min-width: 120px; text-align: center; background: rgba(233,30,99,0.1); padding: 8px; border-radius: 20px; }
         .dashboard-card h4 { font-size: 0.8rem; font-weight: 500; margin-bottom: 6px; }
-        .dashboard-card .value { font-size: 1.3rem; font-weight: 800; color: var(--primary-color); }
+        .dashboard-card .value { font-size: 1.3rem; font-weight: 800; color: var(--primary-color); cursor: pointer; transition: transform 0.2s; }
+        .dashboard-card .value:hover { transform: scale(1.05); }
+        .dashboard-card .value:active { transform: scale(0.95); }
         .progress-bar { height: 6px; background: rgba(255,255,255,0.2); border-radius: 10px; overflow: hidden; margin-top: 8px; }
         .progress-fill { background: var(--primary-color); width: 0%; height: 100%; }
         .form-row { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 12px; }
@@ -605,7 +613,12 @@
             font-weight: 600;
         }
 
-        .notifications-modal {
+        /* Modais genéricos */
+        .notifications-modal,
+        .debtors-modal,
+        .settings-modal,
+        .improvements-modal,
+        .profile-modal {
             display: none;
             position: fixed;
             top: 0;
@@ -618,21 +631,30 @@
             align-items: center;
             backdrop-filter: blur(5px);
         }
-        .notifications-modal .modal-content {
+        .notifications-modal .modal-content,
+        .debtors-modal .modal-content,
+        .settings-modal .modal-content,
+        .improvements-modal .modal-content,
+        .profile-modal .modal-content {
             background: #1a1a1a;
             border-radius: 28px;
             width: 90%;
             max-width: 500px;
-            max-height: 80%;
+            max-height: 85%;
             overflow-y: auto;
             border: 1px solid var(--primary-color);
             box-shadow: 0 8px 30px rgba(0,0,0,0.5);
+            padding: 0;
         }
-        body.light-theme .notifications-modal .modal-content {
+        body.light-theme .notifications-modal .modal-content,
+        body.light-theme .debtors-modal .modal-content,
+        body.light-theme .settings-modal .modal-content,
+        body.light-theme .improvements-modal .modal-content,
+        body.light-theme .profile-modal .modal-content {
             background: #ffffff;
             color: #1a1a1a;
         }
-        .notifications-modal .modal-header {
+        .modal-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -642,21 +664,72 @@
             top: 0;
             background: inherit;
             border-radius: 28px 28px 0 0;
+            z-index: 1;
         }
-        .notifications-modal .modal-header h3 {
+        .modal-header h3 {
             margin: 0;
             color: var(--primary-color);
         }
-        .notifications-modal .modal-header button {
+        .modal-header button {
             background: none;
             border: none;
             font-size: 1.2rem;
             cursor: pointer;
             color: var(--primary-color);
         }
-        .notifications-modal .modal-body {
+        .modal-body {
             padding: 16px;
         }
+
+        /* ===== ESTILOS DO MENU DE CONFIGURAÇÕES ===== */
+        .settings-menu-btn {
+            display: block;
+            width: 100%;
+            text-align: left;
+            padding: 14px 16px;
+            background: rgba(233,30,99,0.08);
+            border: none;
+            border-radius: 16px;
+            margin-bottom: 8px;
+            font-size: 1rem;
+            font-weight: 500;
+            color: inherit;
+            cursor: pointer;
+            transition: background 0.2s;
+            border-left: 3px solid var(--primary-color);
+        }
+        .settings-menu-btn:hover {
+            background: rgba(233,30,99,0.2);
+        }
+        .settings-menu-btn i {
+            margin-right: 12px;
+            color: var(--primary-color);
+            width: 24px;
+            text-align: center;
+        }
+        .settings-section {
+            display: none;
+        }
+        .settings-section.active {
+            display: block;
+        }
+        .settings-back-btn {
+            background: none;
+            border: none;
+            color: var(--primary-color);
+            font-size: 1rem;
+            cursor: pointer;
+            padding: 8px 0;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .settings-back-btn i {
+            font-size: 1.2rem;
+        }
+
+        /* Notification e outros itens já existentes */
         .notification-item {
             background: rgba(233,30,99,0.08);
             border-radius: 16px;
@@ -750,7 +823,6 @@
             padding: 4px 0;
         }
 
-        /* ===== ESTILO PARA PÁGINA DE MELHORIAS ===== */
         .improvement-item {
             background: rgba(233,30,99,0.08);
             border-radius: 16px;
@@ -815,6 +887,55 @@
         body.light-theme .new-messages-alert .alert-button button {
             color: #2e7d32;
         }
+
+        .clickable-value {
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .clickable-value:hover {
+            transform: scale(1.05);
+        }
+        .clickable-value:active {
+            transform: scale(0.95);
+        }
+
+        /* Settings modal styles */
+        .settings-modal .card {
+            background: rgba(0,0,0,0.05);
+            border: 1px solid rgba(233,30,99,0.2);
+            border-radius: 20px;
+            padding: 12px;
+            margin-bottom: 12px;
+        }
+        body.light-theme .settings-modal .card {
+            background: rgba(0,0,0,0.02);
+        }
+        .settings-modal .card-title {
+            font-size: 1rem;
+            margin-bottom: 8px;
+        }
+        .settings-modal .income-row {
+            margin-bottom: 8px;
+        }
+        .settings-modal .income-row span {
+            min-width: 70px;
+        }
+        .settings-modal .form-row .input-group {
+            min-width: 100px;
+        }
+
+        /* Profile modal específico */
+        .profile-modal .modal-body .profile-section {
+            margin-bottom: 20px;
+        }
+        .profile-modal .modal-body .profile-section h4 {
+            color: var(--primary-color);
+            margin-bottom: 8px;
+            font-size: 1rem;
+        }
+        .profile-modal .modal-body .progress-bar {
+            margin-top: 4px;
+        }
     </style>
 </head>
 <body>
@@ -843,7 +964,7 @@
     <!-- HEADER -->
     <div class="app-header">
         <div class="header-top">
-            <div class="logo-area">
+            <div class="logo-area" id="logo-area">
                 <i class="fas fa-piggy-bank"></i>
                 <h2>CASH CASAL</h2>
             </div>
@@ -853,11 +974,12 @@
             </div>
         </div>
         <div class="header-bottom">
-            <div class="user-info">
+            <div class="user-info" id="user-info" title="Clique para ver seu perfil (meta e limite)">
                 <div id="userAvatar" class="profile-avatar">P</div>
                 <span id="user-name-display" class="user-name"></span>
             </div>
             <div class="header-actions">
+                <button id="settings-icon" class="settings-icon" title="Configurações"><i class="fas fa-cog"></i></button>
                 <button id="bell-icon" class="bell-icon" title="Notificações"><i class="fas fa-bell"></i><span id="bell-badge" class="badge" style="display: none;">0</span></button>
                 <button id="theme-icon-header" class="theme-icon"><i class="fas fa-moon"></i></button>
                 <button id="logoutBtn" class="logout-btn" title="Sair"><i class="fas fa-sign-out-alt"></i></button>
@@ -877,11 +999,14 @@
                 <div class="dashboard-row">
                     <div class="dashboard-card"><h4 id="gasto-partner1-label">🧑 Gasto de </h4><div class="value" id="gasto-partner1">R$ 0,00</div></div>
                     <div class="dashboard-card"><h4 id="gasto-partner2-label">👩 Gasto de </h4><div class="value" id="gasto-partner2">R$ 0,00</div></div>
-                    <div class="dashboard-card"><h4><i class="fas fa-hand-holding-usd"></i> Total a receber</h4><div class="value" id="total-a-receber">R$ 0,00</div><small id="debtors-count"></small></div>
+                    <div class="dashboard-card">
+                        <h4><i class="fas fa-hand-holding-usd"></i> Total a receber</h4>
+                        <div class="value clickable-value" id="total-a-receber" title="Clique para ver os devedores">R$ 0,00</div>
+                        <small id="debtors-count"></small>
+                    </div>
                 </div>
-                <div style="margin-top: 12px;"><h4>🎯 Meta de economia do casal</h4><div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 6px;"><input type="text" id="meta-valor" step="100" value="500" style="flex:2;"><button class="btn btn-primary" id="set-meta-btn" style="flex:1;">Definir</button></div><div class="progress-bar"><div class="progress-fill" id="meta-fill"></div></div><div id="meta-progress" style="text-align: center; margin-top: 4px;">0%</div></div>
+                <!-- Meta de economia do casal REMOVIDA daqui -->
             </div>
-            <!-- ===== PAINEL CARTÃO ATACADÃO (DASHBOARD) ===== -->
             <div class="card" id="cartao-atacadao-dashboard">
                 <div class="card-title"><i class="fas fa-credit-card"></i> Cartão Atacadão</div>
                 <div class="dashboard-row">
@@ -891,7 +1016,6 @@
                     </div>
                 </div>
             </div>
-            <!-- Fim do painel -->
             <div class="card">
                 <div class="card-title"><i class="fas fa-sync-alt"></i> Gastos Recorrentes Pendentes</div>
                 <div class="dashboard-row">
@@ -900,6 +1024,24 @@
                     <div class="dashboard-card"><h4><i class="fas fa-chart-simple"></i> Total recorrente</h4><div class="value" id="total-recurring">R$ 0,00</div><small>comprometimento mensal</small></div>
                 </div>
             </div>
+            
+            <!-- ===== CARD: METAS DO CASAL (agora com meta de economia + metas) ===== -->
+            <div class="card">
+                <div class="card-title"><i class="fas fa-list-check"></i> Metas do Casal</div>
+                <!-- Meta de economia do casal (era do Resumo) -->
+                <div style="background: rgba(233,30,99,0.08); border-radius: 16px; padding: 12px; margin-bottom: 12px;">
+                    <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
+                        <span style="font-weight: 600; flex: 1;">🎯 Meta de economia</span>
+                        <input type="text" id="meta-valor" step="100" value="500" style="flex: 2; min-width: 100px;">
+                        <button class="btn btn-primary" id="set-meta-btn" style="flex: 1; min-width: 80px;">Definir</button>
+                    </div>
+                    <div class="progress-bar" style="margin-top: 6px;"><div class="progress-fill" id="meta-fill"></div></div>
+                    <div id="meta-progress" style="text-align: center; margin-top: 2px; font-size: 0.85rem;">0%</div>
+                </div>
+                <!-- Lista de metas cadastradas -->
+                <div id="goals-dashboard-list"></div>
+            </div>
+
             <div class="card"><div class="card-title"><i class="fas fa-chart-line"></i> Evolução mensal (últimos 6 meses)</div><canvas id="evolutionChart" style="max-height: 220px;"></canvas></div>
             <div class="card"><div class="card-title"><i class="fas fa-chart-pie"></i> Gráficos</div><canvas id="categoryChart" style="max-height: 200px;"></canvas><canvas id="compareChart" style="max-height: 150px; margin-top: 16px;"></canvas></div>
             <div class="card"><div class="card-title"><i class="fas fa-chart-line"></i> Análise de Recorrentes</div><div id="recurring-summary"></div><div id="recurring-list"></div></div>
@@ -914,13 +1056,10 @@
             <div id="limit-alert-partner1" class="limit-alert-container"></div>
             <div class="card"><div class="card-title"><i class="fas fa-clock"></i> Gastos pendentes de <span id="partner1-name-label"></span></div><div id="partner1-expenses-list"></div></div>
             <div class="card"><div class="card-title"><i class="fas fa-check-circle"></i> Gastos quitados de <span id="partner1-paid-label"></span></div><div id="partner1-paid-list"></div></div>
-            <div class="card"><div class="card-title"><i class="fas fa-bullseye"></i> Meta individual de <span id="goal-individual-name1"></span></div><input type="text" id="goal1-target" placeholder="Alvo R$"><input type="text" id="goal1-current" placeholder="Atual R$"><button id="save-goal1-btn" class="btn btn-primary">Salvar meta</button><div class="progress-bar"><div class="progress-fill" id="goal1-progress-fill"></div></div><div id="goal1-progress-text" style="text-align:center;">0%</div></div>
-            <div class="card"><div class="card-title"><i class="fas fa-chart-line"></i> Limite de gasto mensal</div><div class="form-row"><div class="input-group"><label>Valor limite (R$)</label><input type="text" id="limit1" step="50" placeholder="Ex: 1000"></div><button id="save-limit1-btn" class="btn btn-primary">Definir limite</button></div><div id="limit-alert1" class="alert-warning" style="display: none;"><i class="fas fa-exclamation-triangle"></i><span><strong>Atenção!</strong> Você já atingiu ou ultrapassou o limite de gastos definido para este mês.</span></div></div>
         </div>
-        <!-- Página 2: Gastos Parceiro 2 (com painel no topo) -->
+        <!-- Página 2: Gastos Parceiro 2 -->
         <div class="swipe-page" data-page="2" id="page-partner2">
             <div id="limit-alert-partner2" class="limit-alert-container"></div>
-            <!-- ===== PAINEL CARTÃO ATACADÃO (PÁGINA 2) ===== -->
             <div class="card" id="cartao-atacadao-partner2">
                 <div class="card-title"><i class="fas fa-credit-card"></i> Cartão Atacadão</div>
                 <div class="dashboard-row">
@@ -930,11 +1069,8 @@
                     </div>
                 </div>
             </div>
-            <!-- Fim do painel -->
             <div class="card"><div class="card-title"><i class="fas fa-clock"></i> Gastos pendentes de <span id="partner2-name-label"></span></div><div id="partner2-expenses-list"></div></div>
             <div class="card"><div class="card-title"><i class="fas fa-check-circle"></i> Gastos quitados de <span id="partner2-paid-label"></span></div><div id="partner2-paid-list"></div></div>
-            <div class="card"><div class="card-title"><i class="fas fa-bullseye"></i> Meta individual de <span id="goal-individual-name2"></span></div><input type="text" id="goal2-target" placeholder="Alvo R$"><input type="text" id="goal2-current" placeholder="Atual R$"><button id="save-goal2-btn" class="btn btn-primary">Salvar meta</button><div class="progress-bar"><div class="progress-fill" id="goal2-progress-fill"></div></div><div id="goal2-progress-text" style="text-align:center;">0%</div></div>
-            <div class="card"><div class="card-title"><i class="fas fa-chart-line"></i> Limite de gasto mensal</div><div class="form-row"><div class="input-group"><label>Valor limite (R$)</label><input type="text" id="limit2" step="50" placeholder="Ex: 1000"></div><button id="save-limit2-btn" class="btn btn-primary">Definir limite</button></div><div id="limit-alert2" class="alert-warning" style="display: none;"><i class="fas fa-exclamation-triangle"></i><span><strong>Atenção!</strong> Você já atingiu ou ultrapassou o limite de gastos definido para este mês.</span></div></div>
         </div>
         <!-- Página 3: Nova despesa -->
         <div class="swipe-page" data-page="3">
@@ -973,92 +1109,8 @@
                 <div style="overflow-x: auto;"><table class="history-table" id="historyTable"><thead><tr><th style="width:30px"><input type="checkbox" id="headerCheckbox" style="width:16px;height:16px;"></th><th>Descrição / Detalhes</th><th>Valor parcela atual</th><th>Data parcela</th><th>Pagador</th><th>Status</th><th>Ações</th></tr></thead><tbody id="tabela-historico"></tbody></table></div>
             </div>
         </div>
-        <!-- Página 5: Configurações -->
+        <!-- Página 5: Mural -->
         <div class="swipe-page" data-page="5">
-            <div class="card"><div class="card-title"><i class="fas fa-chart-line"></i> Renda compartilhada</div><div class="income-row"><span>💰 <span id="income-name1"></span>:</span><input type="text" id="income1" step="100" value="0" style="flex:2;"></div><div class="income-row"><span>💰 <span id="income-name2"></span>:</span><input type="text" id="income2" step="100" value="0" style="flex:2;"></div><div id="income-summary" class="info-message"></div><button id="save-income-btn" class="btn btn-primary">Salvar rendas</button></div>
-            <div class="card"><div class="card-title"><i class="fas fa-tasks"></i> Orçamento por categoria</div><div id="budget-list"></div><div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px;"><input type="text" id="new-budget-cat" placeholder="Categoria" list="categoryList" style="flex:2;"><input type="text" id="new-budget-value" placeholder="Limite R$" style="flex:1;"><button id="add-budget-btn" class="btn btn-primary">Definir</button></div></div>
-            <div class="card"><div class="card-title"><i class="fas fa-tags"></i> Gerenciar categorias</div><div id="categories-list"></div><div style="display: flex; gap: 8px; margin-top: 12px;"><input type="text" id="new-category-name" placeholder="Nova categoria" style="flex:2;"><button id="add-category-btn" class="btn btn-primary">Adicionar</button></div></div>
-            <div class="card"><div class="card-title"><i class="fas fa-database"></i> Backup / Restauração</div><button id="export-all-btn" class="btn btn-secondary" style="width:100%; margin-bottom:8px;">📥 Exportar dados (JSON)</button><button id="import-all-btn" class="btn btn-secondary" style="width:100%;">📤 Importar dados (JSON)</button><input type="file" id="import-file" accept=".json" style="display:none;"></div>
-            <div class="card"><div class="card-title"><i class="fas fa-file-pdf"></i> Relatório mensal</div><button id="export-pdf-btn" class="btn btn-primary" style="width:100%;">📄 Exportar relatório em PDF</button></div>
-            <div class="card"><div class="card-title"><i class="fas fa-palette"></i> Personalizar tema</div><div class="form-row"><div class="input-group"><label>Cor principal</label><input type="color" id="primary-color-picker" value="#e91e63"></div><div class="input-group"><label>Visualização</label><div class="color-preview" id="color-preview" style="background-color:#e91e63;"></div></div></div><button id="reset-color-btn" class="btn btn-secondary" style="width:100%; margin-top:8px;">🔄 Restaurar cor padrão (rosa)</button></div>
-            <div class="card">
-                <div class="card-title"><i class="fas fa-trash-alt"></i> Limpar dados recorrentes</div>
-                <div style="display: flex; gap: 12px; flex-wrap: wrap; justify-content: space-between; margin-bottom: 8px;">
-                    <button id="clear-recurring-partner1" class="btn btn-danger" style="flex:1;">👤 Parceiro 1</button>
-                    <button id="clear-recurring-partner2" class="btn btn-danger" style="flex:1;">👤 Parceiro 2</button>
-                    <button id="clear-recurring-all" class="btn btn-danger" style="flex:1; background: #c62828;">⚠️ Todos</button>
-                </div>
-                <div class="info-message" style="font-size:0.7rem;">⚠️ Atenção: removerá os templates e todas as despesas recorrentes (com ou sem template) do parceiro selecionado. Ação irreversível.</div>
-            </div>
-            <div class="card">
-                <div class="card-title"><i class="fas fa-cloud-upload-alt"></i> Backup Automático</div>
-                <div class="form-row">
-                    <div class="input-group" style="flex: 1;">
-                        <label><i class="fas fa-power-off"></i> Ativar backup automático</label>
-                        <div style="display: flex; align-items: center; gap: 8px; margin-top: 4px;">
-                            <input type="checkbox" id="auto-backup-toggle" style="width: auto; min-height: unset; transform: scale(1.2); margin-right: 8px;">
-                            <span id="auto-backup-status" style="font-size:0.8rem;">Desativado</span>
-                        </div>
-                    </div>
-                    <div class="input-group" style="flex: 1;">
-                        <label><i class="fas fa-calendar-alt"></i> Intervalo</label>
-                        <select id="backup-interval">
-                            <option value="daily">Diário</option>
-                            <option value="weekly">Semanal</option>
-                            <option value="monthly">Mensal</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="info-message" style="margin: 8px 0;">
-                    <i class="fas fa-info-circle"></i> Último backup: <span id="last-backup-date">Nunca</span>
-                </div>
-                <button id="force-backup-btn" class="btn btn-secondary" style="width:100%; margin-top: 8px;">💾 Forçar backup agora</button>
-                <button id="save-backup-settings" class="btn btn-primary" style="width:100%; margin-top: 8px;">Salvar configurações</button>
-            </div>
-        </div>
-        <!-- Página 6: Devedores (AGRUPADO) -->
-        <div class="swipe-page" data-page="6">
-            <div class="card">
-                <div class="card-title"><i class="fas fa-hand-holding-usd"></i> Devedores Pendentes</div>
-                <div id="debtors-list"></div>
-            </div>
-            <!-- Histórico de dívidas quitadas -->
-            <div class="card">
-                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; margin-bottom: 12px;">
-                    <div class="card-title" style="margin-bottom:0;"><i class="fas fa-history"></i> Histórico de dívidas quitadas</div>
-                    <button id="clear-history-debtors" class="btn btn-danger btn-small">🗑️ Limpar histórico</button>
-                </div>
-                <div id="debtors-history-list"></div>
-            </div>
-            <!-- Formulário de nova dívida -->
-            <div class="card">
-                <div class="card-title"><i class="fas fa-plus-circle"></i> Adicionar nova dívida</div>
-                <div class="debtor-form-group">
-                    <div style="flex:2;">
-                        <label>Nome do devedor</label>
-                        <input type="text" id="new-debtor-name" placeholder="Ex: João" list="debtor-names-list">
-                        <datalist id="debtor-names-list"></datalist>
-                    </div>
-                    <div style="flex:1;">
-                        <label>Valor (R$)</label>
-                        <input type="text" id="new-debtor-value" placeholder="0,00" step="0.01">
-                    </div>
-                    <div style="flex:1;">
-                        <label>Data</label>
-                        <input type="date" id="new-debtor-date">
-                    </div>
-                    <div style="flex:2;">
-                        <label>Observação (opcional)</label>
-                        <input type="text" id="new-debtor-obs" placeholder="Motivo da dívida">
-                    </div>
-                    <div style="flex:0 0 auto;">
-                        <button id="add-debtor-btn" class="btn btn-success">Adicionar</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- Página 7: Mural -->
-        <div class="swipe-page" data-page="7">
             <div class="card"><div class="card-title"><i class="fas fa-comments"></i> Mural do Casal</div>
                 <div id="messages-container" class="messages-container"></div>
                 <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px;">
@@ -1068,72 +1120,21 @@
                 <button id="clear-mural-btn" class="btn btn-danger" style="margin-top: 12px; width:100%;">Limpar mural</button>
             </div>
         </div>
-        <!-- Página 8: Metas do casal -->
-        <div class="swipe-page" data-page="8">
-            <div class="card"><div class="card-title"><i class="fas fa-bullseye"></i> Metas de Economia do Casal</div><div id="goals-list"></div><div class="goal-add-form"><div class="input-group"><label>Nome da meta</label><input type="text" id="new-goal-name" placeholder="Ex: Viagem"></div><div class="input-group"><label>Alvo (R$)</label><input type="text" id="new-goal-target" step="100" placeholder="0,00"></div><div class="input-group"><label>Atual (R$)</label><input type="text" id="new-goal-current" step="100" placeholder="0,00" value="0"></div><div class="input-group"><label>Prazo</label><input type="date" id="new-goal-deadline"></div><button id="add-goal-btn" class="btn btn-primary">Adicionar</button></div></div>
-        </div>
-        <!-- Página 9: Parcelas Finais -->
-        <div class="swipe-page" data-page="9">
-            <div class="card"><div class="card-title"><i class="fas fa-calendar-check"></i> Parcelas Finais</div><div id="final-installments-list"></div></div>
-        </div>
-        <!-- Página 10: Fechamento Mensal -->
-        <div class="swipe-page" data-page="10">
-            <div class="card">
-                <div class="card-title"><i class="fas fa-file-invoice-dollar"></i> Fechamento Mensal</div>
-                <div class="info-message" style="margin-bottom: 12px;">📆 Período de fatura: do dia 2 ao dia 1 do mês seguinte</div>
-                <div class="filters-row" style="margin-bottom: 16px;">
-                    <div class="filter-group"><label>Mês de referência</label><select id="closing-month"></select></div>
-                    <div class="filter-group"><label>Ano</label><select id="closing-year"></select></div>
-                    <div class="filter-group"><label>&nbsp;</label><button id="update-closing-btn" class="btn btn-primary">Atualizar</button></div>
-                </div>
-                <div id="closing-summary" class="dashboard-row" style="margin-top: 16px;">
-                    <div class="dashboard-card"><h4>Gasto total de <span id="closing-name1"></span></h4><div class="value" id="closing-total1">R$ 0,00</div></div>
-                    <div class="dashboard-card"><h4>Gasto total de <span id="closing-name2"></span></h4><div class="value" id="closing-total2">R$ 0,00</div></div>
-                    <div class="dashboard-card"><h4>Total do casal</h4><div class="value" id="closing-total-casal">R$ 0,00</div></div>
-                </div>
-                <div class="info-message">📊 Valores consideram todas as despesas (pendentes e quitadas) do período de fatura selecionado.</div>
-            </div>
-        </div>
-        <!-- Página 11: Faturas do Mês -->
-        <div class="swipe-page" data-page="11">
-            <div class="card">
-                <div class="card-title"><i class="fas fa-file-invoice-dollar"></i> Faturas do Mês</div>
-                <div id="invoices-list" style="margin-top: 8px;">
-                    <div style="text-align:center; padding:16px;">Carregando faturas...</div>
-                </div>
-            </div>
-        </div>
-        <!-- ===== NOVA PÁGINA 12: Últimas Melhorias ===== -->
-        <div class="swipe-page" data-page="12">
-            <div class="card">
-                <div class="card-title"><i class="fas fa-star"></i> Últimas Melhorias</div>
-                <div id="improvements-list"></div>
-                <div class="info-message" style="margin-top: 12px; text-align:center; font-size:0.8rem;">
-                    <i class="fas fa-code"></i> Mantenha seu app sempre atualizado!
-                </div>
-            </div>
-        </div>
     </div>
     <div class="page-indicators" id="pageIndicators"></div>
 </div>
 
+<!-- ===== BARRA INFERIOR (apenas 6 botões) ===== -->
 <div class="bottom-nav">
     <button class="nav-btn" data-page="0"><i class="fas fa-chart-line"></i><span>Início</span></button>
     <button class="nav-btn" data-page="1"><i class="fas fa-user"></i><span id="nav-partner1"></span></button>
     <button class="nav-btn" data-page="2"><i class="fas fa-user"></i><span id="nav-partner2"></span></button>
     <button class="nav-btn" data-page="3"><i class="fas fa-plus-circle"></i><span>Nova</span></button>
     <button class="nav-btn" data-page="4"><i class="fas fa-history"></i><span>Histórico</span></button>
-    <button class="nav-btn" data-page="5"><i class="fas fa-cog"></i><span>Config</span></button>
-    <button class="nav-btn" data-page="6"><i class="fas fa-hand-holding-usd"></i><span>Dívidas</span></button>
-    <button class="nav-btn" data-page="7"><i class="fas fa-comments"></i><span>Mural</span></button>
-    <button class="nav-btn" data-page="8"><i class="fas fa-bullseye"></i><span>Metas</span></button>
-    <button class="nav-btn" data-page="9"><i class="fas fa-calendar-check"></i><span>Parcelas</span></button>
-    <button class="nav-btn" data-page="10"><i class="fas fa-file-invoice-dollar"></i><span>Fechamento</span></button>
-    <button class="nav-btn" data-page="11"><i class="fas fa-receipt"></i><span>Faturas</span></button>
-    <button class="nav-btn" data-page="12"><i class="fas fa-star"></i><span>Melhorias</span></button>
+    <button class="nav-btn" data-page="5"><i class="fas fa-comments"></i><span>Mural</span></button>
 </div>
 
-<!-- Modal de Notificações -->
+<!-- ===== MODAL DE NOTIFICAÇÕES ===== -->
 <div id="notifications-modal" class="notifications-modal">
     <div class="modal-content">
         <div class="modal-header">
@@ -1146,15 +1147,323 @@
     </div>
 </div>
 
+<!-- ===== MODAL DE DEVEDORES ===== -->
+<div id="debtors-modal" class="debtors-modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3><i class="fas fa-hand-holding-usd"></i> Devedores</h3>
+            <button id="close-debtors-btn"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="modal-body" id="debtors-modal-body">
+            <div style="text-align:center; padding:16px;">Carregando...</div>
+        </div>
+    </div>
+</div>
+
+<!-- ===== MODAL DE CONFIGURAÇÕES ===== -->
+<div id="settings-modal" class="settings-modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3><i class="fas fa-cog"></i> Configurações</h3>
+            <button id="close-settings-btn"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="modal-body" id="settings-modal-body">
+            <!-- MENU PRINCIPAL -->
+            <div id="settings-menu" class="settings-section active">
+                <button class="settings-menu-btn" data-section="goals"><i class="fas fa-bullseye"></i> Metas de economia do casal</button>
+                <button class="settings-menu-btn" data-section="income"><i class="fas fa-chart-line"></i> Renda compartilhada</button>
+                <button class="settings-menu-btn" data-section="budget"><i class="fas fa-tasks"></i> Orçamento por categoria</button>
+                <button class="settings-menu-btn" data-section="categories"><i class="fas fa-tags"></i> Gerenciar categorias</button>
+                <button class="settings-menu-btn" data-section="backup"><i class="fas fa-database"></i> Backup / Restauração</button>
+                <button class="settings-menu-btn" data-section="pdf"><i class="fas fa-file-pdf"></i> Relatório mensal</button>
+                <button class="settings-menu-btn" data-section="theme"><i class="fas fa-palette"></i> Personalizar tema</button>
+                <button class="settings-menu-btn" data-section="recurring-clear"><i class="fas fa-trash-alt"></i> Limpar dados recorrentes</button>
+                <button class="settings-menu-btn" data-section="auto-backup"><i class="fas fa-cloud-upload-alt"></i> Backup Automático</button>
+                <button class="settings-menu-btn" data-section="final-installments"><i class="fas fa-calendar-check"></i> Parcelas Finais</button>
+                <button class="settings-menu-btn" data-section="closing"><i class="fas fa-file-invoice-dollar"></i> Fechamento Mensal</button>
+                <button class="settings-menu-btn" data-section="invoices"><i class="fas fa-receipt"></i> Faturas</button>
+            </div>
+
+            <!-- SEÇÃO: Metas de economia do casal -->
+            <div id="settings-section-goals" class="settings-section">
+                <button class="settings-back-btn" data-back="goals"><i class="fas fa-arrow-left"></i> Voltar</button>
+                <div class="card">
+                    <div class="card-title"><i class="fas fa-bullseye"></i> Metas de Economia do Casal</div>
+                    <div id="goals-list-settings"></div>
+                    <div class="goal-add-form">
+                        <div class="input-group"><label>Nome da meta</label><input type="text" id="new-goal-name-settings" placeholder="Ex: Viagem"></div>
+                        <div class="input-group"><label>Alvo (R$)</label><input type="text" id="new-goal-target-settings" step="100" placeholder="0,00"></div>
+                        <div class="input-group"><label>Atual (R$)</label><input type="text" id="new-goal-current-settings" step="100" placeholder="0,00" value="0"></div>
+                        <div class="input-group"><label>Prazo</label><input type="date" id="new-goal-deadline-settings"></div>
+                        <button id="add-goal-btn-settings" class="btn btn-primary">Adicionar</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SEÇÃO: Renda compartilhada -->
+            <div id="settings-section-income" class="settings-section">
+                <button class="settings-back-btn" data-back="income"><i class="fas fa-arrow-left"></i> Voltar</button>
+                <div class="card">
+                    <div class="card-title"><i class="fas fa-chart-line"></i> Renda compartilhada</div>
+                    <div class="income-row"><span>💰 <span id="income-name1"></span>:</span><input type="text" id="income1" step="100" value="0" style="flex:2;"></div>
+                    <div class="income-row"><span>💰 <span id="income-name2"></span>:</span><input type="text" id="income2" step="100" value="0" style="flex:2;"></div>
+                    <div id="income-summary" class="info-message"></div>
+                    <button id="save-income-btn" class="btn btn-primary">Salvar rendas</button>
+                </div>
+            </div>
+
+            <!-- SEÇÃO: Orçamento por categoria -->
+            <div id="settings-section-budget" class="settings-section">
+                <button class="settings-back-btn" data-back="budget"><i class="fas fa-arrow-left"></i> Voltar</button>
+                <div class="card">
+                    <div class="card-title"><i class="fas fa-tasks"></i> Orçamento por categoria</div>
+                    <div id="budget-list"></div>
+                    <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px;">
+                        <input type="text" id="new-budget-cat" placeholder="Categoria" list="categoryList" style="flex:2;">
+                        <input type="text" id="new-budget-value" placeholder="Limite R$" style="flex:1;">
+                        <button id="add-budget-btn" class="btn btn-primary">Definir</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SEÇÃO: Gerenciar categorias -->
+            <div id="settings-section-categories" class="settings-section">
+                <button class="settings-back-btn" data-back="categories"><i class="fas fa-arrow-left"></i> Voltar</button>
+                <div class="card">
+                    <div class="card-title"><i class="fas fa-tags"></i> Gerenciar categorias</div>
+                    <div id="categories-list"></div>
+                    <div style="display: flex; gap: 8px; margin-top: 12px;">
+                        <input type="text" id="new-category-name" placeholder="Nova categoria" style="flex:2;">
+                        <button id="add-category-btn" class="btn btn-primary">Adicionar</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SEÇÃO: Backup / Restauração -->
+            <div id="settings-section-backup" class="settings-section">
+                <button class="settings-back-btn" data-back="backup"><i class="fas fa-arrow-left"></i> Voltar</button>
+                <div class="card">
+                    <div class="card-title"><i class="fas fa-database"></i> Backup / Restauração</div>
+                    <button id="export-all-btn" class="btn btn-secondary" style="width:100%; margin-bottom:8px;">📥 Exportar dados (JSON)</button>
+                    <button id="import-all-btn" class="btn btn-secondary" style="width:100%;">📤 Importar dados (JSON)</button>
+                    <input type="file" id="import-file" accept=".json" style="display:none;">
+                </div>
+            </div>
+
+            <!-- SEÇÃO: Relatório mensal -->
+            <div id="settings-section-pdf" class="settings-section">
+                <button class="settings-back-btn" data-back="pdf"><i class="fas fa-arrow-left"></i> Voltar</button>
+                <div class="card">
+                    <div class="card-title"><i class="fas fa-file-pdf"></i> Relatório mensal</div>
+                    <button id="export-pdf-btn" class="btn btn-primary" style="width:100%;">📄 Exportar relatório em PDF</button>
+                </div>
+            </div>
+
+            <!-- SEÇÃO: Personalizar tema -->
+            <div id="settings-section-theme" class="settings-section">
+                <button class="settings-back-btn" data-back="theme"><i class="fas fa-arrow-left"></i> Voltar</button>
+                <div class="card">
+                    <div class="card-title"><i class="fas fa-palette"></i> Personalizar tema</div>
+                    <div class="form-row">
+                        <div class="input-group"><label>Cor principal</label><input type="color" id="primary-color-picker" value="#e91e63"></div>
+                        <div class="input-group"><label>Visualização</label><div class="color-preview" id="color-preview" style="background-color:#e91e63;"></div></div>
+                    </div>
+                    <button id="reset-color-btn" class="btn btn-secondary" style="width:100%; margin-top:8px;">🔄 Restaurar cor padrão (rosa)</button>
+                </div>
+            </div>
+
+            <!-- SEÇÃO: Limpar dados recorrentes -->
+            <div id="settings-section-recurring-clear" class="settings-section">
+                <button class="settings-back-btn" data-back="recurring-clear"><i class="fas fa-arrow-left"></i> Voltar</button>
+                <div class="card">
+                    <div class="card-title"><i class="fas fa-trash-alt"></i> Limpar dados recorrentes</div>
+                    <div style="display: flex; gap: 12px; flex-wrap: wrap; justify-content: space-between; margin-bottom: 8px;">
+                        <button id="clear-recurring-partner1" class="btn btn-danger" style="flex:1;">👤 Parceiro 1</button>
+                        <button id="clear-recurring-partner2" class="btn btn-danger" style="flex:1;">👤 Parceiro 2</button>
+                        <button id="clear-recurring-all" class="btn btn-danger" style="flex:1; background: #c62828;">⚠️ Todos</button>
+                    </div>
+                    <div class="info-message" style="font-size:0.7rem;">⚠️ Atenção: removerá os templates e todas as despesas recorrentes (com ou sem template) do parceiro selecionado. Ação irreversível.</div>
+                </div>
+            </div>
+
+            <!-- SEÇÃO: Backup Automático -->
+            <div id="settings-section-auto-backup" class="settings-section">
+                <button class="settings-back-btn" data-back="auto-backup"><i class="fas fa-arrow-left"></i> Voltar</button>
+                <div class="card">
+                    <div class="card-title"><i class="fas fa-cloud-upload-alt"></i> Backup Automático</div>
+                    <div class="form-row">
+                        <div class="input-group" style="flex: 1;">
+                            <label><i class="fas fa-power-off"></i> Ativar backup automático</label>
+                            <div style="display: flex; align-items: center; gap: 8px; margin-top: 4px;">
+                                <input type="checkbox" id="auto-backup-toggle" style="width: auto; min-height: unset; transform: scale(1.2); margin-right: 8px;">
+                                <span id="auto-backup-status" style="font-size:0.8rem;">Desativado</span>
+                            </div>
+                        </div>
+                        <div class="input-group" style="flex: 1;">
+                            <label><i class="fas fa-calendar-alt"></i> Intervalo</label>
+                            <select id="backup-interval">
+                                <option value="daily">Diário</option>
+                                <option value="weekly">Semanal</option>
+                                <option value="monthly">Mensal</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="info-message" style="margin: 8px 0;">
+                        <i class="fas fa-info-circle"></i> Último backup: <span id="last-backup-date">Nunca</span>
+                    </div>
+                    <button id="force-backup-btn" class="btn btn-secondary" style="width:100%; margin-top: 8px;">💾 Forçar backup agora</button>
+                    <button id="save-backup-settings" class="btn btn-primary" style="width:100%; margin-top: 8px;">Salvar configurações</button>
+                </div>
+            </div>
+
+            <!-- SEÇÃO: Parcelas Finais -->
+            <div id="settings-section-final-installments" class="settings-section">
+                <button class="settings-back-btn" data-back="final-installments"><i class="fas fa-arrow-left"></i> Voltar</button>
+                <div class="card">
+                    <div class="card-title"><i class="fas fa-calendar-check"></i> Parcelas Finais</div>
+                    <div id="final-installments-list"></div>
+                </div>
+            </div>
+
+            <!-- SEÇÃO: Fechamento Mensal -->
+            <div id="settings-section-closing" class="settings-section">
+                <button class="settings-back-btn" data-back="closing"><i class="fas fa-arrow-left"></i> Voltar</button>
+                <div class="card">
+                    <div class="card-title"><i class="fas fa-file-invoice-dollar"></i> Fechamento Mensal</div>
+                    <div class="info-message" style="margin-bottom: 12px;">📆 Período de fatura: do dia 2 ao dia 1 do mês seguinte</div>
+                    <div class="filters-row" style="margin-bottom: 16px;">
+                        <div class="filter-group"><label>Mês de referência</label><select id="closing-month"></select></div>
+                        <div class="filter-group"><label>Ano</label><select id="closing-year"></select></div>
+                        <div class="filter-group"><label>&nbsp;</label><button id="update-closing-btn" class="btn btn-primary">Atualizar</button></div>
+                    </div>
+                    <div id="closing-summary" class="dashboard-row" style="margin-top: 16px;">
+                        <div class="dashboard-card"><h4>Gasto total de <span id="closing-name1"></span></h4><div class="value" id="closing-total1">R$ 0,00</div></div>
+                        <div class="dashboard-card"><h4>Gasto total de <span id="closing-name2"></span></h4><div class="value" id="closing-total2">R$ 0,00</div></div>
+                        <div class="dashboard-card"><h4>Total do casal</h4><div class="value" id="closing-total-casal">R$ 0,00</div></div>
+                    </div>
+                    <div class="info-message">📊 Valores consideram todas as despesas (pendentes e quitadas) do período de fatura selecionado.</div>
+                </div>
+            </div>
+
+            <!-- SEÇÃO: Faturas -->
+            <div id="settings-section-invoices" class="settings-section">
+                <button class="settings-back-btn" data-back="invoices"><i class="fas fa-arrow-left"></i> Voltar</button>
+                <div class="card">
+                    <div class="card-title"><i class="fas fa-receipt"></i> Faturas</div>
+                    <div id="invoices-list-settings" style="margin-top: 8px;">
+                        <div style="text-align:center; padding:16px;">Carregando faturas...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ===== MODAL DE MELHORIAS ===== -->
+<div id="improvements-modal" class="improvements-modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3><i class="fas fa-star"></i> Últimas Melhorias</h3>
+            <button id="close-improvements-btn"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="modal-body" id="improvements-modal-body">
+            <div style="text-align:center; padding:16px;">Carregando...</div>
+        </div>
+    </div>
+</div>
+
+<!-- ===== MODAL DE PERFIL ===== -->
+<div id="profile-modal" class="profile-modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3><i class="fas fa-user-circle"></i> Perfil de <span id="profile-name"></span></h3>
+            <button id="close-profile-btn"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="modal-body" id="profile-modal-body">
+            <div class="profile-section">
+                <h4><i class="fas fa-bullseye"></i> Meta individual</h4>
+                <div class="form-row">
+                    <div class="input-group"><label>Alvo (R$)</label><input type="text" id="profile-goal-target" placeholder="Alvo R$"></div>
+                    <div class="input-group"><label>Atual (R$)</label><input type="text" id="profile-goal-current" placeholder="Atual R$"></div>
+                </div>
+                <button id="profile-save-goal-btn" class="btn btn-primary" style="width:100%;">Salvar meta</button>
+                <div class="progress-bar"><div class="progress-fill" id="profile-goal-progress-fill"></div></div>
+                <div id="profile-goal-progress-text" style="text-align:center; margin-top:4px; font-size:0.85rem;">0%</div>
+            </div>
+            <div class="profile-section">
+                <h4><i class="fas fa-chart-line"></i> Limite de gasto mensal</h4>
+                <div class="form-row">
+                    <div class="input-group"><label>Valor limite (R$)</label><input type="text" id="profile-limit" placeholder="Ex: 1000"></div>
+                </div>
+                <button id="profile-save-limit-btn" class="btn btn-primary" style="width:100%;">Definir limite</button>
+                <div id="profile-limit-alert" class="alert-warning" style="display: none; margin-top:8px;">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <span><strong>Atenção!</strong> Você já atingiu ou ultrapassou o limite de gastos definido para este mês.</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="concierge-container"><div class="concierge-bubble" id="conciergeBubble" style="display: none;"><span id="conciergeMessage"></span></div><div class="concierge-avatar" id="conciergeAvatar"><i class="fas fa-robot"></i></div></div>
 
 <script>
-    // ==================== LISTA DE MELHORIAS (atualize aqui) ====================
+    // ==================== LISTA DE MELHORIAS ====================
     const appImprovements = [
+        {
+            version: "v2.10",
+            date: "28/06/2026",
+            description: "📊 Meta de economia do casal movida para o card 'Metas do Casal' (removida do Resumo do Mês). Card agora mostra meta de economia + metas cadastradas."
+        },
+        {
+            version: "v2.9",
+            date: "28/06/2026",
+            description: "📋 Lista de metas do casal agora aparece na página inicial (Dashboard) em um card dedicado."
+        },
+        {
+            version: "v2.8",
+            date: "28/06/2026",
+            description: "🎯 Metas de economia do casal movidas para dentro das Configurações (botão no menu). Ícone de metas removido do cabeçalho."
+        },
+        {
+            version: "v2.7",
+            date: "28/06/2026",
+            description: "📦 Últimas 3 páginas (Parcelas Finais, Fechamento, Faturas) movidas para dentro das Configurações. Barra inferior e swipe agora com apenas 6 páginas."
+        },
+        {
+            version: "v2.6",
+            date: "28/06/2026",
+            description: "⚙️ Modal de Configurações agora com menu de botões (cada seção abre internamente). Mais enxuto e intuitivo."
+        },
+        {
+            version: "v2.5",
+            date: "28/06/2026",
+            description: "👤 Clique no nome/avatar no cabeçalho para abrir modal com meta individual e limite de gastos (removido das páginas de parceiros)."
+        },
+        {
+            version: "v2.4",
+            date: "27/06/2026",
+            description: "🎯 Metas do casal agora em modal (ícone no cabeçalho). Página de metas removida, navegação mais limpa."
+        },
+        {
+            version: "v2.3",
+            date: "27/06/2026",
+            description: "🎯 Clique no logo 'CASH CASAL' para ver as últimas melhorias em um modal. Página de melhorias removida da navegação."
+        },
+        {
+            version: "v2.2",
+            date: "27/06/2026",
+            description: "⚙️ Configurações movidas para modal no cabeçalho. Página de configurações removida da navegação inferior."
+        },
+        {
+            version: "v2.1",
+            date: "27/06/2026",
+            description: "🔔 Devedores agora abrem em um modal ao clicar em 'Total a receber' na página inicial. Página de dívidas removida da navegação."
+        },
         {
             version: "v2.0",
             date: "26/06/2026",
-            description: "✅ Página 'Últimas Melhorias' adicionada para acompanhar as novidades do app."
+            description: "✅ Página 'Últimas Melhorias' adicionada (agora modal)."
         },
         {
             version: "v1.9",
@@ -1169,7 +1478,7 @@
         {
             version: "v1.7",
             date: "22/06/2026",
-            description: "💰 Página de dívidas reorganizada: pendentes agrupadas, histórico de quitadas com observações, formulário de adição na parte inferior."
+            description: "💰 Página de dívidas reorganizada: pendentes agrupadas, histórico de quitadas com observações."
         },
         {
             version: "v1.6",
@@ -1207,7 +1516,6 @@
             description: "🚀 Lançamento oficial do CASH CASAL - Gestão Financeira para Casais."
         }
     ];
-    // ================================================================
 
     // ==================== FIREBASE CONFIG ====================
     const firebaseConfig = {
@@ -1280,9 +1588,9 @@
     function setupAllCurrencyInputs() {
         const selectors = [
             '#valor-total', '#new-debtor-value', '#meta-valor',
-            '#goal1-target', '#goal1-current', '#goal2-target', '#goal2-current',
-            '#limit1', '#limit2', '#income1', '#income2', '#new-budget-value',
-            '#new-goal-target', '#new-goal-current'
+            '#profile-goal-target', '#profile-goal-current', '#profile-limit',
+            '#income1', '#income2', '#new-budget-value',
+            '#new-goal-target-settings', '#new-goal-current-settings'
         ];
         selectors.forEach(sel => {
             const el = document.querySelector(sel);
@@ -1495,9 +1803,9 @@
     const formatMoney = (val) => val.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
     const escapeHtml = (str) => str?.replace(/[&<>]/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[m])) || '';
     
-    // ==================== RENDER MELHORIAS ====================
+    // ==================== RENDER MELHORIAS (MODAL) ====================
     function renderImprovements() {
-        const container = document.getElementById('improvements-list');
+        const container = document.getElementById('improvements-modal-body');
         if (!container) return;
         if (appImprovements.length === 0) {
             container.innerHTML = '<div class="info-message" style="text-align:center;">Nenhuma melhoria registrada ainda.</div>';
@@ -1648,6 +1956,7 @@
                     globalContainer.innerHTML = '';
                     const partnerAlertContainer = document.getElementById(`limit-alert-${currentPartner}`);
                     if (partnerAlertContainer) partnerAlertContainer.innerHTML = '';
+                    updateProfileModal();
                 });
             }
         } else if (globalContainer) {
@@ -1681,6 +1990,7 @@
                                 const globalCont = document.getElementById('global-limit-alert-container');
                                 if (globalCont) globalCont.innerHTML = '';
                             }
+                            updateProfileModal();
                         });
                     }
                 } else {
@@ -2028,7 +2338,7 @@
         debouncedUpdateDashboard();
     }
     
-    // ========== CORREÇÃO FINAL: GERAÇÃO DE RECORRENTES COM VERIFICAÇÃO EXTRA ==========
+    // ========== GERAÇÃO DE RECORRENTES ==========
     async function generateRecurringForMonth(targetMonth) {
         if (!recurringTemplates.length) return;
     
@@ -2090,7 +2400,7 @@
         }
     }
     
-    // ========== FUNÇÃO MELHORADA PARA LIMPAR RECORRENTES POR PARCEIRO ==========
+    // ========== LIMPAR RECORRENTES POR PARCEIRO ==========
     async function deleteRecurringByPartner(partnerKey) {
         let filterPaidBy = null;
         if (partnerKey === 'partner1') filterPaidBy = 'partner1';
@@ -2160,8 +2470,6 @@
         const doc = await limitsRef.get();
         if (doc.exists) limits = doc.data();
         else { limits = { partner1: 0, partner2: 0 }; await limitsRef.set(limits); }
-        document.getElementById('limit1').value = formatMoneyInput(limits.partner1 || 0);
-        document.getElementById('limit2').value = formatMoneyInput(limits.partner2 || 0);
         checkLimitsAndAlert();
     }
     async function saveLimit(partner, value) {
@@ -2172,6 +2480,7 @@
         await addNotification('limit_changed', `definiu limite de ${partner === 'partner1' ? partner1Name : partner2Name} para ${formatMoney(value)}`);
         Swal.fire('Limite salvo!', `Novo limite: ${formatMoney(value)}`, 'success');
         renderLimitAlerts();
+        updateProfileModal();
     }
     function checkLimitsAndAlert() {
         const targetMonth = `${selectedYear}-${String(selectedMonth+1).padStart(2,'0')}`;
@@ -2180,11 +2489,8 @@
             const { partner1, partner2 } = calculateMonthlyShare(exp);
             totalP1 += partner1; totalP2 += partner2;
         });
-        const alert1 = document.getElementById('limit-alert1');
-        const alert2 = document.getElementById('limit-alert2');
-        if (alert1) alert1.style.display = (limits.partner1 > 0 && totalP1 >= limits.partner1) ? 'flex' : 'none';
-        if (alert2) alert2.style.display = (limits.partner2 > 0 && totalP2 >= limits.partner2) ? 'flex' : 'none';
         renderLimitAlerts();
+        updateProfileModal();
     }
     
     // ==================== CATEGORIAS ====================
@@ -2298,8 +2604,6 @@
         document.getElementById('partner2-paid-label').innerText = partner2Name;
         document.getElementById('income-name1').innerText = partner1Name;
         document.getElementById('income-name2').innerText = partner2Name;
-        document.getElementById('goal-individual-name1').innerText = partner1Name;
-        document.getElementById('goal-individual-name2').innerText = partner2Name;
         document.getElementById('closing-name1').innerText = partner1Name;
         document.getElementById('closing-name2').innerText = partner2Name;
         updateNavNames();
@@ -2307,6 +2611,8 @@
         if(paidBy) { paidBy.options[0].text = partner1Name; paidBy.options[1].text = partner2Name; }
         const filterPayer = document.getElementById('filter-payer');
         if(filterPayer && filterPayer.options.length>=2) { filterPayer.options[1].text = partner1Name; filterPayer.options[2].text = partner2Name; }
+        const profileName = document.getElementById('profile-name');
+        if (profileName) profileName.innerText = currentPartnerId === 'partner1' ? partner1Name : partner2Name;
     }
     function updateNavNames() {
         const nav1 = document.getElementById('nav-partner1');
@@ -2523,13 +2829,13 @@
                 await saveInvoice(monthKey, total, ano, mes);
                 Swal.fire('Pagamento confirmado!', `A fatura de ${nomeMes}/${ano} foi registrada como paga.`, 'success');
                 updateMonthlyClosureAlert();
-                renderInvoices();
+                renderInvoicesSettings();
             });
         }
     }
     
-    async function renderInvoices() {
-        const container = document.getElementById('invoices-list');
+    async function renderInvoicesSettings() {
+        const container = document.getElementById('invoices-list-settings');
         if (!container) return;
         try {
             const snapshot = await invoicesRef.orderBy('confirmedAt', 'desc').get();
@@ -2694,21 +3000,21 @@
         }));
     }
     
-    // ==================== RENDER DEBTORS ====================
+    // ==================== RENDER DEBTORS (MODAL) ====================
     function renderDebtors() {
-        const container = document.getElementById('debtors-list');
-        const historyContainer = document.getElementById('debtors-history-list');
-        const datalist = document.getElementById('debtor-names-list');
-        if (!container || !historyContainer || !datalist) return;
+        const container = document.getElementById('debtors-modal-body');
+        if (!container) return;
     
         const allNames = [...new Set(debtors.map(d => d.nome.trim()).filter(n => n))];
-        datalist.innerHTML = allNames.map(n => `<option value="${escapeHtml(n)}">`).join('');
+        const datalist = document.getElementById('debtor-names-list');
+        if (datalist) datalist.innerHTML = allNames.map(n => `<option value="${escapeHtml(n)}">`).join('');
     
         const pending = debtors.filter(d => !d.quitado);
         const history = debtors.filter(d => d.quitado === true);
     
+        let html = '';
         if (pending.length === 0) {
-            container.innerHTML = '<div class="info-message" style="text-align:center;">Nenhuma dívida pendente.</div>';
+            html += '<div class="info-message" style="text-align:center;">Nenhuma dívida pendente.</div>';
             document.getElementById('total-a-receber').innerText = formatMoney(0);
             document.getElementById('debtors-count').innerHTML = `0 devedor(es)`;
         } else {
@@ -2723,7 +3029,6 @@
             document.getElementById('debtors-count').innerHTML = `${groups.size} devedor(es)`;
     
             const sortedGroups = Array.from(groups.entries()).sort((a, b) => a[0].localeCompare(b[0]));
-            let html = '';
             for (const [name, debts] of sortedGroups) {
                 const sortedDebts = [...debts].sort((a, b) => new Date(a.data) - new Date(b.data));
                 const totalGroup = debts.reduce((sum, d) => sum + d.valor, 0);
@@ -2760,14 +3065,19 @@
                     </div>
                 `;
             }
-            container.innerHTML = html;
         }
     
+        html += `<div style="margin-top: 24px; border-top: 1px solid rgba(233,30,99,0.2); padding-top: 16px;">`;
+        html += `
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; margin-bottom: 12px;">
+                <h4 style="margin:0; color: var(--primary-color);"><i class="fas fa-history"></i> Histórico de dívidas quitadas</h4>
+                <button id="clear-history-debtors" class="btn btn-danger btn-small">🗑️ Limpar histórico</button>
+            </div>
+        `;
         if (history.length === 0) {
-            historyContainer.innerHTML = '<div class="info-message" style="text-align:center; font-size:0.8rem;">Nenhuma dívida quitada registrada.</div>';
+            html += '<div class="info-message" style="text-align:center; font-size:0.8rem;">Nenhuma dívida quitada registrada.</div>';
         } else {
             const sortedHistory = [...history].sort((a, b) => new Date(b.data) - new Date(a.data));
-            let html = '';
             for (const debt of sortedHistory) {
                 const dateFormatted = debt.data ? parseLocalDateToDate(debt.data).toLocaleDateString('pt-BR', { timeZone: TIMEZONE }) : 'Data não informada';
                 const obsHtml = debt.observacao ? `<span style="font-size:0.7rem; opacity:0.8;">📝 ${escapeHtml(debt.observacao)}</span>` : '';
@@ -2785,9 +3095,40 @@
                     </div>
                 `;
             }
-            historyContainer.innerHTML = html;
         }
+        html += `</div>`;
     
+        html += `
+            <div style="margin-top: 24px; border-top: 1px solid rgba(233,30,99,0.2); padding-top: 16px;">
+                <h4 style="margin:0 0 12px 0; color: var(--primary-color);"><i class="fas fa-plus-circle"></i> Adicionar nova dívida</h4>
+                <div class="debtor-form-group">
+                    <div style="flex:2;">
+                        <label>Nome do devedor</label>
+                        <input type="text" id="new-debtor-name" placeholder="Ex: João" list="debtor-names-list">
+                        <datalist id="debtor-names-list"></datalist>
+                    </div>
+                    <div style="flex:1;">
+                        <label>Valor (R$)</label>
+                        <input type="text" id="new-debtor-value" placeholder="0,00" step="0.01">
+                    </div>
+                    <div style="flex:1;">
+                        <label>Data</label>
+                        <input type="date" id="new-debtor-date">
+                    </div>
+                    <div style="flex:2;">
+                        <label>Observação (opcional)</label>
+                        <input type="text" id="new-debtor-obs" placeholder="Motivo da dívida">
+                    </div>
+                    <div style="flex:0 0 auto;">
+                        <button id="add-debtor-btn" class="btn btn-success">Adicionar</button>
+                    </div>
+                </div>
+            </div>
+        `;
+    
+        container.innerHTML = html;
+    
+        // Eventos...
         document.querySelectorAll('.btn-quitar-debtor').forEach(btn => {
             btn.addEventListener('click', async (e) => {
                 e.stopPropagation();
@@ -2814,7 +3155,6 @@
                 }
             });
         });
-    
         document.querySelectorAll('.delete-debtor-entry').forEach(btn => {
             btn.addEventListener('click', async (e) => {
                 e.stopPropagation();
@@ -2840,7 +3180,6 @@
                 }
             });
         });
-    
         document.querySelectorAll('.add-debt-to-group').forEach(btn => {
             btn.addEventListener('click', async (e) => {
                 e.stopPropagation();
@@ -2890,6 +3229,16 @@
                 }
             });
         });
+        const addBtn = document.getElementById('add-debtor-btn');
+        if (addBtn) {
+            addBtn.replaceWith(addBtn.cloneNode(true));
+            document.getElementById('add-debtor-btn').addEventListener('click', addDebtor);
+        }
+        const clearBtn = document.getElementById('clear-history-debtors');
+        if (clearBtn) {
+            clearBtn.replaceWith(clearBtn.cloneNode(true));
+            document.getElementById('clear-history-debtors').addEventListener('click', limparHistoricoDebtors);
+        }
     }
     
     // ==================== ADICIONAR DEVEDOR ====================
@@ -3307,62 +3656,181 @@
     }
     async function setSavingsGoal(v) { await metaRef.set({ value: v }); debouncedUpdateDashboard(); }
     
-    // ==================== METAS ====================
-    async function renderGoals() {
-        const container = document.getElementById('goals-list');
+    // ==================== METAS (seção de configurações) ====================
+    async function renderGoalsSettings() {
+        const container = document.getElementById('goals-list-settings');
         if (!container) return;
-        if (goals.length === 0) { container.innerHTML = '<div style="text-align:center; padding:16px;">Nenhuma meta cadastrada. Crie sua primeira meta!</div>'; return; }
+        if (goals.length === 0) {
+            container.innerHTML = '<div style="text-align:center; padding:16px;">Nenhuma meta cadastrada. Crie sua primeira meta!</div>';
+            return;
+        }
         container.innerHTML = goals.map(goal => {
             const percent = (goal.current / goal.target) * 100;
             const remaining = goal.target - goal.current;
             const deadlineText = goal.deadline ? `📅 Prazo: ${parseLocalDateToDate(goal.deadline).toLocaleDateString('pt-BR', { timeZone: TIMEZONE })}` : '';
-            return `<div class="goal-item"><div><strong>🎯 ${escapeHtml(goal.name)}</strong> <button class="edit-goal btn-small" data-id="${goal.id}">✏️</button> <button class="delete-goal btn-small btn-danger" data-id="${goal.id}">🗑️</button></div><div class="progress-bar"><div class="progress-fill" style="width:${Math.min(percent,100)}%"></div></div><div>${formatMoney(goal.current)} / ${formatMoney(goal.target)}</div><div>${deadlineText} ${remaining>0?`🔹 Faltam ${formatMoney(remaining)}`:'✅ Meta atingida!'}</div></div>`;
+            return `<div class="goal-item"><div><strong>🎯 ${escapeHtml(goal.name)}</strong> <button class="edit-goal-settings btn-small" data-id="${goal.id}">✏️</button> <button class="delete-goal-settings btn-small btn-danger" data-id="${goal.id}">🗑️</button></div><div class="progress-bar"><div class="progress-fill" style="width:${Math.min(percent,100)}%"></div></div><div>${formatMoney(goal.current)} / ${formatMoney(goal.target)}</div><div>${deadlineText} ${remaining>0?`🔹 Faltam ${formatMoney(remaining)}`:'✅ Meta atingida!'}</div></div>`;
         }).join('');
-        document.querySelectorAll('.edit-goal').forEach(btn => btn.addEventListener('click', async () => {
-            const goal = goals.find(g=>g.id===btn.dataset.id);
-            const { value: form } = await Swal.fire({ title: 'Editar meta', html: `<input id="goal-current" type="text" value="${formatMoneyInput(goal.current)}" class="swal2-input"><input id="goal-deadline" type="date" value="${goal.deadline||''}" class="swal2-input">`, didOpen: () => applyCurrencyMask(document.getElementById('goal-current')), preConfirm: () => ({ current: parseMoneyString(document.getElementById('goal-current').value), deadline: document.getElementById('goal-deadline').value }) });
-            if (form) {
-                await goalsRef.doc(goal.id).update({ current: form.current, deadline: form.deadline });
-                await addNotification('goal_updated', `editou a meta "${goal.name}"`);
-            }
-        }));
-        document.querySelectorAll('.delete-goal').forEach(btn => btn.addEventListener('click', async () => { if(await Swal.fire({title:'Confirmar',text:'Excluir meta?',icon:'warning',showCancelButton:true}).then(r=>r.isConfirmed)) {
-            const goal = goals.find(g=>g.id===btn.dataset.id);
-            await goalsRef.doc(btn.dataset.id).delete();
-            await addNotification('goal_deleted', `removeu a meta "${goal.name}"`);
-        } }));
-    }
-    async function addGoal() {
-        const name = document.getElementById('new-goal-name').value.trim();
-        const target = parseMoneyString(document.getElementById('new-goal-target').value);
-        const current = parseMoneyString(document.getElementById('new-goal-current').value);
-        const deadline = document.getElementById('new-goal-deadline').value;
-        if (!name || isNaN(target) || target<=0) { Swal.fire('Erro','Preencha nome e alvo.','error'); return; }
-        await goalsRef.add({ name, target, current, deadline, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
-        await addNotification('goal_added', `criou a meta "${name}" (R$ ${target.toFixed(2)})`);
-        document.getElementById('new-goal-name').value = ''; document.getElementById('new-goal-target').value = ''; document.getElementById('new-goal-current').value = '0'; document.getElementById('new-goal-deadline').value = '';
-        Swal.fire('Meta criada!','','success');
+        
+        document.querySelectorAll('.edit-goal-settings').forEach(btn => {
+            btn.addEventListener('click', async () => {
+                const goal = goals.find(g=>g.id===btn.dataset.id);
+                const { value: form } = await Swal.fire({
+                    title: 'Editar meta',
+                    html: `<input id="goal-current-settings" type="text" value="${formatMoneyInput(goal.current)}" class="swal2-input"><input id="goal-deadline-settings" type="date" value="${goal.deadline||''}" class="swal2-input">`,
+                    didOpen: () => applyCurrencyMask(document.getElementById('goal-current-settings')),
+                    preConfirm: () => ({
+                        current: parseMoneyString(document.getElementById('goal-current-settings').value),
+                        deadline: document.getElementById('goal-deadline-settings').value
+                    })
+                });
+                if (form) {
+                    await goalsRef.doc(goal.id).update({ current: form.current, deadline: form.deadline });
+                    await addNotification('goal_updated', `editou a meta "${goal.name}"`);
+                    renderGoalsSettings();
+                    renderGoalsDashboard();
+                }
+            });
+        });
+        
+        document.querySelectorAll('.delete-goal-settings').forEach(btn => {
+            btn.addEventListener('click', async () => {
+                if (await Swal.fire({title:'Confirmar',text:'Excluir meta?',icon:'warning',showCancelButton:true}).then(r=>r.isConfirmed)) {
+                    const goal = goals.find(g=>g.id===btn.dataset.id);
+                    await goalsRef.doc(btn.dataset.id).delete();
+                    await addNotification('goal_deleted', `removeu a meta "${goal.name}"`);
+                    renderGoalsSettings();
+                    renderGoalsDashboard();
+                }
+            });
+        });
     }
     
-    // ==================== METAS INDIVIDUAIS ====================
-    function updateIndividualGoalUI() {
-        const t1 = individualGoal1.target||0, c1 = individualGoal1.current||0, p1 = t1>0?(c1/t1*100):0;
-        document.getElementById('goal1-progress-fill').style.width = `${Math.min(p1,100)}%`;
-        document.getElementById('goal1-progress-text').innerText = `${Math.round(p1)}% (${formatMoney(c1)} de ${formatMoney(t1)})`;
-        document.getElementById('goal1-target').value = formatMoneyInput(t1);
-        document.getElementById('goal1-current').value = formatMoneyInput(c1);
-        const t2 = individualGoal2.target||0, c2 = individualGoal2.current||0, p2 = t2>0?(c2/t2*100):0;
-        document.getElementById('goal2-progress-fill').style.width = `${Math.min(p2,100)}%`;
-        document.getElementById('goal2-progress-text').innerText = `${Math.round(p2)}% (${formatMoney(c2)} de ${formatMoney(t2)})`;
-        document.getElementById('goal2-target').value = formatMoneyInput(t2);
-        document.getElementById('goal2-current').value = formatMoneyInput(c2);
+    // ==================== METAS (DASHBOARD) ====================
+    function renderGoalsDashboard() {
+        const container = document.getElementById('goals-dashboard-list');
+        if (!container) return;
+        
+        // Se não houver metas cadastradas
+        if (goals.length === 0) {
+            container.innerHTML = '<div class="info-message" style="text-align:center;">Nenhuma meta cadastrada. Crie uma em <strong>Configurações</strong>.</div>';
+            return;
+        }
+        
+        let html = '';
+        goals.forEach(goal => {
+            const percent = (goal.current / goal.target) * 100;
+            const remaining = goal.target - goal.current;
+            const deadlineText = goal.deadline ? `📅 ${parseLocalDateToDate(goal.deadline).toLocaleDateString('pt-BR', { timeZone: TIMEZONE })}` : '';
+            html += `
+                <div class="goal-item" style="padding: 8px 12px; margin-bottom: 8px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 4px;">
+                        <strong>🎯 ${escapeHtml(goal.name)}</strong>
+                        <span style="font-size: 0.8rem; font-weight: 600;">${formatMoney(goal.current)} / ${formatMoney(goal.target)}</span>
+                    </div>
+                    <div class="progress-bar" style="margin-top: 2px; height: 4px;">
+                        <div class="progress-fill" style="width: ${Math.min(percent, 100)}%;"></div>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; font-size: 0.65rem; opacity: 0.7; margin-top: 2px;">
+                        <span>${Math.round(percent)}%</span>
+                        <span>${deadlineText}</span>
+                    </div>
+                </div>
+            `;
+        });
+        container.innerHTML = html;
     }
-    async function saveIndividualGoal(partner) {
-        const target = parseMoneyString(document.getElementById(partner==='partner1'?'goal1-target':'goal2-target').value);
-        const current = parseMoneyString(document.getElementById(partner==='partner1'?'goal1-current':'goal2-current').value);
+    
+    async function addGoalSettings() {
+        const name = document.getElementById('new-goal-name-settings').value.trim();
+        const target = parseMoneyString(document.getElementById('new-goal-target-settings').value);
+        const current = parseMoneyString(document.getElementById('new-goal-current-settings').value);
+        const deadline = document.getElementById('new-goal-deadline-settings').value;
+        if (!name || isNaN(target) || target<=0) {
+            Swal.fire('Erro','Preencha nome e alvo.','error');
+            return;
+        }
+        await goalsRef.add({ name, target, current, deadline, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+        await addNotification('goal_added', `criou a meta "${name}" (R$ ${target.toFixed(2)})`);
+        document.getElementById('new-goal-name-settings').value = '';
+        document.getElementById('new-goal-target-settings').value = '';
+        document.getElementById('new-goal-current-settings').value = '0';
+        document.getElementById('new-goal-deadline-settings').value = '';
+        Swal.fire('Meta criada!','','success');
+        renderGoalsSettings();
+        renderGoalsDashboard();
+    }
+    
+    // ==================== METAS INDIVIDUAIS (MODAL PERFIL) ====================
+    function updateProfileModal() {
+        const modal = document.getElementById('profile-modal');
+        if (!modal || modal.style.display !== 'flex') return;
+        renderProfileModal();
+    }
+    
+    function renderProfileModal() {
+        const partner = currentPartnerId;
+        const goal = partner === 'partner1' ? individualGoal1 : individualGoal2;
+        const limit = limits[partner] || 0;
+        const nome = partner === 'partner1' ? partner1Name : partner2Name;
+        document.getElementById('profile-name').innerText = nome;
+        document.getElementById('profile-goal-target').value = formatMoneyInput(goal.target || 0);
+        document.getElementById('profile-goal-current').value = formatMoneyInput(goal.current || 0);
+        document.getElementById('profile-limit').value = formatMoneyInput(limit);
+        
+        const target = goal.target || 0;
+        const current = goal.current || 0;
+        const percent = target > 0 ? (current / target) * 100 : 0;
+        document.getElementById('profile-goal-progress-fill').style.width = Math.min(percent, 100) + '%';
+        document.getElementById('profile-goal-progress-text').innerText = `${Math.round(percent)}% (${formatMoney(current)} de ${formatMoney(target)})`;
+        
+        const alertDiv = document.getElementById('profile-limit-alert');
+        if (limit > 0) {
+            const { total, overrun } = checkLimitOverrun(partner);
+            if (overrun) {
+                alertDiv.style.display = 'flex';
+                alertDiv.innerHTML = `<i class="fas fa-exclamation-triangle"></i><span><strong>Atenção!</strong> Você já atingiu ou ultrapassou o limite de gastos definido para este mês (Total: ${formatMoney(total)} / Limite: ${formatMoney(limit)}).</span>`;
+            } else {
+                alertDiv.style.display = 'none';
+            }
+        } else {
+            alertDiv.style.display = 'none';
+        }
+    }
+    
+    function openProfileModal() {
+        renderProfileModal();
+        document.getElementById('profile-modal').style.display = 'flex';
+    }
+    
+    function closeProfileModal() {
+        document.getElementById('profile-modal').style.display = 'none';
+    }
+    
+    async function saveProfileGoal() {
+        const partner = currentPartnerId;
+        const target = parseMoneyString(document.getElementById('profile-goal-target').value);
+        const current = parseMoneyString(document.getElementById('profile-goal-current').value);
         await individualGoalsRef.doc(partner).set({ target, current });
         await addNotification('individual_goal_updated', `atualizou meta individual de ${partner === 'partner1' ? partner1Name : partner2Name}`);
         Swal.fire('Meta salva!', '', 'success');
+        if (partner === 'partner1') { individualGoal1 = { target, current }; } else { individualGoal2 = { target, current }; }
+        updateIndividualGoalUI();
+        renderProfileModal();
+    }
+    
+    async function saveProfileLimit() {
+        const partner = currentPartnerId;
+        const value = parseMoneyString(document.getElementById('profile-limit').value);
+        if (isNaN(value) || value < 0) {
+            Swal.fire('Erro', 'Valor inválido.', 'error');
+            return;
+        }
+        await saveLimit(partner, value);
+        renderProfileModal();
+    }
+    
+    function updateIndividualGoalUI() {
+        updateProfileModal();
     }
     
     // ==================== MURAL ====================
@@ -3419,19 +3887,12 @@
     // ==================== CONCIERGE ====================
     function getConciergeMessage(page) {
         const msgs = {
-            0: `💡 Cartão Atacadão separado do resumo mensal. Apenas pendentes aparecem no painel específico.`,
+            0: `💡 Clique no logo para ver as últimas melhorias. Clique no "Total a receber" para devedores. Veja suas metas no card "Metas do Casal".`,
             1: `📊 Gastos pendentes e quitados de ${partner1Name}.`,
             2: `📊 Gastos pendentes e quitados de ${partner2Name}. Cartão Atacadão no topo.`,
             3: `➕ Adicione despesas com categoria "Cartão Atacadão 💳" e veja no painel.`,
             4: `📋 Histórico mostra todas as despesas (pendentes e quitadas).`,
-            5: `⚙️ Configure rendas, orçamentos, categorias, cor do tema, backup automático e exporte PDF.`,
-            6: `💰 Devedores: pendentes agrupados, histórico de quitados, observações e sugestão de nomes. Formulário na parte inferior.`,
-            7: `💬 Mural com mensagens mais recentes no topo. Alertas de novas mensagens na página inicial.`,
-            8: `🎯 Metas de economia do casal.`,
-            9: `📅 Acompanhe quando cada compra parcelada será totalmente quitada.`,
-            10: `📆 Fechamento mensal: veja os gastos totais por parceiro no período de fatura.`,
-            11: `📑 Histórico de todas as faturas mensais pagas.`,
-            12: `⭐ Últimas melhorias: veja as novidades do app.`
+            5: `💬 Mural com mensagens mais recentes no topo. Alertas de novas mensagens na página inicial.`
         };
         return msgs[page] || `Página ${page+1}`;
     }
@@ -3717,9 +4178,11 @@
         updatePartnerPages();
         updateClosingSummary();
         await updateMonthlyClosureAlert();
-        await renderInvoices();
+        await renderInvoicesSettings();
         await renderLimitAlerts();
         checkNewMessages();
+        // Atualiza metas do dashboard
+        renderGoalsDashboard();
         if (firstLoad) { showLoading(false); firstLoad = false; }
     }
     
@@ -3737,19 +4200,36 @@
         recurringRef.onSnapshot(s => { recurringTemplates = s.docs.map(d=> ({ id: d.id, ...d.data() })); });
         metaRef.onSnapshot(d => { savingsGoal = d.exists ? d.data().value : 500; document.getElementById('meta-valor').value = formatMoneyInput(savingsGoal); debouncedUpdateDashboard(); });
         namesRef.onSnapshot(d => { if(d.exists){ partner1Name = d.data().name1 || 'P1'; partner2Name = d.data().name2 || 'P2'; } updateUIWithNames(); debouncedUpdateDashboard(); });
-        debtorsRef.onSnapshot(s => { debtors = s.docs.map(d=> ({ id: d.id, ...d.data() })); renderDebtors(); });
+        debtorsRef.onSnapshot(s => { 
+            debtors = s.docs.map(d=> ({ id: d.id, ...d.data() })); 
+            renderDebtors(); 
+            const total = debtors.filter(d => !d.quitado).reduce((sum, d) => sum + d.valor, 0);
+            document.getElementById('total-a-receber').innerText = formatMoney(total);
+            const count = new Set(debtors.filter(d => !d.quitado).map(d => d.nome.trim())).size;
+            document.getElementById('debtors-count').innerHTML = `${count} devedor(es)`;
+        });
         messagesRef.orderBy('createdAt','desc').onSnapshot(s => { 
             messages = s.docs.map(d=> ({ id: d.id, ...d.data() })); 
             renderMessages(); 
             checkNewMessages();
         });
         incomesRef.onSnapshot(d => { if(d.exists){ incomes.partner1 = d.data().income1||0; incomes.partner2 = d.data().income2||0; } document.getElementById('income1').value = formatMoneyInput(incomes.partner1); document.getElementById('income2').value = formatMoneyInput(incomes.partner2); debouncedUpdateDashboard(); });
-        goalsRef.onSnapshot(s => { goals = s.docs.map(d=> ({ id: d.id, ...d.data() })); renderGoals(); });
-        individualGoalsRef.onSnapshot(s => { s.forEach(d=>{ if(d.id==='partner1') individualGoal1 = d.data(); if(d.id==='partner2') individualGoal2 = d.data(); }); updateIndividualGoalUI(); });
+        goalsRef.onSnapshot(s => { 
+            goals = s.docs.map(d=> ({ id: d.id, ...d.data() })); 
+            renderGoalsSettings(); 
+            renderGoalsDashboard(); 
+        });
+        individualGoalsRef.onSnapshot(s => { 
+            s.forEach(d=>{ 
+                if(d.id==='partner1') individualGoal1 = d.data(); 
+                if(d.id==='partner2') individualGoal2 = d.data(); 
+            }); 
+            updateIndividualGoalUI(); 
+        });
         categoriesRef.onSnapshot(() => loadCategories());
-        limitsRef.onSnapshot(d => { if(d.exists) { limits = d.data(); document.getElementById('limit1').value = formatMoneyInput(limits.partner1 || 0); document.getElementById('limit2').value = formatMoneyInput(limits.partner2 || 0); checkLimitsAndAlert(); renderLimitAlerts(); } });
+        limitsRef.onSnapshot(d => { if(d.exists) { limits = d.data(); checkLimitsAndAlert(); renderLimitAlerts(); updateProfileModal(); } });
         themeRef.onSnapshot(d => { if(d.exists && d.data().primaryColor) applyPrimaryColor(d.data().primaryColor); });
-        invoicesRef.onSnapshot(() => { renderInvoices(); renderLimitAlerts(); });
+        invoicesRef.onSnapshot(() => { renderInvoicesSettings(); renderLimitAlerts(); });
         notificationsRef.onSnapshot(() => updateBellBadge());
     }
     
@@ -3786,6 +4266,54 @@
             if (parseInt(btn.dataset.page) === activeIndex) btn.classList.add('active');
             else btn.classList.remove('active');
         });
+    }
+    
+    // ==================== ABRIR/FECHAR MODAIS ====================
+    function openDebtorsModal() {
+        document.getElementById('debtors-modal').style.display = 'flex';
+        renderDebtors();
+    }
+    function closeDebtorsModal() {
+        document.getElementById('debtors-modal').style.display = 'none';
+    }
+    function openSettingsModal() {
+        document.getElementById('settings-modal').style.display = 'flex';
+        showSettingsMenu();
+    }
+    function closeSettingsModal() {
+        document.getElementById('settings-modal').style.display = 'none';
+    }
+    function openImprovementsModal() {
+        document.getElementById('improvements-modal').style.display = 'flex';
+        renderImprovements();
+    }
+    function closeImprovementsModal() {
+        document.getElementById('improvements-modal').style.display = 'none';
+    }
+    
+    // ==================== NAVEGAÇÃO DAS CONFIGURAÇÕES ====================
+    function showSettingsMenu() {
+        document.querySelectorAll('.settings-section').forEach(el => el.classList.remove('active'));
+        document.getElementById('settings-menu').classList.add('active');
+    }
+    
+    function showSettingsSection(sectionId) {
+        document.querySelectorAll('.settings-section').forEach(el => el.classList.remove('active'));
+        const target = document.getElementById(`settings-section-${sectionId}`);
+        if (target) target.classList.add('active');
+        // Recarregar conteúdo conforme a seção
+        if (sectionId === 'goals') {
+            renderGoalsSettings();
+        }
+        if (sectionId === 'invoices') {
+            renderInvoicesSettings();
+        }
+        if (sectionId === 'closing') {
+            updateClosingSummary();
+        }
+        if (sectionId === 'final-installments') {
+            renderFinalInstallments();
+        }
     }
     
     // ==================== INICIALIZAÇÃO ====================
@@ -3834,10 +4362,54 @@
         document.getElementById('close-notifications-btn')?.addEventListener('click', () => {
             document.getElementById('notifications-modal').style.display = 'none';
         });
-        window.onclick = function(event) {
-            const modal = document.getElementById('notifications-modal');
-            if (event.target === modal) modal.style.display = 'none';
-        };
+        document.getElementById('close-debtors-btn')?.addEventListener('click', closeDebtorsModal);
+        document.getElementById('debtors-modal')?.addEventListener('click', function(e) {
+            if (e.target === this) closeDebtorsModal();
+        });
+        document.getElementById('total-a-receber')?.addEventListener('click', openDebtorsModal);
+        document.getElementById('settings-icon')?.addEventListener('click', openSettingsModal);
+        document.getElementById('close-settings-btn')?.addEventListener('click', closeSettingsModal);
+        document.getElementById('settings-modal')?.addEventListener('click', function(e) {
+            if (e.target === this) closeSettingsModal();
+        });
+        document.getElementById('logo-area')?.addEventListener('click', openImprovementsModal);
+        document.getElementById('close-improvements-btn')?.addEventListener('click', closeImprovementsModal);
+        document.getElementById('improvements-modal')?.addEventListener('click', function(e) {
+            if (e.target === this) closeImprovementsModal();
+        });
+        document.getElementById('user-info')?.addEventListener('click', openProfileModal);
+        document.getElementById('close-profile-btn')?.addEventListener('click', closeProfileModal);
+        document.getElementById('profile-modal')?.addEventListener('click', function(e) {
+            if (e.target === this) closeProfileModal();
+        });
+        document.getElementById('profile-save-goal-btn')?.addEventListener('click', saveProfileGoal);
+        document.getElementById('profile-save-limit-btn')?.addEventListener('click', saveProfileLimit);
+        
+        // Eventos do menu de configurações
+        document.querySelectorAll('.settings-menu-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const section = this.dataset.section;
+                showSettingsSection(section);
+            });
+        });
+        document.querySelectorAll('.settings-back-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                showSettingsMenu();
+            });
+        });
+        
+        // Evento do botão de adicionar meta nas configurações
+        document.getElementById('add-goal-btn-settings')?.addEventListener('click', addGoalSettings);
+        
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeDebtorsModal();
+                closeSettingsModal();
+                closeImprovementsModal();
+                closeProfileModal();
+                document.getElementById('notifications-modal').style.display = 'none';
+            }
+        });
         setupAllCurrencyInputs();
         renderImprovements();
         showLoading(false);
@@ -3905,12 +4477,7 @@
     });
     document.getElementById('calendar-btn').addEventListener('click', openCalendarPicker);
     document.getElementById('set-meta-btn').addEventListener('click', async () => { let v = parseMoneyString(document.getElementById('meta-valor').value); if(isNaN(v)||v<=0) v=500; await setSavingsGoal(v); await addNotification('savings_goal', `definiu meta de economia para ${formatMoney(v)}`); });
-    document.getElementById('add-debtor-btn').addEventListener('click', addDebtor);
-    document.getElementById('clear-history-debtors').addEventListener('click', limparHistoricoDebtors);
     document.getElementById('save-income-btn').addEventListener('click', saveIncomes);
-    document.getElementById('add-goal-btn').addEventListener('click', addGoal);
-    document.getElementById('save-goal1-btn').addEventListener('click', () => saveIndividualGoal('partner1'));
-    document.getElementById('save-goal2-btn').addEventListener('click', () => saveIndividualGoal('partner2'));
     document.getElementById('send-message-btn').addEventListener('click', sendMessage);
     document.getElementById('clear-mural-btn').addEventListener('click', clearMural);
     document.getElementById('export-all-btn').addEventListener('click', exportAllData);
@@ -3936,8 +4503,6 @@
     document.getElementById('primary-color-picker').addEventListener('change', (e) => savePrimaryColor(e.target.value));
     document.getElementById('reset-color-btn').addEventListener('click', resetPrimaryColor);
     document.getElementById('custom-split').style.display = 'none';
-    document.getElementById('save-limit1-btn').addEventListener('click', () => { const val = parseMoneyString(document.getElementById('limit1').value); if (!isNaN(val) && val >= 0) saveLimit('partner1', val); else Swal.fire('Erro', 'Valor inválido', 'error'); });
-    document.getElementById('save-limit2-btn').addEventListener('click', () => { const val = parseMoneyString(document.getElementById('limit2').value); if (!isNaN(val) && val >= 0) saveLimit('partner2', val); else Swal.fire('Erro', 'Valor inválido', 'error'); });
     document.getElementById('update-closing-btn').addEventListener('click', updateClosingSummary);
     document.getElementById('add-category-btn')?.addEventListener('click', async () => {
         const newCat = document.getElementById('new-category-name').value.trim();
