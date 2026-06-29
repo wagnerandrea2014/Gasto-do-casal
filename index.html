@@ -936,6 +936,55 @@
         .profile-modal .modal-body .progress-bar {
             margin-top: 4px;
         }
+
+        /* ===== ESTILO DOS ELEMENTOS QUE ABREM MODAIS ===== */
+        .modal-trigger {
+            position: relative;
+            cursor: pointer;
+        }
+        .modal-trigger .modal-indicator {
+            font-size: 0.6rem;
+            margin-left: 4px;
+            opacity: 0.6;
+            transition: opacity 0.2s;
+            vertical-align: middle;
+        }
+        .modal-trigger:hover .modal-indicator {
+            opacity: 1;
+        }
+        .modal-trigger[title]:hover::after {
+            content: attr(title);
+            position: absolute;
+            bottom: calc(100% + 8px);
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.85);
+            color: #fff;
+            font-size: 0.7rem;
+            padding: 4px 10px;
+            border-radius: 8px;
+            white-space: nowrap;
+            pointer-events: none;
+            z-index: 200;
+            font-weight: 400;
+        }
+        /* Tooltip para elementos com ícone (evita duplicidade) */
+        .modal-trigger-icon[title]:hover::after {
+            content: attr(title);
+            position: absolute;
+            bottom: calc(100% + 8px);
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.85);
+            color: #fff;
+            font-size: 0.7rem;
+            padding: 4px 10px;
+            border-radius: 8px;
+            white-space: nowrap;
+            pointer-events: none;
+            z-index: 200;
+            font-weight: 400;
+        }
     </style>
 </head>
 <body>
@@ -964,9 +1013,9 @@
     <!-- HEADER -->
     <div class="app-header">
         <div class="header-top">
-            <div class="logo-area" id="logo-area">
+            <div class="logo-area modal-trigger" id="logo-area" title="Clique para ver as últimas melhorias">
                 <i class="fas fa-piggy-bank"></i>
-                <h2>CASH CASAL</h2>
+                <h2>CASH CASAL <span class="modal-indicator">🔹</span></h2>
             </div>
             <div class="header-right">
                 <button id="calendar-btn" class="calendar-header" title="Selecionar mês/ano"><i class="fas fa-calendar-alt"></i></button>
@@ -974,13 +1023,14 @@
             </div>
         </div>
         <div class="header-bottom">
-            <div class="user-info" id="user-info" title="Clique para ver seu perfil (meta e limite)">
+            <div class="user-info modal-trigger" id="user-info" title="Clique para ver seu perfil (meta e limite)">
                 <div id="userAvatar" class="profile-avatar">P</div>
                 <span id="user-name-display" class="user-name"></span>
+                <span class="modal-indicator">🔹</span>
             </div>
             <div class="header-actions">
-                <button id="settings-icon" class="settings-icon" title="Configurações"><i class="fas fa-cog"></i></button>
-                <button id="bell-icon" class="bell-icon" title="Notificações"><i class="fas fa-bell"></i><span id="bell-badge" class="badge" style="display: none;">0</span></button>
+                <button id="settings-icon" class="settings-icon modal-trigger-icon" title="Configurações"><i class="fas fa-cog"></i><span class="modal-indicator">🔹</span></button>
+                <button id="bell-icon" class="bell-icon modal-trigger-icon" title="Notificações"><i class="fas fa-bell"></i><span id="bell-badge" class="badge" style="display: none;">0</span><span class="modal-indicator">🔹</span></button>
                 <button id="theme-icon-header" class="theme-icon"><i class="fas fa-moon"></i></button>
                 <button id="logoutBtn" class="logout-btn" title="Sair"><i class="fas fa-sign-out-alt"></i></button>
             </div>
@@ -1001,11 +1051,10 @@
                     <div class="dashboard-card"><h4 id="gasto-partner2-label">👩 Gasto de </h4><div class="value" id="gasto-partner2">R$ 0,00</div></div>
                     <div class="dashboard-card">
                         <h4><i class="fas fa-hand-holding-usd"></i> Total a receber</h4>
-                        <div class="value clickable-value" id="total-a-receber" title="Clique para ver os devedores">R$ 0,00</div>
+                        <div class="value clickable-value modal-trigger" id="total-a-receber" title="Clique para ver os devedores">R$ 0,00 <span class="modal-indicator">🔹</span></div>
                         <small id="debtors-count"></small>
                     </div>
                 </div>
-                <!-- Meta de economia do casal REMOVIDA daqui -->
             </div>
             <div class="card" id="cartao-atacadao-dashboard">
                 <div class="card-title"><i class="fas fa-credit-card"></i> Cartão Atacadão</div>
@@ -1025,10 +1074,10 @@
                 </div>
             </div>
             
-            <!-- ===== CARD: METAS DO CASAL (agora com meta de economia + metas) ===== -->
+            <!-- ===== CARD: METAS DO CASAL ===== -->
             <div class="card">
                 <div class="card-title"><i class="fas fa-list-check"></i> Metas do Casal</div>
-                <!-- Meta de economia do casal (era do Resumo) -->
+                <!-- Meta de economia do casal -->
                 <div style="background: rgba(233,30,99,0.08); border-radius: 16px; padding: 12px; margin-bottom: 12px;">
                     <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
                         <span style="font-weight: 600; flex: 1;">🎯 Meta de economia</span>
@@ -1124,7 +1173,7 @@
     <div class="page-indicators" id="pageIndicators"></div>
 </div>
 
-<!-- ===== BARRA INFERIOR (apenas 6 botões) ===== -->
+<!-- ===== BARRA INFERIOR ===== -->
 <div class="bottom-nav">
     <button class="nav-btn" data-page="0"><i class="fas fa-chart-line"></i><span>Início</span></button>
     <button class="nav-btn" data-page="1"><i class="fas fa-user"></i><span id="nav-partner1"></span></button>
@@ -1410,6 +1459,11 @@
 <script>
     // ==================== LISTA DE MELHORIAS ====================
     const appImprovements = [
+        {
+            version: "v2.11",
+            date: "28/06/2026",
+            description: "🔹 Todos os botões que abrem modais agora possuem o ícone '🔹' e tooltip explicativo (opção 1)."
+        },
         {
             version: "v2.10",
             date: "28/06/2026",
@@ -3710,7 +3764,6 @@
         const container = document.getElementById('goals-dashboard-list');
         if (!container) return;
         
-        // Se não houver metas cadastradas
         if (goals.length === 0) {
             container.innerHTML = '<div class="info-message" style="text-align:center;">Nenhuma meta cadastrada. Crie uma em <strong>Configurações</strong>.</div>';
             return;
@@ -3887,7 +3940,7 @@
     // ==================== CONCIERGE ====================
     function getConciergeMessage(page) {
         const msgs = {
-            0: `💡 Clique no logo para ver as últimas melhorias. Clique no "Total a receber" para devedores. Veja suas metas no card "Metas do Casal".`,
+            0: `💡 Clique no logo 🔹 para melhorias. Clique no "Total a receber" 🔹 para devedores. Veja suas metas no card "Metas do Casal".`,
             1: `📊 Gastos pendentes e quitados de ${partner1Name}.`,
             2: `📊 Gastos pendentes e quitados de ${partner2Name}. Cartão Atacadão no topo.`,
             3: `➕ Adicione despesas com categoria "Cartão Atacadão 💳" e veja no painel.`,
@@ -4181,7 +4234,6 @@
         await renderInvoicesSettings();
         await renderLimitAlerts();
         checkNewMessages();
-        // Atualiza metas do dashboard
         renderGoalsDashboard();
         if (firstLoad) { showLoading(false); firstLoad = false; }
     }
@@ -4301,7 +4353,6 @@
         document.querySelectorAll('.settings-section').forEach(el => el.classList.remove('active'));
         const target = document.getElementById(`settings-section-${sectionId}`);
         if (target) target.classList.add('active');
-        // Recarregar conteúdo conforme a seção
         if (sectionId === 'goals') {
             renderGoalsSettings();
         }
@@ -4385,7 +4436,6 @@
         document.getElementById('profile-save-goal-btn')?.addEventListener('click', saveProfileGoal);
         document.getElementById('profile-save-limit-btn')?.addEventListener('click', saveProfileLimit);
         
-        // Eventos do menu de configurações
         document.querySelectorAll('.settings-menu-btn').forEach(btn => {
             btn.addEventListener('click', function() {
                 const section = this.dataset.section;
@@ -4398,7 +4448,6 @@
             });
         });
         
-        // Evento do botão de adicionar meta nas configurações
         document.getElementById('add-goal-btn-settings')?.addEventListener('click', addGoalSettings);
         
         document.addEventListener('keydown', function(e) {
