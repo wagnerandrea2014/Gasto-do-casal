@@ -1053,6 +1053,7 @@
         </select>
         <button id="enter-app-btn" class="btn btn-primary" style="width:100%; margin-top:16px;">Entrar no app</button>
         <div style="margin-top: 16px; font-size: 0.7rem; text-align: center;">Fatura fecha dia 2 de cada mês</div>
+        <div style="margin-top: 8px; font-size: 0.6rem; text-align: center; opacity: 0.5;">v2.14</div>
     </div>
 </div>
 
@@ -1523,6 +1524,11 @@
 <script>
     // ==================== LISTA DE MELHORIAS ====================
     const appImprovements = [
+        {
+            version: "v2.15",
+            date: "11/07/2026",
+            description: "📅 Ao quitar uma dívida, a data de quitação é registrada e exibida no histórico. Versão do app visível na tela de login."
+        },
         {
             version: "v2.14",
             date: "02/07/2026",
@@ -3402,6 +3408,7 @@
             for (const debt of sortedHistory) {
                 const dateFormatted = debt.data ? parseLocalDateToDate(debt.data).toLocaleDateString('pt-BR', { timeZone: TIMEZONE }) : 'Data não informada';
                 const obsHtml = debt.observacao ? `<span style="font-size:0.7rem; opacity:0.8;">📝 ${escapeHtml(debt.observacao)}</span>` : '';
+                const quitadoEm = debt.quitadoEm ? parseLocalDateToDate(debt.quitadoEm).toLocaleDateString('pt-BR', { timeZone: TIMEZONE }) : 'Data não registrada';
                 html += `
                     <div class="debtor-entry" style="border-left: 3px solid #4caf50; padding-left: 10px; background: rgba(76,175,80,0.05); border-radius: 12px; margin-bottom: 6px;">
                         <div class="debtor-entry-info" style="flex: 2;">
@@ -3409,6 +3416,7 @@
                             <span class="debtor-entry-date"><i class="fas fa-calendar-alt"></i> ${dateFormatted}</span>
                             <span class="debtor-entry-value" style="color: #4caf50;">${formatMoney(debt.valor)}</span>
                             ${obsHtml}
+                            <span style="font-size:0.65rem; opacity:0.6;">✅ Quitada em: ${quitadoEm}</span>
                         </div>
                         <div>
                             <button class="btn-small btn-danger delete-debtor-entry" data-id="${debt.id}" data-name="${escapeHtml(debt.nome)}" title="Remover do histórico" style="background: #c62828;"><i class="fas fa-trash-alt"></i></button>
@@ -3466,9 +3474,10 @@
                 });
                 if (result.isConfirmed) {
                     try {
-                        await debtorsRef.doc(id).update({ quitado: true });
-                        await addNotification('debt_received', `recebeu dívida de ${formatMoney(valor)} de ${name}`);
-                        Swal.fire('Recebido!', `Dívida de ${formatMoney(valor)} quitada.`, 'success');
+                        const quitadoEm = getCurrentDateRecife();
+                        await debtorsRef.doc(id).update({ quitado: true, quitadoEm: quitadoEm });
+                        await addNotification('debt_received', `recebeu dívida de ${formatMoney(valor)} de ${name} (quitada em ${quitadoEm})`);
+                        Swal.fire('Recebido!', `Dívida de ${formatMoney(valor)} quitada em ${quitadoEm}.`, 'success');
                     } catch (err) {
                         console.error(err);
                         Swal.fire('Erro', 'Não foi possível quitar a dívida.', 'error');
