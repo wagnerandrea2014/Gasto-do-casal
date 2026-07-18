@@ -1053,7 +1053,7 @@
         </select>
         <button id="enter-app-btn" class="btn btn-primary" style="width:100%; margin-top:16px;">Entrar no app</button>
         <div style="margin-top: 16px; font-size: 0.7rem; text-align: center;">Fatura fecha dia 2 de cada mês</div>
-        <div style="margin-top: 8px; font-size: 0.6rem; text-align: center; opacity: 0.5;">v2.14</div>
+        <div style="margin-top: 8px; font-size: 0.6rem; text-align: center; opacity: 0.5;">v2.17</div>
     </div>
 </div>
 
@@ -1524,6 +1524,16 @@
 <script>
     // ==================== LISTA DE MELHORIAS ====================
     const appImprovements = [
+        {
+            version: "v2.17",
+            date: "17/07/2026",
+            description: "🐛 CORREÇÃO DEFINITIVA: Despesas recorrentes agora são criadas dentro da mesma transação do Firestore, eliminando completamente duplicatas."
+        },
+        {
+            version: "v2.16",
+            date: "17/07/2026",
+            description: "🐛 Corrigida duplicação de despesas recorrentes. Agora usa transação do Firestore e fuso horário do Recife para evitar concorrência."
+        },
         {
             version: "v2.15",
             date: "11/07/2026",
@@ -2477,64 +2487,69 @@
         debouncedUpdateDashboard();
     }
     
-    // ========== GERAÇÃO DE RECORRENTES ==========
+    // ========== GERAÇÃO DE RECORRENTES (CORRIGIDA v2.17) ==========
     async function generateRecurringForMonth(targetMonth) {
         if (!recurringTemplates.length) return;
-    
-        const hoje = new Date();
-        const anoAtual = hoje.getFullYear();
-        const mesAtual = hoje.getMonth();
+
+        // FIX: Usar o fuso horário do Recife para consistência
+        const hojeRecifeStr = getCurrentDateRecife();
+        const hojeDate = parseLocalDateToDate(hojeRecifeStr);
+        const anoAtual = hojeDate.getFullYear();
+        const mesAtual = hojeDate.getMonth();
+        
         const [targetYear, targetMonthNum] = targetMonth.split('-').map(Number);
+        // Só gera para meses futuros
         if (targetYear < anoAtual || (targetYear === anoAtual && targetMonthNum <= mesAtual)) {
             return;
         }
-    
+
         for (const template of recurringTemplates) {
+            // Verifica se o template ainda existe
             const templateDoc = await recurringRef.doc(template.id).get();
             if (!templateDoc.exists) {
                 continue;
             }
-    
+
             const controlId = `${template.id}_${targetMonth}`;
             const controlDoc = recurringControlRef.doc(controlId);
-            const doc = await controlDoc.get();
-            if (doc.exists) {
-                continue;
-            }
-    
-            await controlDoc.set({
-                processedAt: firebase.firestore.FieldValue.serverTimestamp(),
-                templateId: template.id,
-                month: targetMonth
-            });
-    
-            const q = await expensesRef
-                .where('recurringTemplateId', '==', template.id)
-                .where('installmentMonths', 'array-contains', targetMonth)
-                .get();
-    
-            if (!q.empty) {
-                continue;
-            }
-    
+
+            // Criação da despesa e do controle dentro da mesma transação (atomicidade)
             try {
-                const firstDay = new Date(selectedYear, selectedMonth, 1);
-                const firstDayStr = `${firstDay.getFullYear()}-${String(firstDay.getMonth()+1).padStart(2,'0')}-01`;
-                const newInstallments = generateInstallmentMonths(firstDayStr, template.parcelas, 0);
-                const expenseData = {
-                    ...template,
-                    startDate: firstDayStr,
-                    installmentMonths: newInstallments,
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                    updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
-                    recurringTemplateId: template.id,
-                    recorrente: 'monthly',
-                    quitado: false
-                };
-                delete expenseData.id;
-                await expensesRef.add(expenseData);
-            } catch (err) {
-                console.warn("Erro ao criar despesa para template", template.id, err);
+                await db.runTransaction(async (transaction) => {
+                    const docSnap = await transaction.get(controlDoc);
+                    if (docSnap.exists) {
+                        // Já foi processado
+                        return;
+                    }
+
+                    // Criar controle
+                    transaction.set(controlDoc, {
+                        processedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                        templateId: template.id,
+                        month: targetMonth
+                    });
+
+                    // Criar despesa
+                    const firstDay = new Date(selectedYear, selectedMonth, 1);
+                    const firstDayStr = `${firstDay.getFullYear()}-${String(firstDay.getMonth()+1).padStart(2,'0')}-01`;
+                    const newInstallments = generateInstallmentMonths(firstDayStr, template.parcelas, 0);
+                    const expenseData = {
+                        ...template,
+                        startDate: firstDayStr,
+                        installmentMonths: newInstallments,
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                        updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                        recurringTemplateId: template.id,
+                        recorrente: 'monthly',
+                        quitado: false
+                    };
+                    delete expenseData.id;
+                    const newExpenseRef = expensesRef.doc();
+                    transaction.set(newExpenseRef, expenseData);
+                });
+            } catch (error) {
+                // Se a transação falhar, pode ser por concorrência; apenas logamos
+                console.warn("Transação de recorrência falhou (provavelmente já existe):", controlId, error);
             }
         }
     }
