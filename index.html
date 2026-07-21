@@ -1053,7 +1053,7 @@
         </select>
         <button id="enter-app-btn" class="btn btn-primary" style="width:100%; margin-top:16px;">Entrar no app</button>
         <div style="margin-top: 16px; font-size: 0.7rem; text-align: center;">Fatura fecha dia 2 de cada mês</div>
-        <div style="margin-top: 8px; font-size: 0.6rem; text-align: center; opacity: 0.5;">v2.17</div>
+        <div style="margin-top: 8px; font-size: 0.6rem; text-align: center; opacity: 0.5;">v2.18</div>
     </div>
 </div>
 
@@ -1524,6 +1524,11 @@
 <script>
     // ==================== LISTA DE MELHORIAS ====================
     const appImprovements = [
+        {
+            version: "v2.18",
+            date: "20/07/2026",
+            description: "➕ Adicionado botão 'Puxar parcelas' nas páginas 1 e 2 para adiantar múltiplas parcelas de uma única despesa."
+        },
         {
             version: "v2.17",
             date: "17/07/2026",
@@ -3210,6 +3215,71 @@
         modal.style.display = 'flex';
     }
     
+    // ==================== FUNÇÃO PUXAR PARCELAS (v2.18) ====================
+    async function puxarParcelas(expenseId) {
+        try {
+            const docSnap = await expensesRef.doc(expenseId).get();
+            if (!docSnap.exists) {
+                Swal.fire('Erro', 'Esta despesa não foi encontrada.', 'error');
+                return;
+            }
+            const expense = docSnap.data();
+            const parcelasRestantes = expense.parcelas - (expense.parcelasPagas || 0);
+            if (parcelasRestantes <= 0) {
+                Swal.fire('Informação', 'Todas as parcelas já foram pagas.', 'info');
+                return;
+            }
+            if (expense.parcelas <= 1) {
+                Swal.fire('Informação', 'Esta despesa não é parcelada.', 'info');
+                return;
+            }
+
+            const { value: qtd } = await Swal.fire({
+                title: 'Puxar parcelas',
+                text: `Quantas parcelas (de ${parcelasRestantes} restantes) você quer puxar para a fatura atual?`,
+                input: 'number',
+                inputLabel: 'Quantidade de parcelas',
+                inputValue: 1,
+                inputAttributes: {
+                    min: 1,
+                    max: parcelasRestantes,
+                    step: 1
+                },
+                showCancelButton: true,
+                confirmButtonText: 'Puxar',
+                cancelButtonText: 'Cancelar',
+                preConfirm: (value) => {
+                    const val = parseInt(value);
+                    if (isNaN(val) || val < 1 || val > parcelasRestantes) {
+                        Swal.showValidationMessage(`Digite um número entre 1 e ${parcelasRestantes}`);
+                        return false;
+                    }
+                    return val;
+                }
+            });
+
+            if (!qtd) return;
+
+            // Atualizar parcelasPagas e regenerar installmentMonths
+            const newParcelasPagas = (expense.parcelasPagas || 0) + qtd;
+            const newInstallmentMonths = generateInstallmentMonths(expense.startDate, expense.parcelas, newParcelasPagas);
+            
+            await expensesRef.doc(expenseId).update({
+                parcelasPagas: newParcelasPagas,
+                installmentMonths: newInstallmentMonths,
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
+
+            await addNotification('parcelas_puxadas', `puxou ${qtd} parcela(s) de "${expense.descricao}" para a fatura atual (total parcelas pagas: ${newParcelasPagas})`);
+            Swal.fire('Sucesso!', `${qtd} parcela(s) puxada(s) para a fatura atual.`, 'success');
+            debouncedUpdateDashboard();
+
+        } catch (error) {
+            console.error(error);
+            Swal.fire('Erro', 'Não foi possível puxar as parcelas.', 'error');
+        }
+    }
+
     // ==================== RENDER PARTNER EXPENSES ====================
     async function renderPartnerExpensesWithPaid(partnerKey, containerId, containerPaidId, monthYear) {
         const container = document.getElementById(containerId);
@@ -3236,6 +3306,8 @@
                 observacao: exp.observacao,
                 recorrente: !!(exp.recurringTemplateId || exp.recorrente === 'monthly'),
                 startDate: exp.startDate,
+                parcelas: exp.parcelas,
+                parcelasPagas: exp.parcelasPagas || 0,
                 createdAt: exp.createdAt ? exp.createdAt.toDate() : parseLocalDateToDate(exp.startDate)
             };
             if (exp.quitado) {
@@ -3255,48 +3327,43 @@
         const recorrentes = pending.filter(i => i.recorrente);
         paid.sort((a, b) => (b.data || 0) - (a.data || 0));
     
-        let htmlNormais = '';
-        if (normais.length === 0) {
-            htmlNormais = '<div style="text-align:center; padding:8px;">Nenhum gasto normal pendente.</div>';
-        } else {
-            htmlNormais = normais.map(exp => `
-                <div class="expense-item">
+        // Função para gerar HTML de cada item com botão "Puxar parcelas" se parcelado
+        function renderItem(exp) {
+            const isParcelado = exp.parcelas > 1 && exp.parcelasPagas < exp.parcelas;
+            const parcelasRestantes = exp.parcelas - exp.parcelasPagas;
+            return `
+                <div class="expense-item" style="${exp.recorrente ? 'border-left: 3px solid var(--primary-color);' : ''}">
                     <div>
                         <strong>${escapeHtml(exp.descricao)}</strong>
+                        ${exp.recorrente ? `<span style="background:var(--primary-color); color:white; font-size:0.65rem; border-radius:20px; padding:2px 8px; margin-left:6px;">🔄 Recorrente</span>` : ''}
                         ${exp.observacao ? `<br><span style="font-size:0.7rem; opacity:0.8;">📝 ${escapeHtml(exp.observacao)}</span>` : ''}
                         <br><span class="expense-date">${exp.data ? exp.data.toLocaleDateString('pt-BR', { timeZone: TIMEZONE }) : 'Data?'} - ${exp.categoria || ''}</span>
+                        ${isParcelado ? `<br><span style="font-size:0.65rem; opacity:0.7;">📦 ${exp.parcelas}x - ${parcelasRestantes} parcela(s) restante(s)</span>` : ''}
                     </div>
                     <div>
                         <span class="detail-highlight">${formatMoney(exp.valor)}</span>
-                        <div style="display: flex; gap: 6px; margin-top: 6px;">
+                        <div style="display: flex; gap: 6px; margin-top: 6px; flex-wrap: wrap;">
+                            ${isParcelado ? `<button class="btn-small btn-secondary puxar-parcelas" data-id="${exp.id}" title="Puxar parcelas restantes"><i class="fas fa-forward"></i> Puxar</button>` : ''}
                             <button class="btn-small btn-quitar" data-id="${exp.id}" title="Quitar"><i class="fas fa-check-circle"></i> Quitar</button>
                             <button class="btn-small delete-partner-expense" data-id="${exp.id}" title="Excluir"><i class="fas fa-trash"></i></button>
                         </div>
                     </div>
                 </div>
-            `).join('');
+            `;
+        }
+    
+        let htmlNormais = '';
+        if (normais.length === 0) {
+            htmlNormais = '<div style="text-align:center; padding:8px;">Nenhum gasto normal pendente.</div>';
+        } else {
+            htmlNormais = normais.map(exp => renderItem(exp)).join('');
         }
     
         let htmlRecorrentes = '';
         if (recorrentes.length === 0) {
             htmlRecorrentes = '<div style="text-align:center; padding:8px;">Nenhum gasto recorrente pendente.</div>';
         } else {
-            htmlRecorrentes = recorrentes.map(exp => `
-                <div class="expense-item" style="border-left: 3px solid var(--primary-color);">
-                    <div>
-                        <strong>${escapeHtml(exp.descricao)} <span style="background:var(--primary-color); color:white; font-size:0.65rem; border-radius:20px; padding:2px 8px; margin-left:6px;">🔄 Recorrente</span></strong>
-                        ${exp.observacao ? `<br><span style="font-size:0.7rem; opacity:0.8;">📝 ${escapeHtml(exp.observacao)}</span>` : ''}
-                        <br><span class="expense-date">${exp.data ? exp.data.toLocaleDateString('pt-BR', { timeZone: TIMEZONE }) : 'Data?'} - ${exp.categoria || ''}</span>
-                    </div>
-                    <div>
-                        <span class="detail-highlight">${formatMoney(exp.valor)}</span>
-                        <div style="display: flex; gap: 6px; margin-top: 6px;">
-                            <button class="btn-small btn-quitar" data-id="${exp.id}" title="Quitar"><i class="fas fa-check-circle"></i> Quitar</button>
-                            <button class="btn-small delete-partner-expense" data-id="${exp.id}" title="Excluir"><i class="fas fa-trash"></i></button>
-                        </div>
-                    </div>
-                </div>
-            `).join('');
+            htmlRecorrentes = recorrentes.map(exp => renderItem(exp)).join('');
         }
     
         let htmlPaid = '';
@@ -3340,6 +3407,12 @@
             e.stopPropagation();
             await deleteExpenseById(btn.dataset.id);
         }));
+        document.querySelectorAll('.puxar-parcelas').forEach(btn => {
+            btn.addEventListener('click', async (e) => {
+                e.stopPropagation();
+                await puxarParcelas(btn.dataset.id);
+            });
+        });
     }
     
     // ==================== RENDER DEBTORS (MODAL) ====================
@@ -4232,8 +4305,8 @@
     function getConciergeMessage(page) {
         const msgs = {
             0: `💡 Clique no logo 🔹 para melhorias. Clique no "Total a receber" 🔹 para devedores. Veja suas metas no card "Metas do Casal".`,
-            1: `📊 Gastos pendentes e quitados de ${partner1Name}.`,
-            2: `📊 Gastos pendentes e quitados de ${partner2Name}. Cartão Atacadão no topo.`,
+            1: `📊 Gastos pendentes e quitados de ${partner1Name}. Use "Puxar" para adiantar parcelas.`,
+            2: `📊 Gastos pendentes e quitados de ${partner2Name}. Use "Puxar" para adiantar parcelas. Cartão Atacadão no topo.`,
             3: `➕ Adicione despesas com categoria "Cartão Atacadão 💳" e veja no painel.`,
             4: `📋 Histórico mostra todas as despesas (pendentes e quitadas).`,
             5: `💬 Mural com mensagens mais recentes no topo. Alertas de novas mensagens na página inicial.`
